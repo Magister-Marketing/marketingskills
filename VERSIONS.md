@@ -21,7 +21,7 @@ Current versions of all skills. Agents can compare against local versions to che
 | cro | 2.0.0 | 2026-05-05 |
 | customer-research | 2.0.1 | 2026-07-10 |
 | directory-submissions | 2.0.1 | 2026-07-30 |
-| emails | 2.0.0 | 2026-05-05 |
+| emails | 2.0.1 | 2026-10-03 |
 | free-tools | 2.0.0 | 2026-05-05 |
 | image | 2.0.2 | 2026-07-30 |
 | launch | 2.0.1 | 2026-06-16 |
@@ -68,6 +68,9 @@ Current versions of all skills. Agents can compare against local versions to che
   an HTML document gets the document, not a fenced or annotated one (the
   benchmark's landing page was fenced in 1 of 3 attempts and failed its
   programmatic completeness check).
+- emails (2.0.1): a subject line is a claim read on its own, so a fact's
+  condition stays in it; the same release's benchmark run saw "Up to 8 hours
+  of rechargeable light" as a subject with the condition only in the body.
 - **Findings are observed, causes are hypotheses**: analytics (2.3.0) adds
   the principle that a tracking-audit finding is the defect you can point at,
   the symptom it would explain is a hypothesis stated as such with what would

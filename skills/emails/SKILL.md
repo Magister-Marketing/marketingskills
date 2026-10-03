@@ -2,7 +2,7 @@
 name: emails
 description: "Design lifecycle email sequences — welcome, drip, nurture, onboarding, re-engagement, win-back — with timing, subject lines, and copy."
 metadata:
-  version: 2.0.0
+  version: 2.0.1
 ---
 
 # Email Sequence Design
@@ -98,6 +98,10 @@ Consider:
 - Benefit or curiosity-driven
 - 40-60 characters ideal
 - Test emoji (they're polarizing)
+- A subject line is a claim read on its own. A fact's condition stays in it
+  ("Up to 8 hours on the lowest setting", not "Up to 8 hours of light" with
+  the condition in the body), and nothing goes in it that the source
+  material does not support — see the copywriting skill's claims rules.
 
 **Patterns that work:**
 - Question: "Still struggling with X?"
