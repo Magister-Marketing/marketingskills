@@ -2,7 +2,7 @@
 name: copywriting
 description: "Write, rewrite, or draft persuasive site and brand copy — homepage, landing, pricing, feature pages; headlines, value props, CTAs. Claims must be supportable; a declined claim names the evidence that would unlock it."
 metadata:
-  version: 2.1.1
+  version: 2.1.2
 ---
 
 # Copywriting
@@ -68,6 +68,24 @@ a written guarantee policy, a certification, a citable study or dataset.
 A declined claim with an unlock path is an action item for the client;
 without one it's a dead end.
 
+A condition that is part of a fact stays attached to the claim in the same
+line of copy. "Up to eight hours on the lowest setting" cannot become "Up to
+eight hours" in a headline with the condition moved to a subhead, footnote,
+or rationale: the headline is read alone, so the unqualified version is a
+claim the source does not support. "Confident over qualified" below removes
+hedges ("almost," "very," "really"), never a fact's own condition. An absolute
+("zero," "anywhere," "every," "always") is a claim too, and needs a source
+that states it.
+
+### The Deliverable Takes the Form Requested
+When the request fixes the output form — only a complete HTML document,
+exactly these sections under these headings, a table with this many rows —
+the reply is that form and nothing else. An HTML document starts at
+`<!DOCTYPE html>` and ends at `</html>`, with no code fence, preamble, or
+commentary around it; a fenced or annotated document is not "only the
+document." Say anything you need to say inside the deliverable or in a
+separate message.
+
 ---
 
 ## Writing Style Rules
@@ -77,7 +95,7 @@ without one it's a dead end.
 1. **Simple over complex** — "Use" not "utilize," "help" not "facilitate"
 2. **Specific over vague** — Avoid "streamline," "optimize," "innovative"
 3. **Active over passive** — "We generate reports" not "Reports are generated"
-4. **Confident over qualified** — Remove "almost," "very," "really"
+4. **Confident over qualified** — Remove hedges ("almost," "very," "really"); keep a fact's own condition (see Claims above)
 5. **Show over tell** — Describe the outcome instead of using adverbs
 6. **Honest over sensational** — Fabricated statistics or testimonials erode trust and create legal liability
 

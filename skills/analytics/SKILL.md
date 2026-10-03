@@ -1,8 +1,8 @@
 ---
 name: analytics
-description: "Set up or audit tracking — GA4, GTM, Mixpanel, Segment; tracking plans, event naming, UTM conventions, conversion and attribution debugging. Rate metrics divide matching closed windows — never full-period spend by partial-period results."
+description: "Set up or audit tracking — GA4, GTM, Mixpanel, Segment; tracking plans, event naming, UTM conventions, conversion and attribution debugging. Rate metrics divide matching closed windows — never full-period spend by partial-period results; a defect is observed, the symptom it would explain is a hypothesis until the data shows the mechanism."
 metadata:
-  version: 2.2.0
+  version: 2.3.0
 ---
 
 # Analytics Tracking
@@ -73,6 +73,19 @@ Before implementing tracking, understand:
   from the goal the brief states — the launch target, audience, revenue, or
   positioning objective — not only from what is operationally easiest.
   Name which stated goal each option serves and what it trades away.
+
+### 8. Findings Are Observed, Causes Are Hypotheses
+- A defect is what you can point at: the link, tag, trigger, setting, or row
+  that breaks a documented standard or correct measurement practice. Report
+  it as a finding with its location and the standard it breaks.
+- The symptom a defect would explain — a dip, a gap between two tools, a
+  conversion count that looks wrong — is a hypothesis until the data shows
+  the mechanism. Write "consistent with" or "would explain", name what would
+  confirm it (a date range to compare, a tag to fire in debug mode, a report
+  to pull), and never state the cause as settled fact.
+- Something is clean only when it meets every documented standard. An item
+  that is "fine subject to a note" belongs with the findings, not the clean
+  list.
 
 ---
 

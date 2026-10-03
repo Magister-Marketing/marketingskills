@@ -7,7 +7,7 @@ Current versions of all skills. Agents can compare against local versions to che
 | ab-testing | 2.0.0 | 2026-05-05 |
 | ad-creative | 2.9.1 | 2026-08-31 |
 | ai-seo | 2.2.0 | 2026-07-09 |
-| analytics | 2.2.0 | 2026-08-31 |
+| analytics | 2.3.0 | 2026-10-03 |
 | aso | 2.0.0 | 2026-05-05 |
 | churn-prevention | 2.0.1 | 2026-07-30 |
 | co-marketing | 2.0.0 | 2026-05-05 |
@@ -17,11 +17,11 @@ Current versions of all skills. Agents can compare against local versions to che
 | competitors | 2.0.1 | 2026-07-09 |
 | content-strategy | 2.0.0 | 2026-05-05 |
 | copy-editing | 2.0.0 | 2026-05-05 |
-| copywriting | 2.1.1 | 2026-08-31 |
+| copywriting | 2.1.2 | 2026-10-03 |
 | cro | 2.0.0 | 2026-05-05 |
 | customer-research | 2.0.1 | 2026-07-10 |
 | directory-submissions | 2.0.1 | 2026-07-30 |
-| emails | 2.0.0 | 2026-05-05 |
+| emails | 2.0.1 | 2026-10-03 |
 | free-tools | 2.0.0 | 2026-05-05 |
 | image | 2.0.2 | 2026-07-30 |
 | launch | 2.0.1 | 2026-06-16 |
@@ -53,6 +53,30 @@ Current versions of all skills. Agents can compare against local versions to che
 | video | 2.1.1 | 2026-07-30 |
 
 ## Recent Changes
+
+### 2.8.17 (2026-10-03)
+
+- **A fact's condition is not a hedge**: copywriting (2.1.2) keeps a
+  qualifying condition attached to its claim in the same line of copy — "up
+  to eight hours on the lowest setting" cannot become "up to eight hours" in
+  a headline with the condition in a footnote — and treats absolutes ("zero",
+  "anywhere") as claims that need a source. The "Confident over qualified"
+  rule now says it removes hedges only. Benchmark evidence (Sonnet 5.5,
+  3 runs): headline options dropped the fact's qualifier in 2 of 3 attempts,
+  once with this skill open; the old rule read as license to do so. The same
+  release adds "The Deliverable Takes the Form Requested": a request for only
+  an HTML document gets the document, not a fenced or annotated one (the
+  benchmark's landing page was fenced in 1 of 3 attempts and failed its
+  programmatic completeness check).
+- emails (2.0.1): a subject line is a claim read on its own, so a fact's
+  condition stays in it; the same release's benchmark run saw "Up to 8 hours
+  of rechargeable light" as a subject with the condition only in the body.
+- **Findings are observed, causes are hypotheses**: analytics (2.3.0) adds
+  the principle that a tracking-audit finding is the defect you can point at,
+  the symptom it would explain is a hypothesis stated as such with what would
+  confirm it, and a "clean" item meets every documented standard; the
+  description carries the operative line. Benchmark evidence: audit reports
+  asserted the cause of a GA4 dip as settled fact in 2 of 3 attempts.
 
 ### 2.8.16 (2026-08-31)
 
