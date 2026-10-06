@@ -2,7 +2,7 @@
 name: copywriting
 description: "Write, rewrite, or draft persuasive site and brand copy — homepage, landing, pricing, feature pages; headlines, value props, CTAs. Claims must be supportable; a declined claim names the evidence that would unlock it."
 metadata:
-  version: 2.1.3
+  version: 2.1.4
 ---
 
 # Copywriting
@@ -66,7 +66,12 @@ say why it falls short, offer the closest supportable alternative, and state
 exactly what evidence would unlock the original — a customer-review export,
 a written guarantee policy, a certification, a citable study or dataset.
 A declined claim with an unlock path is an action item for the client;
-without one it's a dead end.
+without one it's a dead end. A declined claim stays declined everywhere in
+the copy: it does not come back as a softer version of itself — a review
+count as "trusted by many", a guarantee as "usually there fast", a credential
+as "a professional set of eyes", a reputation as "the neighbors already know
+who to call". If a line only works because the reader infers the declined
+claim, it is the declined claim.
 
 A condition that is part of a fact stays attached to the claim in the same
 line of copy. "Up to eight hours on the lowest setting" cannot become "Up to

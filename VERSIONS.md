@@ -4,8 +4,8 @@ Current versions of all skills. Agents can compare against local versions to che
 
 | Skill | Version | Last Updated |
 |-------|---------|--------------|
-| ab-testing | 2.0.0 | 2026-05-05 |
-| ad-creative | 2.9.2 | 2026-10-06 |
+| ab-testing | 2.0.1 | 2026-10-06 |
+| ad-creative | 2.9.3 | 2026-10-06 |
 | ai-seo | 2.2.0 | 2026-07-09 |
 | analytics | 2.3.1 | 2026-10-06 |
 | aso | 2.0.0 | 2026-05-05 |
@@ -17,7 +17,7 @@ Current versions of all skills. Agents can compare against local versions to che
 | competitors | 2.0.1 | 2026-07-09 |
 | content-strategy | 2.0.0 | 2026-05-05 |
 | copy-editing | 2.0.0 | 2026-05-05 |
-| copywriting | 2.1.3 | 2026-10-06 |
+| copywriting | 2.1.4 | 2026-10-06 |
 | cro | 2.0.0 | 2026-05-05 |
 | customer-research | 2.0.1 | 2026-07-10 |
 | directory-submissions | 2.0.1 | 2026-07-30 |
@@ -29,7 +29,7 @@ Current versions of all skills. Agents can compare against local versions to che
 | marketing-council | 1.0.0 | 2026-07-06 |
 | marketing-ideas | 2.0.0 | 2026-05-05 |
 | marketing-loops | 1.2.0 | 2026-07-10 |
-| marketing-plan | 1.2.0 | 2026-08-31 |
+| marketing-plan | 1.2.1 | 2026-10-06 |
 | marketing-psychology | 2.0.0 | 2026-05-05 |
 | offers | 1.0.0 | 2026-06-16 |
 | onboarding | 2.0.0 | 2026-05-05 |
@@ -82,6 +82,18 @@ Current versions of all skills. Agents can compare against local versions to che
   every documented standard including allowed-value lists; a well-formed
   value that is not on its list is a finding. An audit's clean list carried
   a link whose source was outside the documented list in 3 of 9 attempts.
+- **A fixed allocation has no reserve row**: marketing-plan (1.2.1) says that
+  when the request fixes the channel count and the total, the experimental
+  layer is carved inside a channel's line, not added as a fourth "reserve"
+  row (the plan's three channels then summed to less than the total in
+  4 of 12 attempts across rounds).
+- **Every CTA field carries the approved CTA**: ad-creative (2.9.3); one of
+  four concepts varied it in 2 of 12.
+- **A declined claim does not return softened**: copywriting (2.1.4) — a
+  review count as "trusted by many", a reputation as "the neighbors already
+  know who to call" is the declined claim.
+- **Factorial cells are identical except the factor**: ab-testing (2.0.1);
+  cells also varied headline structure and props in 2 of 6.
 
 ### 2.8.17 (2026-10-03)
 

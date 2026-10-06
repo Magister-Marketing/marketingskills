@@ -2,7 +2,7 @@
 name: ad-creative
 description: "Generate and iterate ad creative at scale — RSA headlines, Meta/TikTok copy, static ad batches, iMessage and motion video ads, review pages. Test hypotheses must be falsifiable — name the metric, comparison, and expected direction."
 metadata:
-  version: 2.9.2
+  version: 2.9.3
 ---
 
 # Ad Creative
@@ -107,6 +107,12 @@ outputs/         Dated batch folders (outputs/YYYY-MM-DD/)
 ## Platform Specs
 
 Platforms reject or truncate creative that exceeds these limits, so verify every piece of copy fits before delivering.
+
+When the brand facts or the request supply an approved CTA, every CTA field in
+every concept carries that CTA, character for character. A concept does not
+test a different CTA, shorten it, or add a parenthetical to it unless the
+request asks for CTA variants; the message, visual, and audience are what the
+concepts vary.
 
 ### Google Ads (Responsive Search Ads)
 
