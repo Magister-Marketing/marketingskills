@@ -5,9 +5,9 @@ Current versions of all skills. Agents can compare against local versions to che
 | Skill | Version | Last Updated |
 |-------|---------|--------------|
 | ab-testing | 2.0.0 | 2026-05-05 |
-| ad-creative | 2.9.1 | 2026-08-31 |
+| ad-creative | 2.9.2 | 2026-10-06 |
 | ai-seo | 2.2.0 | 2026-07-09 |
-| analytics | 2.3.0 | 2026-10-03 |
+| analytics | 2.3.1 | 2026-10-06 |
 | aso | 2.0.0 | 2026-05-05 |
 | churn-prevention | 2.0.1 | 2026-07-30 |
 | co-marketing | 2.0.0 | 2026-05-05 |
@@ -48,7 +48,7 @@ Current versions of all skills. Agents can compare against local versions to che
 | seo-audit | 2.0.0 | 2026-05-05 |
 | signup | 2.0.0 | 2026-05-05 |
 | site-architecture | 2.0.0 | 2026-05-05 |
-| sms | 1.0.0 | 2026-05-21 |
+| sms | 1.0.1 | 2026-10-06 |
 | social | 2.2.1 | 2026-07-30 |
 | video | 2.1.1 | 2026-07-30 |
 
@@ -69,6 +69,19 @@ Current versions of all skills. Agents can compare against local versions to che
   emails and nothing after them — no change log, no declined-items appendix.
   The benchmark's email repair appended one in 2 of 6 attempts across two
   rounds and failed its "sequence only" check each time.
+- **Visual direction and audience insight are claims**: ad-creative (2.9.2)
+  grounds a physical attribute, an included item, a reach or size, and an
+  audience preference or objection in the supplied facts, reviews, or
+  comments, or writes it as a hypothesis. Concepts invented a lamp arm, a
+  focused beam, "one box", "the clamp's reach", and "the most common
+  objection" in 3 of 9 attempts across three rounds.
+- **An SMS carries the ask**: sms (1.0.1) says the sender line, price, and
+  compliance text are not the CTA; in a multi-placement set the SMS carries
+  the same single ask. The gauntlet's SMS body carried no ask in 2 of 6.
+- **Conformance is a matrix**: analytics (2.3.1) checks each item against
+  every documented standard including allowed-value lists; a well-formed
+  value that is not on its list is a finding. An audit's clean list carried
+  a link whose source was outside the documented list in 3 of 9 attempts.
 
 ### 2.8.17 (2026-10-03)
 
