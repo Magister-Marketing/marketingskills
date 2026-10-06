@@ -4,7 +4,7 @@ Current versions of all skills. Agents can compare against local versions to che
 
 | Skill | Version | Last Updated |
 |-------|---------|--------------|
-| ab-testing | 2.0.1 | 2026-10-06 |
+| ab-testing | 2.0.2 | 2026-10-06 |
 | ad-creative | 2.9.3 | 2026-10-06 |
 | ai-seo | 2.2.0 | 2026-07-09 |
 | analytics | 2.3.1 | 2026-10-06 |
@@ -17,7 +17,7 @@ Current versions of all skills. Agents can compare against local versions to che
 | competitors | 2.0.1 | 2026-07-09 |
 | content-strategy | 2.0.0 | 2026-05-05 |
 | copy-editing | 2.0.0 | 2026-05-05 |
-| copywriting | 2.1.4 | 2026-10-06 |
+| copywriting | 2.1.5 | 2026-10-06 |
 | cro | 2.0.0 | 2026-05-05 |
 | customer-research | 2.0.1 | 2026-07-10 |
 | directory-submissions | 2.0.1 | 2026-07-30 |
@@ -92,8 +92,12 @@ Current versions of all skills. Agents can compare against local versions to che
 - **A declined claim does not return softened**: copywriting (2.1.4) — a
   review count as "trusted by many", a reputation as "the neighbors already
   know who to call" is the declined claim.
-- **Factorial cells are identical except the factor**: ab-testing (2.0.1);
-  cells also varied headline structure and props in 2 of 6.
+- **Factorial cells are identical except the factor**: ab-testing (2.0.2);
+  cells also varied headline structure, props, and the scene in 3 of 9.
+- **The implication of a fact is not a fact**: copywriting (2.1.5) — "up to
+  eight hours on the lowest setting" does not supply "shorter at higher
+  settings"; a rationale is held to the copy's standard. Email and headline
+  copy stated such implications in 4 of 12 attempts across rounds.
 
 ### 2.8.17 (2026-10-03)
 

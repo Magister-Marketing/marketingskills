@@ -2,7 +2,7 @@
 name: copywriting
 description: "Write, rewrite, or draft persuasive site and brand copy — homepage, landing, pricing, feature pages; headlines, value props, CTAs. Claims must be supportable; a declined claim names the evidence that would unlock it."
 metadata:
-  version: 2.1.4
+  version: 2.1.5
 ---
 
 # Copywriting
@@ -80,7 +80,12 @@ or rationale: the headline is read alone, so the unqualified version is a
 claim the source does not support. "Confident over qualified" below removes
 hedges ("almost," "very," "really"), never a fact's own condition. An absolute
 ("zero," "anywhere," "every," "always") is a claim too, and needs a source
-that states it. So is a qualification of the people behind the service:
+that states it. So is the implication of a fact: "up to eight hours on the
+lowest setting" does not supply "shorter at higher settings", "rechargeable"
+does not supply "no outlet needed", "clips on" does not supply "takes no
+desk space". State what the source states; what it implies is not available
+to the copy, the subject line, or the rationale. A rationale is held to the
+same standard as the copy it explains. So is a qualification of the people behind the service:
 "licensed," "certified," "trained," "expert," "professional" in the sense of
 credentialed, "certified hands on the job." With no credential supplied, describe
 what the service does and skip who does it; a declined credential goes under
