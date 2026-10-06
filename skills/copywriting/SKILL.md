@@ -2,7 +2,7 @@
 name: copywriting
 description: "Write, rewrite, or draft persuasive site and brand copy — homepage, landing, pricing, feature pages; headlines, value props, CTAs. Claims must be supportable; a declined claim names the evidence that would unlock it."
 metadata:
-  version: 2.1.2
+  version: 2.1.3
 ---
 
 # Copywriting
@@ -75,7 +75,11 @@ or rationale: the headline is read alone, so the unqualified version is a
 claim the source does not support. "Confident over qualified" below removes
 hedges ("almost," "very," "really"), never a fact's own condition. An absolute
 ("zero," "anywhere," "every," "always") is a claim too, and needs a source
-that states it.
+that states it. So is a qualification of the people behind the service:
+"licensed," "certified," "trained," "expert," "professional" in the sense of
+credentialed, "a licensed set of eyes." With no credential supplied, describe
+what the service does and skip who does it; a declined credential goes under
+the declined items with its unlock (the documented license or certification).
 
 ### The Deliverable Takes the Form Requested
 When the request fixes the output form — only a complete HTML document,

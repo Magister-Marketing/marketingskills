@@ -17,11 +17,11 @@ Current versions of all skills. Agents can compare against local versions to che
 | competitors | 2.0.1 | 2026-07-09 |
 | content-strategy | 2.0.0 | 2026-05-05 |
 | copy-editing | 2.0.0 | 2026-05-05 |
-| copywriting | 2.1.2 | 2026-10-03 |
+| copywriting | 2.1.3 | 2026-10-06 |
 | cro | 2.0.0 | 2026-05-05 |
 | customer-research | 2.0.1 | 2026-07-10 |
 | directory-submissions | 2.0.1 | 2026-07-30 |
-| emails | 2.0.1 | 2026-10-03 |
+| emails | 2.0.2 | 2026-10-06 |
 | free-tools | 2.0.0 | 2026-05-05 |
 | image | 2.0.2 | 2026-07-30 |
 | launch | 2.0.1 | 2026-06-16 |
@@ -53,6 +53,22 @@ Current versions of all skills. Agents can compare against local versions to che
 | video | 2.1.1 | 2026-07-30 |
 
 ## Recent Changes
+
+### 2.8.18 (2026-10-06)
+
+- **A credential is a claim**: copywriting (2.1.3) treats "licensed",
+  "certified", "trained", "expert", and "a licensed set of eyes" as claims
+  about the people behind the service that need a supplied credential; with
+  none, the copy describes what the service does and the credential goes
+  under declined items with its unlock. Benchmark evidence (Sonnet 5.5,
+  3 runs × 2 rounds): the Brightline landing section smuggled a licence in
+  twice ("a licensed set of eyes on your heat", "have a licensed professional
+  take a look") while the reply itself noted no credential was supplied.
+- **Only the sequence means only the emails**: emails (2.0.2) says a request
+  that fixes the output ("output only the corrected sequence") gets the
+  emails and nothing after them — no change log, no declined-items appendix.
+  The benchmark's email repair appended one in 2 of 6 attempts across two
+  rounds and failed its "sequence only" check each time.
 
 ### 2.8.17 (2026-10-03)
 
