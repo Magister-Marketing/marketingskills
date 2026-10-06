@@ -146,8 +146,8 @@ Always add **10–20% experimental budget** on top — CAC is the main dependenc
 When the request fixes the shape of the allocation — exactly N channels, a
 stated total — the allocation is exactly those N lines summing to exactly that
 total. The experimental layer is then carved inside a channel's line and
-named in its rationale ("$1,500 of the $6,500 paid-search line is held for
-new-keyword tests"), not added as a reserve, contingency, or "held" row:
+named in its rationale ("$800 of the $5,000 paid-social line is held for
+creative tests"), not added as a reserve, contingency, or "held" row:
 a fourth line makes the three channels sum to less than the total, and a
 reader auditing the table sees a plan that does not add up.
 

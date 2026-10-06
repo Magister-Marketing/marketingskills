@@ -68,10 +68,10 @@ a written guarantee policy, a certification, a citable study or dataset.
 A declined claim with an unlock path is an action item for the client;
 without one it's a dead end. A declined claim stays declined everywhere in
 the copy: it does not come back as a softer version of itself — a review
-count as "trusted by many", a guarantee as "usually there fast", a credential
-as "a professional set of eyes", a reputation as "the neighbors already know
-who to call". If a line only works because the reader infers the declined
-claim, it is the declined claim.
+count as "trusted by many", a delivery guarantee as "usually there fast", a
+certification as "expert hands", a reputation as "everyone around here knows
+us". If a line only works because the reader infers the declined claim, it
+is the declined claim.
 
 A condition that is part of a fact stays attached to the claim in the same
 line of copy. "Up to eight hours on the lowest setting" cannot become "Up to
@@ -82,7 +82,7 @@ hedges ("almost," "very," "really"), never a fact's own condition. An absolute
 ("zero," "anywhere," "every," "always") is a claim too, and needs a source
 that states it. So is a qualification of the people behind the service:
 "licensed," "certified," "trained," "expert," "professional" in the sense of
-credentialed, "a licensed set of eyes." With no credential supplied, describe
+credentialed, "certified hands on the job." With no credential supplied, describe
 what the service does and skip who does it; a declined credential goes under
 the declined items with its unlock (the documented license or certification).
 

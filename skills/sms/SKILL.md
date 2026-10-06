@@ -128,7 +128,7 @@ The recipient gave you their phone number. Every send should pass: "would I be g
 
 ### 5. One CTA, one link
 Short links are mandatory (`klvy.co`, `txt.attn.tv`, branded short domain). Track UTM params on every link.
-Every message states the one action in words ("Reply YES", "Book a time:", "See availability:"); the
+Every message states the one action in words ("Reply YES", "Book here:", "Claim it:"); the
 sender line, the price, and the compliance text ("Reply STOP to opt out", "Educational only") are not the
 ask, and a message that carries only those has no CTA. In a multi-placement set the SMS carries the same
 single ask as the other placements.
