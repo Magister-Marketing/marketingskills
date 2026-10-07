@@ -2,7 +2,7 @@
 name: ad-creative
 description: "Generate and iterate ad creative at scale — RSA headlines, Meta/TikTok copy, static ad batches, iMessage and motion video ads, review pages. Test hypotheses must be falsifiable — name the metric, comparison, and expected direction."
 metadata:
-  version: 2.9.1
+  version: 2.9.3
 ---
 
 # Ad Creative
@@ -92,6 +92,14 @@ outputs/         Dated batch folders (outputs/YYYY-MM-DD/)
 **Grounding rules:**
 - Every concept cites its source (which review, winning ad, or comment it traces to)
 - No invented claims, stats, or testimonials — ever
+- The visual direction, audience insight, and test hypothesis are claims
+  too. A physical attribute (a strap, a handle, a finish), an included item
+  or its packaging ("everything in one kit"), a dimension or capacity, an
+  audience preference or objection ("the most common objection is price",
+  "buyers care more about durability than looks") comes from the supplied
+  product facts, reviews, or comments, or it is written as a hypothesis to
+  test, never as a fact. Stage the product with what the sources say it has,
+  in the places they say it goes.
 - If `inputs/winning-ads/` or `inputs/reviews/` is empty, stop and ask the user to populate it before generating. Do not generate ungrounded concepts as a fallback.
 - Inputs decay: refresh `inputs/winning-ads/` as new ads scale; refresh `inputs/reviews/` and `inputs/comments/` monthly
 
@@ -100,6 +108,12 @@ outputs/         Dated batch folders (outputs/YYYY-MM-DD/)
 ## Platform Specs
 
 Platforms reject or truncate creative that exceeds these limits, so verify every piece of copy fits before delivering.
+
+When the brand facts or the request supply an approved CTA, every CTA field in
+every concept carries that CTA, character for character. A concept does not
+test a different CTA, shorten it, or add a parenthetical to it unless the
+request asks for CTA variants; the message, visual, and audience are what the
+concepts vary.
 
 ### Google Ads (Responsive Search Ads)
 

@@ -2,7 +2,7 @@
 name: marketing-plan
 description: "Produce an fCMO-grade 12-month marketing plan — 13 AARRR sections, 90-day roadmap, budget math, ops stack — as a Notion-ready doc."
 metadata:
-  version: 1.2.0
+  version: 1.2.1
 ---
 
 # Marketing Plan
@@ -142,6 +142,14 @@ The funding-stage anchors above tell you *what's in the ballpark*. To set the ac
 2. **Goal-Based** — reverse-engineer the budget from the revenue target. Formula: `[(New ARR / (ARPC × 12)) × CAC] / annual retention rate`. Best for fundraising or when the goal is fixed.
 
 Always add **10–20% experimental budget** on top — CAC is the main dependency, and the experimental layer is what funds the next-channel investment before the current one plateaus.
+
+When the request fixes the shape of the allocation — exactly N channels, a
+stated total — the allocation is exactly those N lines summing to exactly that
+total. The experimental layer is then carved inside a channel's line and
+named in its rationale ("$800 of the $5,000 paid-social line is held for
+creative tests"), not added as a reserve, contingency, or "held" row:
+a fourth line makes the three channels sum to less than the total, and a
+reader auditing the table sees a plan that does not add up.
 
 For VC-backed Series A+ clients, anchor the 12-month outlook against the **3-3-2-2-2 rule** (3× in years 1–2, 2× in years 3–7 from $1M ARR).
 

@@ -2,7 +2,7 @@
 name: sms
 description: "Plan compliant SMS/MMS marketing — cart-abandon, win-back, promo flows; TCPA and A2P 10DLC compliance; Klaviyo, Postscript, Attentive, Twilio."
 metadata:
-  version: 1.0.0
+  version: 1.0.1
 ---
 
 # SMS Marketing
@@ -128,6 +128,10 @@ The recipient gave you their phone number. Every send should pass: "would I be g
 
 ### 5. One CTA, one link
 Short links are mandatory (`klvy.co`, `txt.attn.tv`, branded short domain). Track UTM params on every link.
+Every message states the one action in words ("Reply YES", "Book here:", "Claim it:"); the
+sender line, the price, and the compliance text ("Reply STOP to opt out", "Educational only") are not the
+ask, and a message that carries only those has no CTA. In a multi-placement set the SMS carries the same
+single ask as the other placements.
 
 ### 6. Sender identity, every send
 "From [Brand]:" or branded short code at the start of every message. Even on automated flows. Recipients can't see "from" address — they need it inline.
