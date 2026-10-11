@@ -2,7 +2,7 @@
 name: ab-testing
 description: "Design A/B tests and growth experimentation programs — hypotheses, sample size, statistical significance, ICE-scored experiment backlogs."
 metadata:
-  version: 2.0.0
+  version: 2.0.2
 ---
 
 # A/B Test Setup
@@ -135,6 +135,12 @@ We'll know this is true when [metrics].
 - Single, meaningful change
 - Bold enough to make a difference
 - True to the hypothesis
+- In a factorial design, cells that share a level of a factor are identical
+  on it: the same headline structure, the same visual composition, setting,
+  scene, and props, the same copy except the words the other factor assigns. Write the shared
+  element once and reuse it verbatim across the cells that share it; a cell
+  that also differs in structure, staging, or an extra claim confounds the
+  factor it was meant to isolate.
 
 ---
 

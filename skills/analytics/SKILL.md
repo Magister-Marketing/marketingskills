@@ -2,7 +2,7 @@
 name: analytics
 description: "Set up or audit tracking — GA4, GTM, Mixpanel, Segment; tracking plans, event naming, UTM conventions, conversion and attribution debugging. Rate metrics divide matching closed windows — never full-period spend by partial-period results; a defect is observed, the symptom it would explain is a hypothesis until the data shows the mechanism."
 metadata:
-  version: 2.3.0
+  version: 2.3.1
 ---
 
 # Analytics Tracking
@@ -85,7 +85,13 @@ Before implementing tracking, understand:
   to pull), and never state the cause as settled fact.
 - Something is clean only when it meets every documented standard. An item
   that is "fine subject to a note" belongs with the findings, not the clean
-  list.
+  list. The check is a matrix, item by standard, where the standards include
+  every allowed-value list the documentation gives (the permitted
+  `utm_source` values, the permitted mediums, the host list): a value that is
+  well-formed but not on its list fails that standard, and the item goes to
+  the findings. Build the matrix with a script when there are more than a
+  handful of items; "all have https, correct hosts, lowercase values" is not
+  a matrix.
 
 ---
 

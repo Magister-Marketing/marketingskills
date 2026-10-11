@@ -2,7 +2,7 @@
 name: copywriting
 description: "Write, rewrite, or draft persuasive site and brand copy — homepage, landing, pricing, feature pages; headlines, value props, CTAs. Claims must be supportable; a declined claim names the evidence that would unlock it."
 metadata:
-  version: 2.1.2
+  version: 2.1.5
 ---
 
 # Copywriting
@@ -66,7 +66,12 @@ say why it falls short, offer the closest supportable alternative, and state
 exactly what evidence would unlock the original — a customer-review export,
 a written guarantee policy, a certification, a citable study or dataset.
 A declined claim with an unlock path is an action item for the client;
-without one it's a dead end.
+without one it's a dead end. A declined claim stays declined everywhere in
+the copy: it does not come back as a softer version of itself — a review
+count as "trusted by many", a delivery guarantee as "usually there fast", a
+certification as "expert hands", a reputation as "everyone around here knows
+us". If a line only works because the reader infers the declined claim, it
+is the declined claim.
 
 A condition that is part of a fact stays attached to the claim in the same
 line of copy. "Up to eight hours on the lowest setting" cannot become "Up to
@@ -75,7 +80,16 @@ or rationale: the headline is read alone, so the unqualified version is a
 claim the source does not support. "Confident over qualified" below removes
 hedges ("almost," "very," "really"), never a fact's own condition. An absolute
 ("zero," "anywhere," "every," "always") is a claim too, and needs a source
-that states it.
+that states it. So is the implication of a fact: "up to eight hours on the
+lowest setting" does not supply "shorter at higher settings", "rechargeable"
+does not supply "no outlet needed", "clips on" does not supply "takes no
+desk space". State what the source states; what it implies is not available
+to the copy, the subject line, or the rationale. A rationale is held to the
+same standard as the copy it explains. So is a qualification of the people behind the service:
+"licensed," "certified," "trained," "expert," "professional" in the sense of
+credentialed, "certified hands on the job." With no credential supplied, describe
+what the service does and skip who does it; a declined credential goes under
+the declined items with its unlock (the documented license or certification).
 
 ### The Deliverable Takes the Form Requested
 When the request fixes the output form — only a complete HTML document,

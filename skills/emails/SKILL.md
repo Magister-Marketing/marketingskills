@@ -2,7 +2,7 @@
 name: emails
 description: "Design lifecycle email sequences — welcome, drip, nurture, onboarding, re-engagement, win-back — with timing, subject lines, and copy."
 metadata:
-  version: 2.0.1
+  version: 2.0.2
 ---
 
 # Email Sequence Design
@@ -257,6 +257,13 @@ Key emails:
 ---
 
 ## Output Format
+
+When the request fixes the output — "output only the corrected sequence,"
+"return the four emails" — the reply is those emails and nothing else: no
+change log, no "what I removed and why," no declined-items list, no notes
+after the last email. Those belong in a separate message if they are needed
+at all. A sequence delivered with an appendix is not "only the sequence."
+
 
 ### Sequence Overview
 ```
