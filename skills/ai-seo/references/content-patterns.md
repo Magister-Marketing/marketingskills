@@ -108,7 +108,7 @@ Use for evaluation queries: "Is [X] worth it?", "Should I [X]?"
 
 ### FAQ Block
 
-Use for topic pages with multiple common questions. Essential for FAQ schema.
+Use for topic pages with multiple common questions. Visible Q&A is what engines extract; FAQPage markup is optional and earns no Google rich result since 2026-05-07.
 
 ```markdown
 ## Frequently Asked Questions

@@ -1,13 +1,13 @@
 ---
 name: schema
-description: "Add or fix schema.org structured data — JSON-LD for Article, Product, FAQ, HowTo, breadcrumbs; validate for Google rich results."
+description: "Add or fix schema.org structured data — JSON-LD for Organization, Product, Article, LocalBusiness, breadcrumbs; validate it and check Google rich-result eligibility."
 metadata:
-  version: 2.0.0
+  version: 2.1.0
 ---
 
 # Schema Markup
 
-You are an expert in structured data and schema markup. Your goal is to implement schema.org markup that helps search engines understand content and enables rich results in search.
+You are an expert in structured data and schema markup. Your goal is to implement schema.org markup that accurately describes the page, helps search engines understand it, and earns a rich result where Google still shows one.
 
 ## Initial Assessment
 
@@ -40,7 +40,7 @@ Before implementing schema, understand:
 - Place in `<head>` or end of `<body>`
 
 ### 3. Follow Google's Guidelines
-- Only use markup Google supports
+- Check the type in Google's [Search Gallery](https://developers.google.com/search/docs/appearance/structured-data/search-gallery) before promising a rich result: Google retires features (see below)
 - Avoid spam tactics
 - Review eligibility requirements
 
@@ -56,17 +56,28 @@ Before implementing schema, understand:
 | Type | Use For | Required Properties |
 |------|---------|-------------------|
 | Organization | Company homepage/about | name, url |
-| WebSite | Homepage (search box) | name, url |
+| WebSite | Homepage (site name) | name, url |
 | Article | Blog posts, news | headline, image, datePublished, author |
 | Product | Product pages | name, image, offers |
 | SoftwareApplication | SaaS/app pages | name, offers |
-| FAQPage | FAQ content | mainEntity (Q&A array) |
-| HowTo | Tutorials | name, step |
+| FAQPage | A visible FAQ (no Google rich result) | mainEntity (Q&A array) |
+| HowTo | Tutorials (no Google rich result) | name, step |
 | BreadcrumbList | Any page with breadcrumbs | itemListElement |
 | LocalBusiness | Local business pages | name, address |
 | Event | Events, webinars | name, startDate, location |
 
 **For complete JSON-LD examples**: See [references/schema-examples.md](references/schema-examples.md)
+
+### Rich results Google no longer shows
+
+| Markup | Google status | What to tell the user |
+|---|---|---|
+| FAQPage | No rich result since 2026-05-07 (documentation removed 2026-06-15) | Keep it only if it describes a FAQ that is visible on the page. It earns no Google rich result, and no search or AI engine has published that it cites pages more because of it. |
+| HowTo | No rich result since September 2023 | Same: harmless when accurate, no rich result. Write clear numbered steps on the page instead. |
+| WebSite + SearchAction | Sitelinks search box retired 2024-11-29 | `WebSite` still helps Google pick the site name; the search action does nothing. |
+| SpecialAnnouncement, Course info, Estimated salary, Learning video, Vehicle listing, Practice problem | Retired 2025–2026 | Don't add them for Google. |
+
+Never promise a rich result, a click-through lift, or more AI citations from FAQPage or HowTo markup. Source: Google Search Central's [documentation updates](https://developers.google.com/search/updates).
 
 ---
 
@@ -85,7 +96,7 @@ Required: name, image, offers (price + availability)
 Recommended: sku, brand, aggregateRating, review
 
 ### FAQPage
-Required: mainEntity (array of Question/Answer pairs)
+Required: mainEntity (array of Question/Answer pairs). Markup only: Google has shown no FAQ rich result since 2026-05-07.
 
 ### BreadcrumbList
 Required: itemListElement (array with position, name, item)
@@ -110,6 +121,21 @@ You can combine multiple schema types on one page using `@graph`:
 ---
 
 ## Validation and Testing
+
+### Validate before you ship
+
+Run the bundled validator on a draft page, a saved copy of a live page, or a `.json` file:
+
+```bash
+python3 scripts/validate_jsonld.py page.html
+```
+
+The path is relative to this skill's folder. If your shell can't read the skill folder (a sandbox that only mounts the workspace), copy `scripts/validate_jsonld.py` into the workspace first, then run it there. It needs only Python's standard library and reports:
+
+- **Errors** (exit code 1): JSON that does not parse, a missing `@context` or `@type`, placeholder text, and properties Google requires for Product, LocalBusiness, Event, BreadcrumbList, Recipe, VideoObject, JobPosting and SoftwareApplication
+- **Warnings**: properties Google recommends, and markup Google no longer shows as a rich result
+
+Fix every error before publishing. Then check the live page in Google's Rich Results Test, which renders JavaScript.
 
 ### Tools
 - **Google Rich Results Test**: https://search.google.com/test/rich-results
@@ -157,6 +183,7 @@ You can combine multiple schema types on one page using `@graph`:
 ```
 
 ### Testing Checklist
+- [ ] `validate_jsonld.py` reports no errors
 - [ ] Validates in Rich Results Test
 - [ ] No errors or warnings
 - [ ] Matches page content

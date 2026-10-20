@@ -1,8 +1,8 @@
 ---
 name: ai-seo
-description: "Optimize for AI search (AEO/GEO/LLMO) — get cited in AI Overviews, ChatGPT, Perplexity, Claude answers; llms.txt, OKF, extractable structure."
+description: "Optimize for AI search (AEO/GEO/LLMO) — get cited in AI Overviews, ChatGPT, Perplexity, Claude answers; crawler access, extractable structure, OKF."
 metadata:
-  version: 2.2.0
+  version: 2.2.1
 ---
 
 # AI SEO
@@ -85,13 +85,13 @@ Google explicitly says:
 
 **Other AI engines (ChatGPT, Claude, Perplexity, Copilot) behave differently:**
 - They actively reward extractable structure — passages, FAQs, comparison tables, definition blocks
-- They parse `llms.txt`, structured pricing pages, and machine-readable files when present
+- None of them has confirmed reading `llms.txt`. In one server-log study (OtterlyAI, 2025) only 84 of 62,100 AI-bot requests (0.1%) asked for it
 - They cite third-party sources (Reddit, Wikipedia, review sites) more heavily than top-ranked pages
 
 **What this means for the work:**
-- The structural patterns in this skill (40–60 word answer blocks, FAQ schema, comparison tables) help **non-Google AI engines** materially. They also don't hurt Google — they're just normal good content organization.
+- The structural patterns in this skill (40–60 word answer blocks, visible FAQ sections, comparison tables) help **non-Google AI engines** materially. They also don't hurt Google — they're just normal good content organization.
 - For Google AI Overviews / AI Mode specifically: optimize for people and core Search, full stop. Strong E-E-A-T, original information, semantic HTML, clean indexability.
-- For ChatGPT/Claude/Perplexity: layer on the extractable structure + llms.txt + machine-readable files.
+- For ChatGPT/Claude/Perplexity: layer on the extractable structure, and make sure their search bots can fetch the page (allowed in robots.txt, content in the server-rendered HTML).
 
 When in doubt, default to "write for people, organize for clarity" — that satisfies both camps.
 
@@ -150,7 +150,7 @@ For each priority page, verify:
 | Statistics with sources cited? | |
 | Comparison tables for "[X] vs [Y]" queries? | |
 | FAQ section with natural-language questions? | |
-| Schema markup (FAQ, HowTo, Article, Product)? | |
+| Schema markup that matches the page (Organization, Article, Product)? | |
 | Expert attribution (author name, credentials)? | |
 | Recently updated (within 6 months)? | |
 | Heading structure matches query patterns? | |
@@ -303,7 +303,7 @@ Add these machine-readable files to your site root:
 - AI agents increasingly compare products programmatically before a human ever visits your site
 - Opaque pricing gets filtered out of AI-mediated buying journeys
 - A simple markdown file is trivially parseable by any LLM — no rendering, no JavaScript, no login walls
-- Same principle as `robots.txt` (for crawlers), `llms.txt` (for AI context), and `AGENTS.md` (for agent capabilities)
+- Same idea as `robots.txt` for crawlers: a plain file any agent can read without rendering
 
 **Best practices:**
 - Use consistent units (monthly vs. annual, per-seat vs. flat)
@@ -312,9 +312,9 @@ Add these machine-readable files to your site root:
 - Keep it updated — stale pricing is worse than no file
 - Link to it from your sitemap and main pricing page
 
-**`/llms.txt`** — Context file for AI systems (see [llmstxt.org](https://llmstxt.org))
+**`/llms.txt`** — optional, and never a fix for low AI visibility (see [llmstxt.org](https://llmstxt.org))
 
-If you don't have one yet, add an `llms.txt` that gives AI systems a quick overview of what your product does, who it's for, and links to key pages (including your pricing).
+Google Search ignores it: Google's AI features guide says "You don't need to create new machine readable files, AI text files, or markup" to appear in AI Overviews or AI Mode. No other major AI search engine has confirmed reading it either. Coding agents do read it on developer-docs sites, so add one when the product has API or developer documentation. For other sites it costs little and does nothing measurable today: don't recommend it as a priority, and don't count its absence as a gap.
 
 **`/okf/` — Open Knowledge Format bundle (Google-backed, v0.1)**
 
@@ -327,14 +327,14 @@ Structured data helps AI systems understand your content. Key schemas:
 | Content Type | Schema | Why It Helps |
 |-------------|--------|-------------|
 | Articles/Blog posts | `Article`, `BlogPosting` | Author, date, topic identification |
-| How-to content | `HowTo` | Step extraction for process queries |
-| FAQs | `FAQPage` | Direct Q&A extraction |
+| How-to content | `HowTo` | Marks steps; no Google rich result since 2023 |
+| FAQs | `FAQPage` | Marks a visible FAQ; no Google rich result since 2026-05-07 |
 | Products | `Product` | Pricing, features, reviews |
 | Comparisons | `ItemList` | Structured comparison data |
 | Reviews | `Review`, `AggregateRating` | Trust signals |
 | Organization | `Organization` | Entity recognition |
 
-Content with proper schema shows 30-40% higher AI visibility on non-Google AI engines. **Google's note**: structured data is "not required for generative AI search" but is recommended for overall SEO strategy. For implementation, use the **schema** skill.
+No AI search engine has published that it favors pages with schema markup, so don't sell schema as a citation lever. **Google**: "There's also no special schema.org structured data that you need to add" for AI features; markup that matches the visible page still helps search engines understand it. For implementation and validation, use the **schema** skill.
 
 ---
 

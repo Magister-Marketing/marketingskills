@@ -6,7 +6,7 @@ Current versions of all skills. Agents can compare against local versions to che
 |-------|---------|--------------|
 | ab-testing | 2.0.2 | 2026-10-06 |
 | ad-creative | 2.9.3 | 2026-10-06 |
-| ai-seo | 2.2.0 | 2026-07-09 |
+| ai-seo | 2.2.1 | 2026-10-19 |
 | analytics | 2.3.1 | 2026-10-06 |
 | aso | 2.0.0 | 2026-05-05 |
 | churn-prevention | 2.0.1 | 2026-07-30 |
@@ -14,13 +14,13 @@ Current versions of all skills. Agents can compare against local versions to che
 | cold-email | 2.0.0 | 2026-05-05 |
 | community-marketing | 2.0.0 | 2026-05-05 |
 | competitor-profiling | 2.0.1 | 2026-07-30 |
-| competitors | 2.0.1 | 2026-07-09 |
+| competitors | 2.0.2 | 2026-10-19 |
 | content-strategy | 2.0.0 | 2026-05-05 |
 | copy-editing | 2.0.0 | 2026-05-05 |
 | copywriting | 2.1.5 | 2026-10-06 |
 | cro | 2.0.0 | 2026-05-05 |
 | customer-research | 2.0.1 | 2026-07-10 |
-| directory-submissions | 2.0.1 | 2026-07-30 |
+| directory-submissions | 2.0.2 | 2026-10-19 |
 | emails | 2.0.2 | 2026-10-06 |
 | free-tools | 2.0.0 | 2026-05-05 |
 | image | 2.0.2 | 2026-07-30 |
@@ -29,7 +29,7 @@ Current versions of all skills. Agents can compare against local versions to che
 | marketing-council | 1.0.0 | 2026-07-06 |
 | marketing-ideas | 2.0.0 | 2026-05-05 |
 | marketing-loops | 1.2.0 | 2026-07-10 |
-| marketing-plan | 1.2.1 | 2026-10-06 |
+| marketing-plan | 1.2.2 | 2026-10-19 |
 | marketing-psychology | 2.0.0 | 2026-05-05 |
 | offers | 1.0.0 | 2026-06-16 |
 | onboarding | 2.0.0 | 2026-05-05 |
@@ -44,7 +44,7 @@ Current versions of all skills. Agents can compare against local versions to che
 | referrals | 2.0.0 | 2026-05-05 |
 | revops | 2.0.0 | 2026-05-05 |
 | sales-enablement | 2.0.1 | 2026-06-16 |
-| schema | 2.0.0 | 2026-05-05 |
+| schema | 2.1.0 | 2026-10-19 |
 | seo-audit | 2.0.0 | 2026-05-05 |
 | signup | 2.0.0 | 2026-05-05 |
 | site-architecture | 2.0.0 | 2026-05-05 |
@@ -53,6 +53,23 @@ Current versions of all skills. Agents can compare against local versions to che
 | video | 2.1.1 | 2026-07-30 |
 
 ## Recent Changes
+
+### 2.8.19 (2026-10-19)
+
+- **No promised rich results that Google retired**: schema (2.1.0) marks
+  FAQPage and HowTo as markup without a Google rich result (FAQ ended
+  2026-05-07, HowTo in September 2023), drops the sitelinks search box
+  (`WebSite` + `SearchAction`, retired 2024-11-29), points at Google's
+  Search Gallery before promising any rich result, and ships
+  `scripts/validate_jsonld.py`, a standard-library validator for invalid
+  JSON, placeholders, retired types and Google-required properties
+  (adapted from AgriciDaniel/claude-seo, MIT).
+- **llms.txt is optional, not a lever**: ai-seo (2.2.1) no longer says
+  ChatGPT, Claude or Perplexity read `llms.txt` (none has confirmed it;
+  0.1% of AI-bot requests in OtterlyAI's log study), says Google Search
+  ignores it, and drops the unsourced "30-40% higher AI visibility with
+  schema" claims. competitors (2.0.2), directory-submissions (2.0.2) and
+  marketing-plan (1.2.2) stop selling FAQ schema as a citation lever.
 
 ### 2.8.18 (2026-10-06)
 

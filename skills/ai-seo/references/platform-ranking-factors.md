@@ -22,12 +22,12 @@ Beyond these basics, each platform weights different signals. Here's what matter
 
 Google AI Overviews pull from Google's own index and lean heavily on E-E-A-T signals (Experience, Expertise, Authoritativeness, Trustworthiness). They appear in roughly 45% of Google searches.
 
-**What makes Google AI Overviews different:** They already have your traditional SEO signals — backlinks, page authority, topical relevance. The additional AI layer adds a preference for content with cited sources and structured data. Research shows that including authoritative citations in your content correlates with a 132% visibility boost, and writing with an authoritative (not salesy) tone adds another 89%.
+**What makes Google AI Overviews different:** They already have your traditional SEO signals — backlinks, page authority, topical relevance. The additional AI layer adds a preference for content with cited sources. Research shows that including authoritative citations in your content correlates with a 132% visibility boost, and writing with an authoritative (not salesy) tone adds another 89%.
 
-**Importantly, AI Overviews don't just recycle the traditional Top 10.** Only about 15% of AI Overview sources overlap with conventional organic results. Pages that wouldn't crack page 1 in traditional search can still get cited if they have strong structured data and clear, extractable answers.
+**Importantly, AI Overviews don't just recycle the traditional Top 10.** Only about 15% of AI Overview sources overlap with conventional organic results. Pages that wouldn't crack page 1 in traditional search can still get cited if they give clear, extractable answers.
 
 **What to focus on:**
-- Schema markup is the single biggest lever — Article, FAQPage, HowTo, and Product schemas give AI Overviews structured context to work with (30-40% visibility boost)
+- Core Search eligibility first: the page must be indexable and snippet-eligible (no `noindex`, no `nosnippet`), because AI Overviews draw on Google's index. Google says no special markup or files are needed for AI features
 - Build topical authority through content clusters with strong internal linking
 - Include named, sourced citations in your content (not just claims)
 - Author bios with real credentials matter — E-E-A-T is weighted heavily
@@ -66,14 +66,14 @@ Perplexity always cites its sources with clickable links, making it the most tra
 **What makes Perplexity different:** It's the most "research-oriented" AI search engine, and its citation behavior reflects that. Perplexity maintains curated lists of authoritative domains (Amazon, GitHub, major academic sites) that get inherent ranking boosts. It uses a time-decay algorithm that evaluates new content quickly, giving fresh publishers a real shot at citation.
 
 **Perplexity has unique content preferences:**
-- **FAQ Schema (JSON-LD)** — Pages with FAQ structured data get cited noticeably more often
+- **Question-and-answer sections** — Visible Q&A blocks are easy to extract and cite (FAQPage markup itself has no published effect)
 - **PDF documents** — Publicly accessible PDFs (whitepapers, research reports) are prioritized. If you have authoritative PDF content gated behind a form, consider making a version public.
 - **Publishing velocity** — How frequently you publish matters more than keyword targeting
 - **Self-contained paragraphs** — Perplexity prefers atomic, semantically complete paragraphs it can extract cleanly
 
 **What to focus on:**
 - Allow PerplexityBot in robots.txt
-- Implement FAQPage schema on any page with Q&A content
+- Answer common questions in visible Q&A sections on the page
 - Host PDF resources publicly (whitepapers, guides, reports)
 - Add Article schema with publication and modification timestamps
 - Write in clear, self-contained paragraphs that work as standalone answers
@@ -136,17 +136,17 @@ Allow: /
 
 If you're optimizing for AI search for the first time, focus your effort where your audience actually is:
 
-**Start with Google AI Overviews** — They reach the most users (45%+ of Google searches) and you likely already have Google SEO foundations in place. Add schema markup, include cited sources in your content, and strengthen E-E-A-T signals.
+**Start with Google AI Overviews** — They reach the most users (45%+ of Google searches) and you likely already have Google SEO foundations in place. Make sure key pages are indexable and snippet-eligible, include cited sources in your content, and strengthen E-E-A-T signals.
 
 **Then address ChatGPT** — It's the most-used standalone AI search tool for tech and business audiences. Focus on freshness (update content monthly), domain authority, and matching your content structure to how ChatGPT formats its responses.
 
-**Then expand to Perplexity** — Especially valuable if your audience includes researchers, early adopters, or tech professionals. Add FAQ schema, publish PDF resources, and write in clear, self-contained paragraphs.
+**Then expand to Perplexity** — Especially valuable if your audience includes researchers, early adopters, or tech professionals. Add visible Q&A sections, publish PDF resources, and write in clear, self-contained paragraphs.
 
-**Copilot and Claude are lower priority** unless your audience skews enterprise/Microsoft (Copilot) or developer/analyst (Claude). But the fundamentals — structured content, cited sources, schema markup — help across all platforms.
+**Copilot and Claude are lower priority** unless your audience skews enterprise/Microsoft (Copilot) or developer/analyst (Claude). But the fundamentals — structured content, cited sources, crawlable pages — help across all platforms.
 
 **Actions that help everywhere:**
 1. Allow all AI bots in robots.txt
-2. Implement schema markup (FAQPage, Article, Organization at minimum)
+2. Add schema markup that matches the page (Organization, Article, Product where they apply)
 3. Include statistics with named sources in your content
 4. Update content regularly — monthly for competitive topics
 5. Use clear heading structure (H1 > H2 > H3)
