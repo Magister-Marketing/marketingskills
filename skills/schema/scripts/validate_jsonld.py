@@ -139,7 +139,12 @@ def check_node(node: dict[str, Any], where: str, *, context: bool, errors: list[
     """Check one JSON-LD node and recurse into @graph members."""
     if "@context" in node:
         ctx = node["@context"]
-        ctx_values = ctx if isinstance(ctx, list) else [ctx.get("@vocab") if isinstance(ctx, dict) else ctx]
+        if isinstance(ctx, list):
+            ctx_values = ctx
+        elif isinstance(ctx, dict):
+            ctx_values = [ctx.get("@vocab")]
+        else:
+            ctx_values = [ctx]
         if not any(isinstance(v, str) and v in SCHEMA_ORG for v in ctx_values):
             errors.append(f"{where}: @context should be https://schema.org")
         context = True
