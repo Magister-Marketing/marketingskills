@@ -2,7 +2,7 @@
 name: marketing-plan
 description: "Produce an fCMO-grade 12-month marketing plan — 13 AARRR sections, 90-day roadmap, budget math, ops stack — as a Notion-ready doc."
 metadata:
-  version: 1.2.1
+  version: 1.2.2
 ---
 
 # Marketing Plan

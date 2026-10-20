@@ -2,7 +2,7 @@
 name: competitors
 description: "Create competitor comparison and alternative pages for SEO — [X] vs [Y], [X] alternative(s) formats with honest tables and migration paths."
 metadata:
-  version: 2.0.1
+  version: 2.0.2
 ---
 
 # Competitor & Alternative Pages
@@ -226,7 +226,7 @@ For each competitor, gather:
 - Create hub page linking to all competitor content
 
 ### Schema Markup
-Consider FAQ schema for common questions like "What is the best alternative to [Competitor]?"
+Answer common questions like "What is the best alternative to [Competitor]?" in a visible FAQ section. FAQPage markup can describe it, but Google has shown no FAQ rich result since 2026-05-07, so don't promise one. Use the **schema** skill for Organization, Product and BreadcrumbList markup.
 
 ---
 

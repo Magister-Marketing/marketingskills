@@ -4,7 +4,7 @@ Complete JSON-LD examples for common schema types.
 
 ## Contents
 - Organization
-- WebSite (with SearchAction)
+- WebSite
 - Article / BlogPosting
 - Product
 - SoftwareApplication
@@ -42,24 +42,17 @@ For company/brand homepage or about page.
 
 ---
 
-## WebSite (with SearchAction)
+## WebSite
 
-For homepage, enables sitelinks search box.
+For the homepage. Google uses it to choose the site name shown in results. Leave out `potentialAction`/`SearchAction`: Google retired the sitelinks search box on 2024-11-29.
 
 ```json
 {
   "@context": "https://schema.org",
   "@type": "WebSite",
   "name": "Example",
-  "url": "https://example.com",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": {
-      "@type": "EntryPoint",
-      "urlTemplate": "https://example.com/search?q={search_term_string}"
-    },
-    "query-input": "required name=search_term_string"
-  }
+  "alternateName": "EX",
+  "url": "https://example.com/"
 }
 ```
 
@@ -162,7 +155,7 @@ For SaaS product pages and app landing pages.
 
 ## FAQPage
 
-For pages with frequently asked questions.
+For pages with a visible FAQ. Google has shown no FAQ rich result since 2026-05-07; add this only to describe questions and answers that are on the page, never for a promised search feature.
 
 ```json
 {
@@ -193,7 +186,7 @@ For pages with frequently asked questions.
 
 ## HowTo
 
-For instructional content and tutorials.
+For instructional content. Google has shown no HowTo rich result since September 2023; numbered steps in the page itself matter more than this markup.
 
 ```json
 {

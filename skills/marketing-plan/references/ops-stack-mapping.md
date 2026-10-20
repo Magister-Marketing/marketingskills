@@ -23,7 +23,7 @@ The plan's Section 11 makes this thesis explicit by:
 | `seo-audit` | Audit site for technical and on-page SEO | Quarterly site health checks |
 | `ai-seo` | Optimize content for AI search engines / LLM citation | Future-proof content strategy |
 | `programmatic-seo` | Build template-driven SEO pages at scale | Location, comparison, integration page systems |
-| `schema` | Add structured data markup | Rich snippets, eligibility for AI citation |
+| `schema` | Add and validate structured data markup | Rich results where Google still supports them (Product, LocalBusiness, Event) |
 | `content-strategy` | Plan content topics, pillars, cadence | Setting the editorial calendar |
 | `competitors` | Build vs-pages and alternative-to-pages | Capture high-intent SERPs against competitors |
 | `ads` | Plan and structure paid campaigns | Apple Search Ads, Meta, Google, LinkedIn |

@@ -54,7 +54,7 @@ For the cross-cutting strategy, see [SKILL.md](../SKILL.md).
 **Optimize:**
 - Step-by-step format with numbered lists
 - Code examples where relevant
-- HowTo schema markup
+- Numbered steps in the page itself (HowTo markup earns no Google rich result since 2023)
 - Screenshots with descriptive alt text
 - Clear prerequisites and expected outcomes
 

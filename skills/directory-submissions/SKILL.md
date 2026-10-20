@@ -2,7 +2,7 @@
 name: directory-submissions
 description: "Plan directory submissions for backlinks and discovery — Product Hunt launch, G2/Capterra reviews, AI/MCP/SaaS directory tiers, tracker."
 metadata:
-  version: 2.0.1
+  version: 2.0.2
 ---
 
 # Directory Submissions
@@ -43,7 +43,7 @@ Never submit to a directory until the landing page it will link to is live, inde
 - Logo assets in PNG + SVG + square 1024×1024 + favicon.
 - 5–8 real product screenshots at 1920×1080 (not marketing mockups).
 - A 60–90 second demo video — products with video on Product Hunt get **2.7× more upvotes**.
-- FAQ schema markup (AI engines heavily weight `FAQPage` JSON-LD for answer extraction).
+- A visible FAQ section that answers buyer questions directly (FAQPage markup is optional: Google has shown no FAQ rich result since 2026-05-07, and no AI engine has published that it weights the markup).
 - Structured data: `Organization`, `Product`, `SoftwareApplication`.
 
 ### Rule 2: Destination pages before directories
@@ -79,7 +79,7 @@ Ask the user these 9 questions. If any are "no", they're not ready — help them
 3. Are privacy policy + terms live?
 4. Logo assets in PNG + SVG + square + favicon?
 5. 5–8 real screenshots + 60–90s demo video?
-6. Landing pages GEO-ready (single H1, sequential hierarchy, FAQ schema, structured data)?
+6. Landing pages GEO-ready (single H1, sequential hierarchy, visible FAQ, structured data)?
 7. At least 3 alternative pages and 3 use-case pages live and indexed?
 8. Template gallery or lead magnet asset (if applicable to category)?
 9. At least 20 beta/early users who could leave a review on G2?
@@ -250,7 +250,7 @@ In 2026, 30–50% of "research a tool" queries happen inside ChatGPT, Claude, Pe
 
 1. **One H1 per page, sequential heading hierarchy.** 2.8× higher citation rate. 87% of cited pages use a single H1.
 2. **Dense, factual content with citable stats.** AI engines prefer specific numbers ("3× faster than X") over vague claims.
-3. **FAQ schema on every landing page.** AI engines heavily weight `FAQPage` JSON-LD for answer extraction.
+3. **A visible FAQ on every landing page.** Direct question-and-answer text is easy for AI engines to extract and cite.
 4. **Comparison tables.** Extractable, structured — exactly what an AI answer needs.
 5. **Explicit "what it is" paragraph in the first 100 words.**
 6. **Get cited on Reddit and Hacker News.** Claude and Perplexity index these heavily. Genuine mentions on r/SaaS and HN count as training fuel.

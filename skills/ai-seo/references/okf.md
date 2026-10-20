@@ -52,10 +52,10 @@ A secondary benefit that pays off today regardless: **generating the bundle is i
 |---|---|
 | `sitemap.xml` | Tells a crawler which URLs exist |
 | `robots.txt` (with AI bot rules) | Permits or blocks AI crawlers |
-| `llms.txt` | Points an agent at the handful of pages you most want read |
+| `llms.txt` | Points an agent at the handful of pages you most want read (no major AI search engine has confirmed reading it) |
 | `/pricing.md` | Structured pricing for agent-buyer comparisons |
 | **`/okf/` bundle** | Hands over the content itself as cross-linked concepts |
-| Schema markup | Per-page structured data (Article, FAQPage, Product, etc.) |
+| Schema markup | Per-page structured data (Organization, Article, Product, etc.) |
 
 These stack rather than compete. `llms.txt` is a signpost, OKF is the library.
 
@@ -84,13 +84,13 @@ Serve the bundle at `yoursite.com/okf/`, starting with `yoursite.com/okf/index.m
 - **Static sites with custom paths**: upload the directory to `/okf/`
 - **Closed platforms (Wix, Squarespace, most page-builders)**: you usually can't serve files at custom paths — skip OKF entirely
 
-After it's serving, add a line to `llms.txt` pointing to the bundle so agents that read `llms.txt` (today) can discover the bundle (later).
+After it's serving, link the bundle from your sitemap; if the site already has an `llms.txt`, add a line there too.
 
 ## When to skip
 
 - Site is <10 pages — overhead exceeds payoff
 - Site is on a closed platform that won't allow custom paths
-- You're not maintaining `llms.txt`, schema markup, or other machine-readable files (OKF compounds with those; alone it does nothing)
+- You're not maintaining a sitemap, schema markup, or other machine-readable files (OKF compounds with those; alone it does nothing)
 - You can't budget the 30 minutes a quarter to refresh the bundle as content changes
 
 ## What to watch
