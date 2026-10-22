@@ -2,7 +2,7 @@
 name: ads
 description: "Plan and optimize paid campaigns — Google Ads, Meta, LinkedIn, TikTok — targeting, budgets, ROAS/CPA, retargeting, ABM, kill/scale decisions."
 metadata:
-  version: 2.2.0
+  version: 2.2.1
 ---
 
 # Paid Ads
@@ -16,6 +16,9 @@ If `.agents/product-marketing.md` exists (or `.claude/product-marketing.md`, or 
 
 **Apply the project's brand:**
 If `BRAND.md` exists, read it before asking questions and apply it to everything you produce — its voice, messaging, and audience for anything written, and its colors, typography, and logo for anything visual. Never ask for a brand fact it already answers. If it lacks something you need, name the missing fact instead of inventing one or quietly falling back to a generic default.
+
+**Use the numbers the brand has already connected:**
+If `INTEGRATIONS.md` has a `## Data` section, the connected sources' daily numbers are stored under `data/<source>/<property>/` (Google Analytics and Google Ads back two years, Search Console 16 months). Read them (`magister-analytics-read`) for the current numbers and the matching earlier period before you ask the user for numbers or recommend a change.
 
 Gather this context (ask if not provided):
 

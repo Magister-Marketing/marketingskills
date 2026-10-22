@@ -27,7 +27,7 @@ POST https://analyticsdata.googleapis.com/v1beta/properties/{property_id}:runRep
 {
   "dateRanges": [{"startDate": "30daysAgo", "endDate": "today"}],
   "dimensions": [{"name": "sessionSource"}],
-  "metrics": [{"name": "sessions"}, {"name": "conversions"}]
+  "metrics": [{"name": "sessions"}, {"name": "keyEvents"}]
 }
 ```
 
@@ -100,7 +100,7 @@ POST https://www.google-analytics.com/mp/collect?measurement_id={measurement_id}
 - `sessions` - Total sessions
 - `activeUsers` - Active users
 - `newUsers` - New users
-- `conversions` - Conversion events
+- `keyEvents` - Key events (named conversions until 2024)
 - `engagementRate` - Engaged sessions rate
 - `averageSessionDuration` - Session duration
 

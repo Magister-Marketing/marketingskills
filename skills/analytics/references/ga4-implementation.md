@@ -140,7 +140,7 @@ dataLayer.push({
 ### Creating Conversions
 
 1. **Collect the event** - Ensure event is firing in GA4
-2. **Mark as conversion** - Admin > Events > Mark as conversion
+2. **Mark as key event** - Admin > Data display > Events > Mark as key event (GA4 called these conversions until 2024)
 3. **Set counting method**:
    - Once per session (leads, signups)
    - Every event (purchases)
