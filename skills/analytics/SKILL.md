@@ -2,7 +2,7 @@
 name: analytics
 description: "Set up or audit tracking — GA4, GTM, Mixpanel, Segment; tracking plans, event naming, UTM conventions, conversion and attribution debugging. Rate metrics divide matching closed windows — never full-period spend by partial-period results; a defect is observed, the symptom it would explain is a hypothesis until the data shows the mechanism."
 metadata:
-  version: 2.3.1
+  version: 2.3.2
 ---
 
 # Analytics Tracking
@@ -16,6 +16,9 @@ If `.agents/product-marketing.md` exists (or `.claude/product-marketing.md`, or 
 
 **Apply the project's brand:**
 If `BRAND.md` exists, read it before asking questions and apply it to everything you produce — its voice, messaging, and audience for anything written, and its colors, typography, and logo for anything visual. Never ask for a brand fact it already answers. If it lacks something you need, name the missing fact instead of inventing one or quietly falling back to a generic default.
+
+**Use the numbers the brand has already connected:**
+If `INTEGRATIONS.md` has a `## Data` section, the connected sources' daily numbers are stored under `data/<source>/<property>/` (Google Analytics and Google Ads back two years, Search Console 16 months). Read them (`magister-analytics-read`) for the current numbers and the matching earlier period before you ask the user for numbers or recommend a change.
 
 Before implementing tracking, understand:
 

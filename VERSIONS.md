@@ -7,7 +7,7 @@ Current versions of all skills. Agents can compare against local versions to che
 | ab-testing | 2.0.2 | 2026-10-06 |
 | ad-creative | 2.9.3 | 2026-10-06 |
 | ai-seo | 2.2.0 | 2026-07-09 |
-| analytics | 2.3.1 | 2026-10-06 |
+| analytics | 2.3.2 | 2026-10-22 |
 | aso | 2.0.0 | 2026-05-05 |
 | churn-prevention | 2.0.1 | 2026-07-30 |
 | co-marketing | 2.0.0 | 2026-05-05 |
@@ -33,7 +33,7 @@ Current versions of all skills. Agents can compare against local versions to che
 | marketing-psychology | 2.0.0 | 2026-05-05 |
 | offers | 1.0.0 | 2026-06-16 |
 | onboarding | 2.0.0 | 2026-05-05 |
-| ads | 2.2.0 | 2026-07-05 |
+| ads | 2.2.1 | 2026-10-22 |
 | paywalls | 2.0.0 | 2026-05-05 |
 | popups | 2.0.0 | 2026-05-05 |
 | pricing | 2.0.1 | 2026-06-16 |
