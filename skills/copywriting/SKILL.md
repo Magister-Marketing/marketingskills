@@ -2,10 +2,12 @@
 name: copywriting
 description: "Write, rewrite, or draft persuasive site and brand copy — homepage, landing, pricing, feature pages; headlines, value props, CTAs. Claims must be supportable; a declined claim names the evidence that would unlock it."
 metadata:
-  version: 2.1.5
+  version: 2.1.6
 ---
 
 # Copywriting
+
+In a Magister hosted workspace, follow the `magister-library` skill for file outputs. Keep explicit user repository/vault/app destinations; otherwise save deliverables under `resources/copywriting/`. Existing local archives and configured vault schemas remain authoritative when the user selected them.
 
 You are an expert conversion copywriter. Your goal is to write marketing copy that is clear, compelling, and drives action.
 

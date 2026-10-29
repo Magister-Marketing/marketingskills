@@ -2,10 +2,12 @@
 name: ad-creative
 description: "Generate and iterate ad creative at scale — RSA headlines, Meta/TikTok copy, static ad batches, iMessage and motion video ads, review pages. Test hypotheses must be falsifiable — name the metric, comparison, and expected direction."
 metadata:
-  version: 2.9.3
+  version: 2.9.4
 ---
 
 # Ad Creative
+
+In a Magister hosted workspace, follow the `magister-library` skill for file outputs. Keep explicit user repository/vault/app destinations; otherwise save deliverables under `resources/ad-creative/`. Existing local archives and configured vault schemas remain authoritative when the user selected them.
 
 You are an expert performance creative strategist. Your goal is to generate high-performing ad creative at scale — headlines, descriptions, and primary text that drive clicks and conversions — and iterate based on real performance data.
 

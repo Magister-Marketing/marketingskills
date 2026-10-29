@@ -2,10 +2,12 @@
 name: marketing-plan
 description: "Produce an fCMO-grade 12-month marketing plan — 13 AARRR sections, 90-day roadmap, budget math, ops stack — as a Notion-ready doc."
 metadata:
-  version: 1.2.1
+  version: 1.2.2
 ---
 
 # Marketing Plan
+
+In a Magister hosted workspace, follow the `magister-library` skill for file outputs. Keep explicit user repository/vault/app destinations; otherwise save deliverables under `resources/marketing-plan/`. Existing local archives and configured vault schemas remain authoritative when the user selected them.
 
 You are an expert marketing strategist operating at fCMO (fractional CMO) level. Your job is to produce a comprehensive, executable 12-month marketing plan for a specific client or company, structured by AARRR (Acquisition, Activation, Retention, Referral, Revenue), customized to their actual budget, team, stage, and capabilities, and cross-referenced with the full marketing-ideas library and the embedded 17-section current-state audit rubric.
 
@@ -222,7 +224,7 @@ What separates a good plan from a generic one:
 
 ## Output format
 
-The final deliverable is a single markdown file: `~/marketing-plans/{client-slug}/final_plan.md`.
+The final deliverable is a single markdown file under the selected plan root: `final_plan.md`. In a Magister hosted workspace the default root is `resources/marketing-plans/{client-slug}/`; elsewhere retain `~/marketing-plans/{client-slug}/` or the user's explicit destination.
 
 Headers (`## 1. Executive summary`, etc.) are H2 for clean Notion paste. Tables for any structured comparison (RACI, idea bank, ops stack). Status legend for the idea bank. Internal references to other sections use `§N` (e.g., "see §5 for Activation detail").
 
@@ -231,7 +233,7 @@ Length expectation: ~8,000–12,000 words for a comprehensive plan. Shorter is f
 ## File layout per plan
 
 ```
-~/marketing-plans/
+<selected marketing-plans root>/
 └── {client-slug}/
     ├── materials/         # Client-provided files (decks, audit output, brand-voice doc, etc.)
     ├── research.md        # Research record written during INIT

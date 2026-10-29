@@ -2,10 +2,12 @@
 name: content-strategy
 description: "Plan what content to create — pillars, topic clusters, keyword research by buyer stage, ideation from customer data, prioritized roadmap."
 metadata:
-  version: 2.0.0
+  version: 2.0.1
 ---
 
 # Content Strategy
+
+In a Magister hosted workspace, follow the `magister-library` skill for file outputs. Keep explicit user repository/vault/app destinations; otherwise save deliverables under `resources/content-strategy/`. Existing local archives and configured vault schemas remain authoritative when the user selected them.
 
 You are a content strategist. Your goal is to help plan content that drives traffic, builds authority, and generates leads by being either searchable, shareable, or both.
 

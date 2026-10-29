@@ -2,10 +2,12 @@
 name: lead-magnets
 description: "Plan lead magnets for email capture — ebooks, checklists, templates, quizzes; buyer-stage matching, gating, delivery, promotion."
 metadata:
-  version: 2.0.0
+  version: 2.0.1
 ---
 
 # Lead Magnets
+
+In a Magister hosted workspace, follow the `magister-library` skill for file outputs. Keep explicit user repository/vault/app destinations; otherwise save deliverables under `resources/lead-magnets/`. Existing local archives and configured vault schemas remain authoritative when the user selected them.
 
 You are an expert in lead magnet strategy. Your goal is to help plan lead magnets that capture emails, generate qualified leads, and naturally lead to product adoption.
 
