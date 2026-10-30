@@ -5,7 +5,7 @@ Current versions of all skills. Agents can compare against local versions to che
 | Skill | Version | Last Updated |
 |-------|---------|--------------|
 | ab-testing | 2.0.2 | 2026-10-06 |
-| ad-creative | 2.9.3 | 2026-10-06 |
+| ad-creative | 2.9.4 | 2026-10-27 |
 | ai-seo | 2.2.0 | 2026-07-09 |
 | analytics | 2.3.2 | 2026-10-22 |
 | aso | 2.0.0 | 2026-05-05 |
@@ -15,21 +15,21 @@ Current versions of all skills. Agents can compare against local versions to che
 | community-marketing | 2.0.0 | 2026-05-05 |
 | competitor-profiling | 2.0.1 | 2026-07-30 |
 | competitors | 2.0.1 | 2026-07-09 |
-| content-strategy | 2.0.0 | 2026-05-05 |
+| content-strategy | 2.0.1 | 2026-10-27 |
 | copy-editing | 2.0.0 | 2026-05-05 |
-| copywriting | 2.1.5 | 2026-10-06 |
+| copywriting | 2.1.6 | 2026-10-27 |
 | cro | 2.0.0 | 2026-05-05 |
 | customer-research | 2.0.1 | 2026-07-10 |
 | directory-submissions | 2.0.1 | 2026-07-30 |
 | emails | 2.0.2 | 2026-10-06 |
 | free-tools | 2.0.0 | 2026-05-05 |
-| image | 2.0.2 | 2026-07-30 |
+| image | 2.0.3 | 2026-10-27 |
 | launch | 2.0.1 | 2026-06-16 |
-| lead-magnets | 2.0.0 | 2026-05-05 |
+| lead-magnets | 2.0.1 | 2026-10-27 |
 | marketing-council | 1.0.0 | 2026-07-06 |
 | marketing-ideas | 2.0.0 | 2026-05-05 |
 | marketing-loops | 1.2.0 | 2026-07-10 |
-| marketing-plan | 1.2.1 | 2026-10-06 |
+| marketing-plan | 1.2.2 | 2026-10-27 |
 | marketing-psychology | 2.0.0 | 2026-05-05 |
 | offers | 1.0.0 | 2026-06-16 |
 | onboarding | 2.0.0 | 2026-05-05 |
@@ -50,7 +50,7 @@ Current versions of all skills. Agents can compare against local versions to che
 | site-architecture | 2.0.0 | 2026-05-05 |
 | sms | 1.0.1 | 2026-10-06 |
 | social | 2.2.1 | 2026-07-30 |
-| video | 2.1.1 | 2026-07-30 |
+| video | 2.1.2 | 2026-10-27 |
 
 ## Recent Changes
 
@@ -376,3 +376,7 @@ Total skills: 40 (unchanged).
 ### 2026-01-27
 - Initial version tracking added
 - Added tools registry with 29 integration guides
+
+## 2.8.21 — 2026-10-27
+
+Hosted Magister output guidance now uses the shared Library file contract, preserves explicit destinations, and separates confirmed cloud saves from external copies. Updated image, video, ad-creative, lead-magnets, marketing-plan, content-strategy, and copywriting.

@@ -2,10 +2,12 @@
 name: video
 description: "Produce video with AI and code — Veo/Sora/Runway/Kling generation, HeyGen/Synthesia avatars, Remotion/Hyperframes templates, edit-spec copying."
 metadata:
-  version: 2.1.1
+  version: 2.1.2
 ---
 
 # Video
+
+In a Magister hosted workspace, follow the `magister-library` skill for file outputs. Keep explicit user repository/vault/app destinations; otherwise save deliverables under `resources/video/`. Existing local archives and configured vault schemas remain authoritative when the user selected them.
 
 You are an expert video producer who helps create marketing videos using AI generation models, AI avatars, and programmatic video frameworks. Your goal is to help users produce professional video content efficiently — from product demos and explainers to social clips and ads.
 
