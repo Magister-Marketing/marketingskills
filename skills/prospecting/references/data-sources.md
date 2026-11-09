@@ -191,20 +191,25 @@ Cross-reference both for high-confidence tech stack signals.
 
 ## GitHub (stargazers / forks / watchers)
 
-**Use for**: Developer-intent prospecting. Especially powerful for dev-tool SaaS — stargazers of competitor or category-defining repos are in-market signal.
+**Use for**: Company-level developer-intent research for dev-tool SaaS: which companies' developers star, fork, or watch competitor or category-defining repos. A research and segmentation signal, never a mailing list.
+
+**The rule**: GitHub's Acceptable Use Policies forbid using information from GitHub, "whether scraped, collected through our API, or obtained otherwise", to send unsolicited email to its users. Finding the person's address somewhere else (Apollo, Clay, Hunter) does not change that: the targeting still came from GitHub. Never put stargazers, forkers, watchers, or contributors on an outreach list, and never look up their emails.
+
+**What to do instead**:
+- **Company-level intent**: aggregate stargazers and forkers by their public `company` field and report which companies show the most interest. Outreach, if any, is one-to-one and low-volume, to the right buyer at that company sourced elsewhere — not the GitHub users themselves
+- **Consent matching**: use "starred the repo" as a segment only within existing consent (newsletter subscribers or customers who already opted in)
+- **Opt-in capture**: a README, release-note, or pinned-Discussion call to action that sends interested people to a signup form
+- **Fork research**: read what people change in forks to learn what users customize (product research)
 
 **Strengths**:
-- Public API, no scraping concerns
-- High signal quality (a starred repo = explicit interest)
-- Forks are an even stronger signal (intent to modify, not just bookmark)
+- High signal quality (a starred repo = explicit interest; a fork = intent to modify)
 - The reviewed `magister-github` integration can retrieve bounded, paginated
-  repository interest data; enrichment remains a separate typed capability
+  repository interest data
 - Free with 5,000 req/hr authenticated rate limit
 
 **Watch out for**:
-- Only ~5–20% of users publish email — pair with Apollo/Clay/Hunter for enrichment
 - Very-popular repos (100K+ stars) are mostly noise; smaller targeted repos (5K–25K) give better signal density
-- Most prospects are individuals, not company contacts directly — need to figure out their company from `company` field or LinkedIn
+- `company` is free text: normalize case, strip `@`, and merge obvious variants before counting
 
 **Integration**: see [github.md](../../../tools/integrations/github.md)
 

@@ -1,6 +1,8 @@
 # GitHub
 
-GitHub REST API for prospecting use cases: listing users who star, fork, or watch a repo as a high-quality developer-intent signal.
+GitHub REST API for developer-intent research: which companies' developers star, fork, or watch a repo.
+
+**Never a mailing list.** GitHub's Acceptable Use Policies forbid using information from GitHub, "whether scraped, collected through our API, or obtained otherwise", to send unsolicited email to its users. Finding the address somewhere else does not change that. Use the data for company-level aggregation, consent matching (people who already opted in), opt-in calls to action, and fork research — never to email, DM, or enrich individual users with email.
 
 ## Capabilities
 
@@ -72,7 +74,7 @@ GET https://api.github.com/users/{username}
 Returns: `name`, `company`, `blog`, `email` (if public), `bio`, `twitter_username`, `location`, `public_repos`, `followers`, `created_at`, `hireable`.
 
 **Key fields for prospecting**:
-- `email`: only ~5–20% of users publish this. Always nullable.
+- `email`: only ~5–20% of users publish this. Always nullable. Not for outreach: GitHub's terms forbid unsolicited email to its users.
 - `company`: many users include `@org` syntax — strip the `@` for plain company name.
 - `blog`: often a personal website where contact info is published.
 - `twitter_username` / `bio`: useful for cross-channel research.
@@ -88,20 +90,20 @@ GET https://api.github.com/rate_limit
 ### Workflow 1 — Stargazers of a competitor or adjacent tool
 
 ```bash
-# 100 stargazers, enrich each one, only keep those with email or company set
+# 100 stargazers with profiles, for company-level aggregation
 node tools/clis/github-prospects.js stargazers vercel/next.js \
-  --limit 100 --enrich --format csv > nextjs-stars.csv
+  --limit 100 --enrich --with-company --format csv > nextjs-stars.csv
 ```
 
-Filter the CSV in your spreadsheet by `company` set OR `email` set OR `blog` set. Hand off to Apollo/Clay/Hunter to enrich the rest with email-by-name+company.
+Count rows per `company` (normalized) to rank the companies showing interest. Reach the right buyer at those companies through other sources; never look up emails for the stargazers themselves.
 
 ### Workflow 2 — Forks of your own repo (warm intent)
 
-People who fork your repo have already shown direct interest. High-conversion outreach prospects.
+People who fork your repo have already shown direct interest. Read what they change (product research), and invite them to opt in from the README or release notes rather than emailing them.
 
 ```bash
 node tools/clis/github-prospects.js forks yourorg/yourrepo \
-  --enrich --with-email --format csv > my-fork-prospects.csv
+  --enrich --with-company --format csv > my-forks.csv
 ```
 
 ### Workflow 3 — Watchers of a category-defining repo

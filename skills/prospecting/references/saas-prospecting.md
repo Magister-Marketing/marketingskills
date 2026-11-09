@@ -56,26 +56,27 @@ Combine 2+ sources for cross-verification.
 
 - **Job boards** (LinkedIn Jobs, Indeed, AngelList): role openings as signals
 - **RB2B / Clearbit Reveal**: visitor identification (warm anonymous traffic)
-- **GitHub stars/forks of competitor or adjacent repos**: developer-level intent signal (see `tools/integrations/github.md` and the typed
+- **GitHub stars/forks of competitor or adjacent repos**: company-level intent signal (see `tools/integrations/github.md` and the typed
   [`magister-github`](../../magister-github/SKILL.md) integration). Especially
-  strong for dev-tool SaaS — a developer who starred `vercel/next.js` last week
-  is in-market for adjacent Next.js infrastructure.
+  strong for dev-tool SaaS — a company whose developers starred `vercel/next.js`
+  last week may be in-market for adjacent Next.js infrastructure. Count
+  companies, not people: never email the developers themselves.
 - **Recent blog posts / changelog**: product direction signals
 - **G2 reviews mentioning competitor switches**: explicit dissatisfaction signal
 
-#### GitHub prospecting pattern (when audience is developers)
+#### GitHub company-intent pattern (when audience is developers)
 
-For dev-tool SaaS, GitHub is one of the highest-quality discovery channels:
+For dev-tool SaaS, GitHub shows which companies are in-market. It is research, never a list of people to email: GitHub's Acceptable Use Policies forbid using information from GitHub, "whether scraped, collected through our API, or obtained otherwise", to send unsolicited email to its users, however the address was found.
 
 1. Identify 3–5 "anchor" repos: your direct competitors, your category leader, complementary tools your buyer uses
 2. Load and follow [`magister-github`](../../magister-github/SKILL.md), then use
    `magister_integration_read` with the reviewed GitHub relative paths to pull
    stargazers or forks. The upstream network CLI is not installed.
-3. Filter to users with `company` set — these are the easiest to enrich downstream
-4. Pair with Apollo/Clay/Hunter to lookup email by name + company
-5. Validate with Truelist before adding to outreach list
+3. Aggregate by the public `company` field (normalize case, strip `@`, merge variants) and rank companies by interest
+4. Treat each top company as an account: find the right buyer there through your usual B2B sources (Apollo, the company's own site), not the GitHub users
+5. Validate with Truelist before adding them to an outreach list
 
-Tradeoffs: GitHub yields email for only ~5–20% of users directly. The strength is the signal quality — a stargazer of a niche dev tool is genuinely in-market in a way Apollo firmographics alone can't tell you.
+Tradeoffs: the strength is signal quality at the company level — a company whose developers star a niche dev tool is in-market in a way Apollo firmographics alone can't tell you. The individual stargazers stay research only.
 
 ---
 
