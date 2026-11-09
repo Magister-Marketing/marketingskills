@@ -103,11 +103,18 @@ async function getUser(login) {
 
 function matchesFilter(user, opts) {
   if (!user) return false
-  if (opts['with-email'] && !user.email) return false
   if (opts['with-company'] && !user.company) return false
   if (opts['with-blog'] && !user.blog) return false
   if (opts['type'] && user.type !== opts.type) return false
   return true
+}
+
+// Research only: GitHub's Acceptable Use Policies forbid using its data to
+// email the users it lists, so profiles never leave this tool with an email.
+function withoutEmail(profile) {
+  if (!profile || typeof profile !== 'object') return profile
+  const { email, ...rest } = profile
+  return rest
 }
 
 async function enrichUsers(users, opts = {}, { concurrency = 5, targetCount } = {}) {
@@ -117,7 +124,7 @@ async function enrichUsers(users, opts = {}, { concurrency = 5, targetCount } = 
     const profiles = await Promise.all(batch.map(u => getUser(u.login)))
     for (const profile of profiles) {
       if (!profile || profile.error) continue
-      if (matchesFilter(profile, opts)) matched.push(profile)
+      if (matchesFilter(profile, opts)) matched.push(withoutEmail(profile))
     }
     if (targetCount && matched.length >= targetCount) {
       return matched.slice(0, targetCount)
@@ -127,7 +134,7 @@ async function enrichUsers(users, opts = {}, { concurrency = 5, targetCount } = 
 }
 
 function toCSV(users) {
-  const cols = ['login', 'name', 'company', 'email', 'blog', 'location', 'bio', 'twitter_username', 'public_repos', 'followers', 'created_at', 'html_url']
+  const cols = ['login', 'name', 'company', 'blog', 'location', 'bio', 'twitter_username', 'public_repos', 'followers', 'created_at', 'html_url']
   const escape = (v) => {
     if (v === null || v === undefined) return ''
     const s = String(v).replace(/\r?\n/g, ' ')
@@ -152,18 +159,26 @@ function parseRepo(input) {
 async function main() {
   const [command, ...rest] = args._
 
+  if (args['with-email']) {
+    console.log(JSON.stringify({
+      error: '--with-email was removed: GitHub Acceptable Use Policies forbid using this data to email the users it lists. Use --with-company to aggregate by company.',
+    }, null, 2))
+    process.exitCode = 2
+    return
+  }
+
   let result
 
   switch (command) {
     case 'stargazers': {
       const repo = parseRepo(rest[0])
-      if (!repo) { result = { error: 'Usage: stargazers <owner/repo> [--limit N] [--target N] [--enrich] [--with-email] [--with-company] [--with-blog] [--format csv|json]' }; break }
+      if (!repo) { result = { error: 'Usage: stargazers <owner/repo> [--limit N] [--target N] [--enrich] [--with-company] [--with-blog] [--format csv|json]' }; break }
       const limit = args.limit ? parseInt(args.limit, 10) : undefined
       const target = args.target ? parseInt(args.target, 10) : undefined
       const page = await paginate(`/repos/${repo.owner}/${repo.repo}/stargazers`, { limit })
       if (page._dry_run || page.error) { result = page; break }
       let users = page.data
-      if (args.enrich || args['with-email'] || args['with-company'] || args['with-blog'] || args.type) {
+      if (args.enrich || args['with-company'] || args['with-blog'] || args.type) {
         users = await enrichUsers(users, args, { targetCount: target })
       }
       if (args.format === 'csv') {
@@ -176,14 +191,14 @@ async function main() {
 
     case 'forks': {
       const repo = parseRepo(rest[0])
-      if (!repo) { result = { error: 'Usage: forks <owner/repo> [--limit N] [--target N] [--enrich] [--with-email] [--with-company] [--with-blog] [--format csv|json]' }; break }
+      if (!repo) { result = { error: 'Usage: forks <owner/repo> [--limit N] [--target N] [--enrich] [--with-company] [--with-blog] [--format csv|json]' }; break }
       const limit = args.limit ? parseInt(args.limit, 10) : undefined
       const target = args.target ? parseInt(args.target, 10) : undefined
       const page = await paginate(`/repos/${repo.owner}/${repo.repo}/forks`, { limit })
       if (page._dry_run || page.error) { result = page; break }
       const forkOwners = page.data.map(f => f.owner)
       let users = forkOwners
-      if (args.enrich || args['with-email'] || args['with-company'] || args['with-blog'] || args.type) {
+      if (args.enrich || args['with-company'] || args['with-blog'] || args.type) {
         users = await enrichUsers(forkOwners, args, { targetCount: target })
       }
       if (args.format === 'csv') {
@@ -196,13 +211,13 @@ async function main() {
 
     case 'watchers': {
       const repo = parseRepo(rest[0])
-      if (!repo) { result = { error: 'Usage: watchers <owner/repo> [--limit N] [--target N] [--enrich] [--with-email] [--with-company] [--with-blog] [--format csv|json]' }; break }
+      if (!repo) { result = { error: 'Usage: watchers <owner/repo> [--limit N] [--target N] [--enrich] [--with-company] [--with-blog] [--format csv|json]' }; break }
       const limit = args.limit ? parseInt(args.limit, 10) : undefined
       const target = args.target ? parseInt(args.target, 10) : undefined
       const page = await paginate(`/repos/${repo.owner}/${repo.repo}/subscribers`, { limit })
       if (page._dry_run || page.error) { result = page; break }
       let users = page.data
-      if (args.enrich || args['with-email'] || args['with-company'] || args['with-blog'] || args.type) {
+      if (args.enrich || args['with-company'] || args['with-blog'] || args.type) {
         users = await enrichUsers(users, args, { targetCount: target })
       }
       if (args.format === 'csv') {
@@ -216,7 +231,7 @@ async function main() {
     case 'user': {
       const login = rest[0]
       if (!login) { result = { error: 'Usage: user <username>' }; break }
-      result = await getUser(login)
+      result = withoutEmail(await getUser(login))
       break
     }
 
@@ -230,9 +245,9 @@ async function main() {
       result = {
         error: 'Unknown command',
         usage: {
-          stargazers: 'stargazers <owner/repo> [--limit N] [--target N] [--enrich] [--with-email] [--with-company] [--with-blog] [--type User|Organization] [--format csv|json]',
-          forks: 'forks <owner/repo> [--limit N] [--target N] [--enrich] [--with-email] [--with-company] [--with-blog] [--type User|Organization] [--format csv|json]',
-          watchers: 'watchers <owner/repo> [--limit N] [--target N] [--enrich] [--with-email] [--with-company] [--with-blog] [--format csv|json]',
+          stargazers: 'stargazers <owner/repo> [--limit N] [--target N] [--enrich] [--with-company] [--with-blog] [--type User|Organization] [--format csv|json]',
+          forks: 'forks <owner/repo> [--limit N] [--target N] [--enrich] [--with-company] [--with-blog] [--type User|Organization] [--format csv|json]',
+          watchers: 'watchers <owner/repo> [--limit N] [--target N] [--enrich] [--with-company] [--with-blog] [--format csv|json]',
           user: 'user <username>',
           'rate-limit': 'rate-limit',
         },
@@ -240,10 +255,10 @@ async function main() {
           'Set GITHUB_TOKEN env var for 5000 req/hr (vs 60/hr unauthenticated).',
           'Token needs only public_repo scope for public data; no scope is required to list public stargazers/forks.',
           '--enrich fetches each users full profile (1 extra request per user). Use with --limit on large repos.',
-          '--with-email / --with-company / --with-blog imply --enrich.',
+          '--with-company / --with-blog imply --enrich.',
           '--target N stops enrichment as soon as N users match the filters (saves API quota on restrictive filters).',
-          '--format csv outputs prospecting-ready CSV; default JSON.',
-          'Pair with Apollo, Clay, Hunter, or Truelist to fill in missing emails.',
+          '--format csv outputs CSV; default JSON.',
+          'Research only: aggregate by company. GitHub Acceptable Use Policies forbid using this data to email or DM the users it lists, however the address is found.',
         ],
       }
   }

@@ -56,26 +56,27 @@ Combine 2+ sources for cross-verification.
 
 - **Job boards** (LinkedIn Jobs, Indeed, AngelList): role openings as signals
 - **RB2B / Clearbit Reveal**: visitor identification (warm anonymous traffic)
-- **GitHub stars/forks of competitor or adjacent repos**: developer-level intent signal (see `tools/integrations/github.md` and the typed
+- **GitHub stars/forks of competitor or adjacent repos**: company-level intent signal (see `tools/integrations/github.md` and the typed
   [`magister-github`](../../magister-github/SKILL.md) integration). Especially
-  strong for dev-tool SaaS — a developer who starred `vercel/next.js` last week
-  is in-market for adjacent Next.js infrastructure.
+  strong for dev-tool SaaS — a company whose developers starred `vercel/next.js`
+  last week may be in-market for adjacent Next.js infrastructure. Count
+  companies, not people: never email the developers themselves.
 - **Recent blog posts / changelog**: product direction signals
 - **G2 reviews mentioning competitor switches**: explicit dissatisfaction signal
 
-#### GitHub prospecting pattern (when audience is developers)
+#### GitHub company-intent pattern (when audience is developers)
 
-For dev-tool SaaS, GitHub is one of the highest-quality discovery channels:
+For dev-tool SaaS, GitHub hints at which companies are evaluating a space. It is research, never a list of people to email: GitHub's Acceptable Use Policies forbid using information from GitHub, "whether scraped, collected through our API, or obtained otherwise", to send unsolicited email to its users, however the address was found.
 
 1. Identify 3–5 "anchor" repos: your direct competitors, your category leader, complementary tools your buyer uses
 2. Load and follow [`magister-github`](../../magister-github/SKILL.md), then use
    `magister_integration_read` with the reviewed GitHub relative paths to pull
-   stargazers or forks. The upstream network CLI is not installed.
-3. Filter to users with `company` set — these are the easiest to enrich downstream
-4. Pair with Apollo/Clay/Hunter to lookup email by name + company
-5. Validate with Truelist before adding to outreach list
+   stargazers or forks. The upstream network CLI is not installed. GitHub is limiting the stargazer and watcher lists to a repository's admins and collaborators (changelog, 2026-06-30): on a repo you don't administer they may come back empty or 403. An empty list is not evidence of no interest; use forks, which are not restricted, or your own repos.
+3. Aggregate by the public `company` field (normalize case, strip `@`, merge variants) and rank companies by interest
+4. Treat each top company as a candidate account: confirm a buying signal from another source (hiring for the stack, funding, a stated need) before ranking it, then find the right buyer there through your usual B2B sources (Apollo, the company's own site), not the GitHub users
+5. Validate with Truelist before adding them to an outreach list
 
-Tradeoffs: GitHub yields email for only ~5–20% of users directly. The strength is the signal quality — a stargazer of a niche dev tool is genuinely in-market in a way Apollo firmographics alone can't tell you.
+Tradeoffs: a developer's star is a hypothesis about their company, not proof it is in-market: developers star tools for side projects, learning, or a previous job. Several developers at one company starring a niche dev tool is a lead worth checking, and only independent buying evidence makes it Hot. The individual stargazers stay research only.
 
 ---
 

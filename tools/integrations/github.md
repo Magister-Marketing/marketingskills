@@ -1,6 +1,10 @@
 # GitHub
 
-GitHub REST API for prospecting use cases: listing users who star, fork, or watch a repo as a high-quality developer-intent signal.
+GitHub REST API for developer-intent research: which companies' developers star, fork, or watch a repo.
+
+**Never a mailing list.** GitHub's Acceptable Use Policies forbid using information from GitHub, "whether scraped, collected through our API, or obtained otherwise", to send unsolicited email to its users. Finding the address somewhere else does not change that. Use the data for company-level aggregation, consent matching (people who already opted in, where your privacy notice or their consent covers that use), opt-in calls to action, and fork research — never to email, DM, or enrich individual users with email. The CLI never outputs email addresses.
+
+**Access is narrowing.** GitHub is limiting the stargazer and watcher lists to a repository's admins and collaborators (changelog, 2026-06-30): on a repo you don't administer they may come back empty or 403. An empty list is not evidence of no interest; use forks, which are not restricted, or your own repos.
 
 ## Capabilities
 
@@ -72,7 +76,7 @@ GET https://api.github.com/users/{username}
 Returns: `name`, `company`, `blog`, `email` (if public), `bio`, `twitter_username`, `location`, `public_repos`, `followers`, `created_at`, `hireable`.
 
 **Key fields for prospecting**:
-- `email`: only ~5–20% of users publish this. Always nullable.
+- `email`: only ~5–20% of users publish this. Always nullable. Not for outreach: GitHub's terms forbid unsolicited email to its users.
 - `company`: many users include `@org` syntax — strip the `@` for plain company name.
 - `blog`: often a personal website where contact info is published.
 - `twitter_username` / `bio`: useful for cross-channel research.
@@ -88,21 +92,25 @@ GET https://api.github.com/rate_limit
 ### Workflow 1 — Stargazers of a competitor or adjacent tool
 
 ```bash
-# 100 stargazers, enrich each one, only keep those with email or company set
+# 100 stargazers with profiles, for company-level aggregation
 node tools/clis/github-prospects.js stargazers vercel/next.js \
-  --limit 100 --enrich --format csv > nextjs-stars.csv
+  --limit 100 --enrich --with-company --format csv > nextjs-stars.csv
 ```
 
-Filter the CSV in your spreadsheet by `company` set OR `email` set OR `blog` set. Hand off to Apollo/Clay/Hunter to enrich the rest with email-by-name+company.
+Count rows per `company` (normalized) to rank the companies showing interest. Reach the right buyer at those companies through other sources; never look up emails for the stargazers themselves.
 
 ### Workflow 2 — Forks of your own repo (warm intent)
 
-People who fork your repo have already shown direct interest. High-conversion outreach prospects.
+People who fork your repo have already shown direct interest. Invite them to opt in from the README or release notes rather than emailing them.
+
+The CLI's `forks` command lists the fork *owners*, so it answers "which companies fork this" (with `--with-company` it keeps only owners who name one):
 
 ```bash
 node tools/clis/github-prospects.js forks yourorg/yourrepo \
-  --enrich --with-email --format csv > my-fork-prospects.csv
+  --enrich --with-company --format csv > my-fork-companies.csv
 ```
+
+To read what people change (product research), list the forks themselves instead: `GET /repos/{owner}/{repo}/forks?sort=newest` returns every fork's `full_name`, `pushed_at` and `html_url` whether or not its owner names a company. Compare the recently pushed ones with your repo.
 
 ### Workflow 3 — Watchers of a category-defining repo
 
@@ -118,7 +126,7 @@ node tools/clis/github-prospects.js watchers tldraw/tldraw \
 ```bash
 # Stargazers
 node tools/clis/github-prospects.js stargazers <owner/repo> \
-  [--limit N] [--enrich] [--with-email] [--with-company] \
+  [--limit N] [--enrich] [--with-company] \
   [--with-blog] [--type User|Organization] [--format csv|json]
 
 # Forks
@@ -138,45 +146,45 @@ node tools/clis/github-prospects.js rate-limit
 - `--limit N`: cap total results pulled from the list endpoint
 - `--target N`: when filtering with `--with-*`, stop enriching as soon as N users match (saves quota on restrictive filters)
 - `--enrich`: fetch full profile per user (1 extra request each)
-- `--with-email` / `--with-company` / `--with-blog`: filter to users with these fields set (implies `--enrich`)
+- `--with-company` / `--with-blog`: filter to users with these fields set (implies `--enrich`)
 - `--type User|Organization`: filter by account type
-- `--format csv`: output prospecting-ready CSV; default is JSON
+- `--format csv`: output CSV; default is JSON
 - `--dry-run`: preview the request without sending
 
 ## When to Use
 
-- **SaaS prospecting** (primary use case): stargazers of a competitor, complement, or category-defining repo as in-market developer signal
-- **Open-source product marketing**: see who's forking or watching your own repo for warm outreach
-- **Developer-tool ICP discovery**: stargazers of `next.js`, `prisma`, `tailwindcss`, etc., signal a Next.js / Prisma / Tailwind developer
-- **Trigger event monitoring**: a recent fork of a competitor's repo often signals dissatisfaction or active evaluation
+- **SaaS account research** (primary use case): which companies' developers star a competitor, complement, or category-defining repo
+- **Open-source product research**: see who forks or watches your own repo and read what they change; invite them to opt in from the README or release notes rather than contacting them
+- **Developer-tool ICP discovery**: stargazers of `next.js`, `prisma`, `tailwindcss`, etc. show which companies build on Next.js / Prisma / Tailwind
+- **Trigger event monitoring**: recent forks of a competitor's repo by developers at one company often signal evaluation at that company
 
 ## When NOT to Use
 
-- **Email is your only signal you need** — GitHub yields email for only ~5–20% of users. Pair with Apollo, Clay, or Hunter for enrichment from name + company.
-- **Hyper-broad lists** — a repo with 100K+ stars is mostly noise. Smaller, more specific repos (5K–25K stars) give higher-signal lists.
-- **You don't have a way to handle high-volume LinkedIn lookup downstream** — most enrichment from GitHub username goes through LinkedIn Sales Nav manually.
+- **To build an email or DM list** — never. GitHub's Acceptable Use Policies forbid using information from GitHub, "whether scraped, collected through our API, or obtained otherwise", to send unsolicited email to its users. Looking the address up in Apollo, Clay, or Hunter does not change that.
+- **To contact the individual users at all** — reach the right buyer at an interested company through other sources instead.
+- **Hyper-broad lists** — a repo with 100K+ stars is mostly noise. Smaller, more specific repos (5K–25K stars) give a clearer company signal.
 
 ## Compliance Notes
 
-- **GitHub data is public** — no ToS issue with reading the API. The ToS prohibits abusive scraping (bypassing rate limits, mass account creation), not legitimate API usage.
-- **Personal emails published on GitHub** — users opt in to publishing their email. Treat as business contact when paired with company/blog signals; respect GDPR/CAN-SPAM for the downstream send.
-- **Source URL lineage** — for every prospect added from GitHub, capture `html_url` (their profile URL) and the source repo. Required for GDPR DSAR defense.
+- **Reading is fine, contacting is not** — reading public data through the API within its rate limits is legitimate use. Emailing, DMing, or bulk-contacting the users it lists is forbidden by GitHub's Acceptable Use Policies, however the address was found.
+- **Emails published on GitHub profiles** are not consent to be emailed. Don't collect them for outreach.
+- **Source lineage** — for every company you count, keep the source repo and the date of the pull.
 - **Cool-down between large pulls** — even at 5,000 req/hr, don't burst-fingerprint. Pagination is naturally paced; respect `X-RateLimit-Remaining` headers.
 
 ## Pairing with Other Tools
 
-Typical GitHub prospecting pipeline:
+Typical GitHub company-intent pipeline:
 
-1. Pull stargazers/forkers via this CLI
-2. Filter to users with company set (or other signal)
-3. **Enrich missing emails** via Apollo / Clay / Hunter (lookup by name + company domain)
-4. **Validate emails** via Truelist before adding to outreach list
-5. **Hand off** to cold-email skill for outreach
+1. Pull stargazers/forkers via this CLI (`--with-company`; the output never carries email)
+2. **Aggregate by company**: normalize the free-text `company` field (case, `@`, obvious variants) and rank companies by interest
+3. **Find the right buyer** at the top companies through your usual B2B sources (Apollo, the company's own site) — never the GitHub users themselves
+4. **Validate** those buyers' emails via Truelist before adding them to an outreach list
+5. **Hand off** to the cold-email skill for one-to-one, low-volume outreach to those buyers
 
 See `skills/prospecting/references/saas-prospecting.md` and `data-sources.md` for the full prospecting framework.
 
 ## Relevant Skills
 
 - prospecting (primary use case)
-- cold-email (downstream outreach)
-- competitor-profiling (deeper account-level research on individual stargazers worth pursuing)
+- cold-email (outreach to buyers at interested companies, sourced elsewhere)
+- competitor-profiling (deeper research on the companies that show interest)

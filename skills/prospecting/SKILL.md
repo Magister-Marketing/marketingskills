@@ -2,7 +2,7 @@
 name: prospecting
 description: "Build qualified prospect lists — B2B SaaS, general B2B, local SMB, or demand-signal first customers; sourcing, scoring, verified lead sheets."
 metadata:
-  version: 1.1.1
+  version: 1.1.2
 ---
 
 # Prospecting
@@ -112,8 +112,9 @@ These apply to every branch. **Read first, every engagement.**
 6. **Rate limit yourself.** Even on public sources, space requests. Don't fingerprint as a bot.
 7. **No breached, leaked, or unprovenanced data.** Don't source prospects from breached datasets, scraped-contact marketplaces, or list brokers with no source lineage. Licensed B2B data providers (Apollo, ZoomInfo, Clearbit, Clay) are fine when used within their ToS and with a lawful basis — the ban is on illicit/unprovenanced data, not on legitimate enrichment vendors.
 8. **Never target or infer sensitive traits.** Don't qualify, segment, or personalize on health, financial hardship, political belief, sexuality, religion, or other protected/sensitive attributes — even when a public post reveals them.
+9. **No outreach to people found on GitHub.** GitHub's terms forbid using its data to send unsolicited email to its users, however the address was found. Stargazers, forkers, watchers, contributors, and issue authors are research and company-level signal — never prospects to email, DM, or enrich with an email lookup.
 
-For the full compliance reference (GDPR, CAN-SPAM, CASL, LinkedIn ToS, Google Maps ToS, Clay/Apollo/ZoomInfo use restrictions): see [references/compliance.md](references/compliance.md).
+For the full compliance reference (GDPR, CAN-SPAM, CASL, LinkedIn ToS, Google Maps ToS, GitHub's Acceptable Use Policies, Clay/Apollo/ZoomInfo use restrictions): see [references/compliance.md](references/compliance.md).
 
 ---
 
@@ -146,7 +147,7 @@ Full breakdown in [references/data-sources.md](references/data-sources.md). Quic
 | **LinkedIn Sales Navigator** | Decision-maker mapping (manual, no scraping) |
 | **BuiltWith / Wappalyzer** | Tech stack qualification (SaaS branch) |
 | **Crunchbase** | Funding signals (SaaS branch) |
-| **GitHub** | Stargazers / forks of competitor or adjacent repos (dev-tool SaaS branch) |
+| **GitHub** | Which companies' developers star or fork competitor or adjacent repos (dev-tool SaaS branch; company-level signal, never people to email) |
 | **Google Maps + browser** | Local SMB discovery |
 | **Firecrawl / Browserbase** | Programmatic extraction from individual prospect websites — never from platforms |
 
@@ -248,7 +249,7 @@ For implementation, see the [tools registry](../../tools/REGISTRY.md). Key prosp
 | **Truelist** | Email deliverability validation | - | [truelist.md](../../tools/integrations/truelist.md) |
 | **Outreach** | Sales engagement (post-list) | ✓ | [outreach.md](../../tools/integrations/outreach.md) |
 | **RB2B** | Visitor identification (warm intent) | - | [rb2b.md](../../tools/integrations/rb2b.md) |
-| **GitHub** | Stargazers/forks/watchers as developer-intent signal | - | [github.md](../../tools/integrations/github.md) |
+| **GitHub** | Company-level developer intent from stargazers/forks (never an email list) | - | [github.md](../../tools/integrations/github.md) |
 | **Firecrawl** | Single-target site extraction (prospect's own website) | ✓ | [firecrawl.md](../../tools/integrations/firecrawl.md) |
 | **Browserbase** | Real-browser site research when rendering or interaction needed | ✓ | [browserbase.md](../../tools/integrations/browserbase.md) |
 

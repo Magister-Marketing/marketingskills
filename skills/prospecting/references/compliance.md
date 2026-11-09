@@ -81,6 +81,12 @@ Stricter than CAN-SPAM. Cold B2B outreach requires:
 - Storing Place IDs or large structured Maps data in your CRM: explicit ToS prohibition
 - Use Maps to **find** local businesses, then cross-source from the business's own site for the data you retain
 
+### GitHub
+
+- GitHub's Acceptable Use Policies forbid using information from GitHub, "whether scraped, collected through our API, or obtained otherwise", to send unsolicited email to its users. Finding the address somewhere else does not change that: the targeting came from GitHub
+- Stargazers, forkers, watchers, contributors, and issue authors: research and company-level signal only, never an outreach list
+- Reach developers through opt-in instead (a README or release-note call to action to a signup form), or reach the right buyer at an interested company through other sources
+
 ### Apollo / ZoomInfo / Clearbit
 
 - All have their own ToS limiting reselling, downstream sharing, and use cases
@@ -105,6 +111,7 @@ Stricter than CAN-SPAM. Cold B2B outreach requires:
 6. **Skipping the lawful basis documentation**. If challenged, you need to show your work. Capture source URL + collection date for every contact.
 7. **Reselling prospect lists**. You may not have the right to share them downstream. Read your data provider contracts.
 8. **CAPTCHA bypass / login wall bypass**. Even if technically possible, this signals bot behavior and violates virtually every ToS.
+9. **Emailing people found on GitHub** (stargazers, forkers, watchers, contributors), even with an address found elsewhere. GitHub's Acceptable Use Policies forbid it.
 
 ---
 

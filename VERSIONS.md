@@ -39,7 +39,7 @@ Current versions of all skills. Agents can compare against local versions to che
 | pricing | 2.0.1 | 2026-06-16 |
 | product-marketing | 2.1.0 | 2026-07-16 |
 | programmatic-seo | 2.0.0 | 2026-05-05 |
-| prospecting | 1.1.1 | 2026-07-30 |
+| prospecting | 1.1.2 | 2026-11-09 |
 | public-relations | 1.0.1 | 2026-07-30 |
 | referrals | 2.0.0 | 2026-05-05 |
 | revops | 2.0.0 | 2026-05-05 |
@@ -53,6 +53,22 @@ Current versions of all skills. Agents can compare against local versions to che
 | video | 2.1.2 | 2026-10-27 |
 
 ## Recent Changes
+
+### 2.8.22 (2026-11-09)
+
+- **No outreach to people found on GitHub**: prospecting (1.1.2) no longer
+  treats stargazers, forkers, or watchers as email prospects. GitHub's
+  Acceptable Use Policies forbid using its data to send unsolicited email,
+  however the address was found. GitHub is now company-level intent
+  research: aggregate by `company`, reach the right buyer through other
+  sources, use opt-in and consent matching, and read forks for product
+  research. Updated the SKILL.md guardrails and tool tables,
+  data-sources, saas-prospecting, demand-signals, compliance,
+  `tools/integrations/github.md` (its use cases, compliance notes and
+  pipeline now aggregate by company), `github-prospects.js` (its help
+  text; `--with-email` is refused with an error, and no output carries
+  an email address),
+  and `tools/REGISTRY.md`.
 
 ### 2.8.18 (2026-10-06)
 

@@ -329,13 +329,13 @@ Pre-outreach email deliverability validation.
 
 ### Developer Intent / GitHub
 
-Discovery channel for dev-tool SaaS prospecting via GitHub stargazers, forkers, and watchers.
+Company-level intent research for dev-tool SaaS via GitHub stargazers, forkers, and watchers. Never an email list: GitHub's Acceptable Use Policies forbid unsolicited email to its users.
 
 | Tool | Best For | Notes |
 |------|----------|-------|
-| **github** | Stargazers / forks / watchers of competitor or adjacent repos | Public API; pair with Apollo/Clay/Hunter for email enrichment |
+| **github** | Stargazers / forks / watchers of competitor or adjacent repos | Public API; aggregate by company, never enrich users with email |
 
-**Agent recommendation**: Use `github-prospects.js` CLI to pull stargazers/forks of 3–5 anchor repos (competitors, category leaders, complementary tools). Filter to users with `company` field set, then enrich missing emails via Apollo or Hunter, then validate via Truelist before outreach.
+**Agent recommendation**: Use `github-prospects.js` CLI to pull stargazers/forks of 3–5 anchor repos (competitors, category leaders, complementary tools) and aggregate by the `company` field to rank interested companies. Reach the right buyer at those companies through other sources; never email the GitHub users themselves. GitHub is limiting the stargazer and watcher lists to a repository's admins and collaborators (changelog, 2026-06-30): on a repo you don't administer they may come back empty or 403. An empty list is not evidence of no interest; use forks, which are not restricted, or your own repos.
 
 ### Site Scraping (single-target only)
 
