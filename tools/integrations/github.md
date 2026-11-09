@@ -120,7 +120,7 @@ node tools/clis/github-prospects.js watchers tldraw/tldraw \
 ```bash
 # Stargazers
 node tools/clis/github-prospects.js stargazers <owner/repo> \
-  [--limit N] [--enrich] [--with-email] [--with-company] \
+  [--limit N] [--enrich] [--with-company] \
   [--with-blog] [--type User|Organization] [--format csv|json]
 
 # Forks
@@ -140,7 +140,7 @@ node tools/clis/github-prospects.js rate-limit
 - `--limit N`: cap total results pulled from the list endpoint
 - `--target N`: when filtering with `--with-*`, stop enriching as soon as N users match (saves quota on restrictive filters)
 - `--enrich`: fetch full profile per user (1 extra request each)
-- `--with-email` / `--with-company` / `--with-blog`: filter to users with these fields set (implies `--enrich`)
+- `--with-company` / `--with-blog`: filter to users with these fields set (implies `--enrich`)
 - `--type User|Organization`: filter by account type
 - `--format csv`: output CSV; default is JSON
 - `--dry-run`: preview the request without sending

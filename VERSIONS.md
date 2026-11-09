@@ -65,8 +65,9 @@ Current versions of all skills. Agents can compare against local versions to che
   research. Updated the SKILL.md guardrails and tool tables,
   data-sources, saas-prospecting, demand-signals, compliance,
   `tools/integrations/github.md` (its use cases, compliance notes and
-  pipeline now aggregate by company), the `github-prospects.js` help
-  text, and `tools/REGISTRY.md`.
+  pipeline now aggregate by company), `github-prospects.js` (its help
+  text; the `--with-email` filter and the CSV `email` column are gone),
+  and `tools/REGISTRY.md`.
 
 ### 2.8.18 (2026-10-06)
 
