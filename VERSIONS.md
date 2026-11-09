@@ -66,7 +66,8 @@ Current versions of all skills. Agents can compare against local versions to che
   data-sources, saas-prospecting, demand-signals, compliance,
   `tools/integrations/github.md` (its use cases, compliance notes and
   pipeline now aggregate by company), `github-prospects.js` (its help
-  text; the `--with-email` filter and the CSV `email` column are gone),
+  text; `--with-email` is refused with an error, and no output carries
+  an email address),
   and `tools/REGISTRY.md`.
 
 ### 2.8.18 (2026-10-06)

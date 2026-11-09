@@ -335,7 +335,7 @@ Company-level intent research for dev-tool SaaS via GitHub stargazers, forkers, 
 |------|----------|-------|
 | **github** | Stargazers / forks / watchers of competitor or adjacent repos | Public API; aggregate by company, never enrich users with email |
 
-**Agent recommendation**: Use `github-prospects.js` CLI to pull stargazers/forks of 3–5 anchor repos (competitors, category leaders, complementary tools) and aggregate by the `company` field to rank interested companies. Reach the right buyer at those companies through other sources; never email the GitHub users themselves.
+**Agent recommendation**: Use `github-prospects.js` CLI to pull stargazers/forks of 3–5 anchor repos (competitors, category leaders, complementary tools) and aggregate by the `company` field to rank interested companies. Reach the right buyer at those companies through other sources; never email the GitHub users themselves. GitHub is limiting the stargazer and watcher lists to a repository's admins and collaborators (changelog, 2026-06-30): on a repo you don't administer they may come back empty or 403. An empty list is not evidence of no interest; use forks, which are not restricted, or your own repos.
 
 ### Site Scraping (single-target only)
 

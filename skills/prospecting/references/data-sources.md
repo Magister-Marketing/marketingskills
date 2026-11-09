@@ -197,17 +197,18 @@ Cross-reference both for high-confidence tech stack signals.
 
 **What to do instead**:
 - **Company-level intent**: aggregate stargazers and forkers by their public `company` field and report which companies show the most interest. Outreach, if any, is one-to-one and low-volume, to the right buyer at that company sourced elsewhere — not the GitHub users themselves
-- **Consent matching**: use "starred the repo" as a segment only within existing consent (newsletter subscribers or customers who already opted in)
+- **Consent matching**: use "starred the repo" as a segment only for people who already opted in to hear from you (newsletter subscribers, customers), and only when your privacy notice or their consent covers matching public activity like GitHub stars to their record. A newsletter opt-in alone may not (GDPR purpose limits). When unsure, skip the match
 - **Opt-in capture**: a README, release-note, or pinned-Discussion call to action that sends interested people to a signup form
 - **Fork research**: read what people change in forks to learn what users customize (product research)
 
 **Strengths**:
-- High signal quality (a starred repo = explicit interest; a fork = intent to modify)
+- A useful hypothesis (a star = an individual's interest; a fork = intent to modify), to confirm with independent evidence before calling a company in-market
 - The reviewed `magister-github` integration can retrieve bounded, paginated
   repository interest data
 - Free with 5,000 req/hr authenticated rate limit
 
 **Watch out for**:
+- GitHub is limiting the stargazer and watcher lists to a repository's admins and collaborators (changelog, 2026-06-30): on a repo you don't administer they may come back empty or 403. An empty list is not evidence of no interest; use forks, which are not restricted, or your own repos.
 - Very-popular repos (100K+ stars) are mostly noise; smaller targeted repos (5K–25K) give better signal density
 - `company` is free text: normalize case, strip `@`, and merge obvious variants before counting
 

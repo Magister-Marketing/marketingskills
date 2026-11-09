@@ -66,17 +66,17 @@ Combine 2+ sources for cross-verification.
 
 #### GitHub company-intent pattern (when audience is developers)
 
-For dev-tool SaaS, GitHub shows which companies are in-market. It is research, never a list of people to email: GitHub's Acceptable Use Policies forbid using information from GitHub, "whether scraped, collected through our API, or obtained otherwise", to send unsolicited email to its users, however the address was found.
+For dev-tool SaaS, GitHub hints at which companies are evaluating a space. It is research, never a list of people to email: GitHub's Acceptable Use Policies forbid using information from GitHub, "whether scraped, collected through our API, or obtained otherwise", to send unsolicited email to its users, however the address was found.
 
 1. Identify 3–5 "anchor" repos: your direct competitors, your category leader, complementary tools your buyer uses
 2. Load and follow [`magister-github`](../../magister-github/SKILL.md), then use
    `magister_integration_read` with the reviewed GitHub relative paths to pull
-   stargazers or forks. The upstream network CLI is not installed.
+   stargazers or forks. The upstream network CLI is not installed. GitHub is limiting the stargazer and watcher lists to a repository's admins and collaborators (changelog, 2026-06-30): on a repo you don't administer they may come back empty or 403. An empty list is not evidence of no interest; use forks, which are not restricted, or your own repos.
 3. Aggregate by the public `company` field (normalize case, strip `@`, merge variants) and rank companies by interest
-4. Treat each top company as an account: find the right buyer there through your usual B2B sources (Apollo, the company's own site), not the GitHub users
+4. Treat each top company as a candidate account: confirm a buying signal from another source (hiring for the stack, funding, a stated need) before ranking it, then find the right buyer there through your usual B2B sources (Apollo, the company's own site), not the GitHub users
 5. Validate with Truelist before adding them to an outreach list
 
-Tradeoffs: the strength is signal quality at the company level — a company whose developers star a niche dev tool is in-market in a way Apollo firmographics alone can't tell you. The individual stargazers stay research only.
+Tradeoffs: a developer's star is a hypothesis about their company, not proof it is in-market: developers star tools for side projects, learning, or a previous job. Several developers at one company starring a niche dev tool is a lead worth checking, and only independent buying evidence makes it Hot. The individual stargazers stay research only.
 
 ---
 

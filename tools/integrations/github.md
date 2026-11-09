@@ -2,7 +2,9 @@
 
 GitHub REST API for developer-intent research: which companies' developers star, fork, or watch a repo.
 
-**Never a mailing list.** GitHub's Acceptable Use Policies forbid using information from GitHub, "whether scraped, collected through our API, or obtained otherwise", to send unsolicited email to its users. Finding the address somewhere else does not change that. Use the data for company-level aggregation, consent matching (people who already opted in), opt-in calls to action, and fork research — never to email, DM, or enrich individual users with email.
+**Never a mailing list.** GitHub's Acceptable Use Policies forbid using information from GitHub, "whether scraped, collected through our API, or obtained otherwise", to send unsolicited email to its users. Finding the address somewhere else does not change that. Use the data for company-level aggregation, consent matching (people who already opted in, where your privacy notice or their consent covers that use), opt-in calls to action, and fork research — never to email, DM, or enrich individual users with email. The CLI never outputs email addresses.
+
+**Access is narrowing.** GitHub is limiting the stargazer and watcher lists to a repository's admins and collaborators (changelog, 2026-06-30): on a repo you don't administer they may come back empty or 403. An empty list is not evidence of no interest; use forks, which are not restricted, or your own repos.
 
 ## Capabilities
 
@@ -99,12 +101,16 @@ Count rows per `company` (normalized) to rank the companies showing interest. Re
 
 ### Workflow 2 — Forks of your own repo (warm intent)
 
-People who fork your repo have already shown direct interest. Read what they change (product research), and invite them to opt in from the README or release notes rather than emailing them.
+People who fork your repo have already shown direct interest. Invite them to opt in from the README or release notes rather than emailing them.
+
+The CLI's `forks` command lists the fork *owners*, so it answers "which companies fork this" (with `--with-company` it keeps only owners who name one):
 
 ```bash
 node tools/clis/github-prospects.js forks yourorg/yourrepo \
-  --enrich --with-company --format csv > my-forks.csv
+  --enrich --with-company --format csv > my-fork-companies.csv
 ```
+
+To read what people change (product research), list the forks themselves instead: `GET /repos/{owner}/{repo}/forks?sort=newest` returns every fork's `full_name`, `pushed_at` and `html_url` whether or not its owner names a company. Compare the recently pushed ones with your repo.
 
 ### Workflow 3 — Watchers of a category-defining repo
 
@@ -169,7 +175,7 @@ node tools/clis/github-prospects.js rate-limit
 
 Typical GitHub company-intent pipeline:
 
-1. Pull stargazers/forkers via this CLI (`--with-company`)
+1. Pull stargazers/forkers via this CLI (`--with-company`; the output never carries email)
 2. **Aggregate by company**: normalize the free-text `company` field (case, `@`, obvious variants) and rank companies by interest
 3. **Find the right buyer** at the top companies through your usual B2B sources (Apollo, the company's own site) — never the GitHub users themselves
 4. **Validate** those buyers' emails via Truelist before adding them to an outreach list

@@ -109,6 +109,14 @@ function matchesFilter(user, opts) {
   return true
 }
 
+// Research only: GitHub's Acceptable Use Policies forbid using its data to
+// email the users it lists, so profiles never leave this tool with an email.
+function withoutEmail(profile) {
+  if (!profile || typeof profile !== 'object') return profile
+  const { email, ...rest } = profile
+  return rest
+}
+
 async function enrichUsers(users, opts = {}, { concurrency = 5, targetCount } = {}) {
   const matched = []
   for (let i = 0; i < users.length; i += concurrency) {
@@ -116,7 +124,7 @@ async function enrichUsers(users, opts = {}, { concurrency = 5, targetCount } = 
     const profiles = await Promise.all(batch.map(u => getUser(u.login)))
     for (const profile of profiles) {
       if (!profile || profile.error) continue
-      if (matchesFilter(profile, opts)) matched.push(profile)
+      if (matchesFilter(profile, opts)) matched.push(withoutEmail(profile))
     }
     if (targetCount && matched.length >= targetCount) {
       return matched.slice(0, targetCount)
@@ -150,6 +158,14 @@ function parseRepo(input) {
 
 async function main() {
   const [command, ...rest] = args._
+
+  if (args['with-email']) {
+    console.log(JSON.stringify({
+      error: '--with-email was removed: GitHub Acceptable Use Policies forbid using this data to email the users it lists. Use --with-company to aggregate by company.',
+    }, null, 2))
+    process.exitCode = 2
+    return
+  }
 
   let result
 
@@ -215,7 +231,7 @@ async function main() {
     case 'user': {
       const login = rest[0]
       if (!login) { result = { error: 'Usage: user <username>' }; break }
-      result = await getUser(login)
+      result = withoutEmail(await getUser(login))
       break
     }
 
