@@ -242,8 +242,8 @@ async function main() {
           '--enrich fetches each users full profile (1 extra request per user). Use with --limit on large repos.',
           '--with-email / --with-company / --with-blog imply --enrich.',
           '--target N stops enrichment as soon as N users match the filters (saves API quota on restrictive filters).',
-          '--format csv outputs prospecting-ready CSV; default JSON.',
-          'Pair with Apollo, Clay, Hunter, or Truelist to fill in missing emails.',
+          '--format csv outputs CSV; default JSON.',
+          'Research only: aggregate by company. GitHub Acceptable Use Policies forbid using this data to email or DM the users it lists, however the address is found.',
         ],
       }
   }

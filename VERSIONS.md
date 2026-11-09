@@ -64,7 +64,9 @@ Current versions of all skills. Agents can compare against local versions to che
   sources, use opt-in and consent matching, and read forks for product
   research. Updated the SKILL.md guardrails and tool tables,
   data-sources, saas-prospecting, demand-signals, compliance,
-  `tools/integrations/github.md`, and `tools/REGISTRY.md`.
+  `tools/integrations/github.md` (its use cases, compliance notes and
+  pipeline now aggregate by company), the `github-prospects.js` help
+  text, and `tools/REGISTRY.md`.
 
 ### 2.8.18 (2026-10-06)
 
