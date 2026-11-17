@@ -31,7 +31,7 @@ On Magister the shell has no network and cannot write to the workspace, and `scr
 Three limits change how the stages run:
 
 - **Archive commands are slow.** Each Wayback capture takes 7 to 15 seconds, so `stack`, `history`, `hero` and `sitemap-growth` read 6 months by default and 8 at most, and stop at 150 seconds. Say the archive window you used. For the longer curve use DataForSEO's `historical_rank_overview`, which covers the full 24 months. A timeout means ask for fewer months, not the same call again.
-- **Collector calls are counted.** A team has a small hourly allowance, two commands may run at a time, and one site may only be read so often. Quick mode needs about ten calls, a full teardown about 25, so run them one or two at a time and never repeat a call that answered. A 429 says how long to wait.
+- **Collector calls are counted.** A team has a small hourly allowance, one command may run at a time, and one site may only be read so often. Quick mode needs about ten calls, a full teardown about 25, so run them one at a time and never repeat a call that answered. A 429 says how long to wait. Only the first 64 KB of a page is read; when an answer's `notes` names a site, "not found" there means "not found in the first 64 KB".
 - **GitHub star history is not available.** `adoption` returns npm and PyPI downloads and the current star count.
 
 A site built on Webflow whose owner connected it is read only through the Webflow connection. When a collector is refused for that reason, record it and move on; do not look for another way to read the site.
