@@ -17,7 +17,7 @@ On Magister the shell has no network and cannot write to the workspace, and `scr
 
 | The skill says | On Magister |
 |---|---|
-| `node scripts/teardown.mjs <command> ...` | `magister_integration_read` with `service: "public_research"`, `method: "POST"`, `path: "<command>"`, and the arguments as a JSON `body`. `site target.com` is `path: "site"`, `body: {"domain": "target.com"}`; `--months 24` is `"months": 24`; `--domain`, `--you`, `--app-id` become `domain`, `you`, `app_id`. Read `magister-public-research` for every command's fields and limits before the first call |
+| `node scripts/teardown.mjs <command> ...` | `magister_integration_read` with `service: "public_research"`, `method: "POST"`, `path: "<command>"`, and the arguments as a JSON `body`. `site target.com` is `path: "site"`, `body: {"domain": "target.com"}`; `--months 6` is `"months": 6` (archive commands take 8 at most, whatever the upstream examples below say); `--domain`, `--you`, `--app-id` become `domain`, `you`, `app_id`. Read `magister-public-research` for every command's fields and limits before the first call |
 | `--out teardowns/target/file.csv` | Add `"csv": true` to the body. The rows come back as `csv` in the answer; save them yourself (last row of this table) |
 | `moves --moves ... --traffic ...`, `diff --old ... --new ...` | The same service, with the CSV text itself in the body: `moves_csv` and `traffic_csv`, or `old_csv` and `new_csv`. Read the saved files, then pass their contents |
 | `sc-ads`, ScrapeCreators, ad libraries | `magister-ad-library` for Meta, Google, TikTok and LinkedIn ads, and `magister-social-research` for each handle's recent posts (stage 6) and video transcripts (stage 4). Both are built in: never ask for a key. The `ads` command only returns ad library links |
@@ -30,8 +30,8 @@ On Magister the shell has no network and cannot write to the workspace, and `scr
 
 Three limits change how the stages run:
 
-- **Archive commands are slow.** `stack`, `history`, `hero` and `sitemap-growth` default to 12 months here and stop at 150 seconds. Start with 12; ask for 24 only when the first call was quick. A timeout means ask for fewer months, not the same call again.
-- **Collector calls are counted.** A project has 60 an hour. Quick mode needs about ten, a full teardown about 25. Run them one or two at a time.
+- **Archive commands are slow.** Each Wayback capture takes 7 to 15 seconds, so `stack`, `history`, `hero` and `sitemap-growth` read 6 months by default and 8 at most, and stop at 150 seconds. Say the archive window you used. For the longer curve use DataForSEO's `historical_rank_overview`, which covers the full 24 months. A timeout means ask for fewer months, not the same call again.
+- **Collector calls are counted.** A team has a small hourly allowance, two commands may run at a time, and one site may only be read so often. Quick mode needs about ten calls, a full teardown about 25, so run them one or two at a time and never repeat a call that answered. A 429 says how long to wait.
 - **GitHub star history is not available.** `adoption` returns npm and PyPI downloads and the current star count.
 
 A site built on Webflow whose owner connected it is read only through the Webflow connection. When a collector is refused for that reason, record it and move on; do not look for another way to read the site.
