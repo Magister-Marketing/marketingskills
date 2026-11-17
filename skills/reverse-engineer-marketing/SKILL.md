@@ -1,6 +1,6 @@
 ---
 name: reverse-engineer-marketing
-description: "Work out how a company grew and what to copy — a dated log of its moves against its traffic from public data, archives, job posts, reviews and its funnel, ending in plays routed to other skills."
+description: "Work out how a company grew and what to copy — a dated log of its moves against its traffic from public data, archives, job posts, reviews and its funnel, ending in plays routed to other skills. Also finds where competitors are weak. For a snapshot profile, see competitor-profiling; for comparison pages, competitors."
 metadata:
   version: 1.1.4
 ---
