@@ -1,6 +1,6 @@
 ---
 name: attribution
-description: "Work out which marketing drives revenue — attribution models, platforms that over-claim, MMM, incrementality and holdout tests, self-reported attribution. A correlation is a lead until a holdout or matched windows show the lift."
+description: "Work out which marketing drives revenue, or whether a channel is really working — attribution models, platforms that over-claim, MMM, incrementality and holdout tests, self-reported attribution, podcasts and dark social. A correlation is a lead until a holdout or matched windows show the lift. For UTMs and tracking plans, see analytics; for pixels and CAPI, conversion-tracking; for CRM revenue, revops."
 metadata:
   version: 1.1.9
 ---

@@ -1,6 +1,6 @@
 ---
 name: conversion-tracking
-description: "Set up, audit, or fix conversion tracking to Google Ads, Meta, GA4, LinkedIn, TikTok — GTM, pixels, CAPI, Enhanced Conversions, offline imports. Fire on confirmed success, verify a test conversion arrives, diagnose before changing."
+description: "Set up, audit, or fix conversion tracking to Google Ads, Meta, GA4, LinkedIn, TikTok, or find why conversions are missing or doubled — GTM, pixels, CAPI, Enhanced Conversions, offline imports. Fire on confirmed success, verify a test conversion arrives, diagnose before changing, offer free paths and disclose partner tools. For tracking plans, see analytics; for crediting channels, attribution; for bidding, ads."
 metadata:
   version: 1.0.6
 ---

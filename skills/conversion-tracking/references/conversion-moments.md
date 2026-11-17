@@ -152,7 +152,7 @@ grep -rn "send_to"
 grep -rn "'event', 'conversion'\|\"event\", \"conversion\""
 grep -rn "generate_lead\|form_submit\|formSubmit"
 grep -rn "onSubmit\|handleSubmit"   # then READ each handler:
-#   does the success branch (after await fetch) contain gtag/fbq/dataLayer.push?
+#   does the success branch (after the awaited request) contain gtag/fbq/dataLayer.push?
 #   red flag: a request to /api/contact → setSubmitted(true) with no tracking call
 grep -rn "router.push\|redirect(" -- **/contact* **/form*
 ```

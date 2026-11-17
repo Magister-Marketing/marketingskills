@@ -1,6 +1,6 @@
 ---
 name: events
-description: "Plan, run, sponsor, or speak at events — webinars, conferences, booths, meetups — with show-up rates, follow-up into pipeline, and whether an event is worth the money."
+description: "Plan, run, sponsor, or speak at events — webinars, conferences, booths, meetups — with show-up rates, follow-up into pipeline, and whether an event is worth the money. For launches, see launch; for joint webinars, co-marketing; for event emails, emails."
 metadata:
   version: 1.0.3
 ---
