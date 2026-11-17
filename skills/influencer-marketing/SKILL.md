@@ -1,6 +1,6 @@
 ---
 name: influencer-marketing
-description: "Plan creator, influencer, and ambassador partnerships — vetting, pay, usage rights, briefs, UGC, newsletter and podcast sponsorships, FTC disclosure, and whether a sponsorship worked."
+description: "Plan creator, influencer, and ambassador partnerships — vetting, pay, usage rights, briefs, UGC, newsletter and podcast sponsorships, FTC disclosure, and whether a sponsorship worked. For affiliate payouts, see referrals; for creator content as ads, ad-creative."
 metadata:
   version: 1.4.3
 ---
