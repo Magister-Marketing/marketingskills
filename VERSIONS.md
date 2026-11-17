@@ -47,6 +47,7 @@ Current versions of all skills. Agents can compare against local versions to che
 | prospecting | 1.1.2 | 2026-11-09 |
 | public-relations | 1.0.1 | 2026-07-30 |
 | referrals | 2.0.0 | 2026-05-05 |
+| reverse-engineer-marketing | 1.1.4 | 2026-11-17 |
 | revops | 2.0.0 | 2026-05-05 |
 | sales-enablement | 2.0.1 | 2026-06-16 |
 | schema | 2.0.0 | 2026-05-05 |
