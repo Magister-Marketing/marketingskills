@@ -6,9 +6,11 @@ Current versions of all skills. Agents can compare against local versions to che
 |-------|---------|--------------|
 | ab-testing | 2.0.2 | 2026-10-06 |
 | ad-creative | 2.9.4 | 2026-10-27 |
+| ads | 2.2.1 | 2026-10-22 |
 | ai-seo | 2.2.0 | 2026-07-09 |
 | analytics | 2.3.2 | 2026-10-22 |
 | aso | 2.0.0 | 2026-05-05 |
+| attribution | 1.1.9 | 2026-11-17 |
 | churn-prevention | 2.0.1 | 2026-07-30 |
 | co-marketing | 2.0.0 | 2026-05-05 |
 | cold-email | 2.0.0 | 2026-05-05 |
@@ -16,16 +18,20 @@ Current versions of all skills. Agents can compare against local versions to che
 | competitor-profiling | 2.0.1 | 2026-07-30 |
 | competitors | 2.0.1 | 2026-07-09 |
 | content-strategy | 2.0.1 | 2026-10-27 |
+| conversion-tracking | 1.0.6 | 2026-11-17 |
 | copy-editing | 2.0.0 | 2026-05-05 |
 | copywriting | 2.1.6 | 2026-10-27 |
 | cro | 2.0.0 | 2026-05-05 |
 | customer-research | 2.0.1 | 2026-07-10 |
 | directory-submissions | 2.0.1 | 2026-07-30 |
 | emails | 2.0.2 | 2026-10-06 |
+| events | 1.0.3 | 2026-11-17 |
 | free-tools | 2.0.0 | 2026-05-05 |
 | image | 2.0.3 | 2026-10-27 |
+| influencer-marketing | 1.4.3 | 2026-11-17 |
 | launch | 2.0.1 | 2026-06-16 |
 | lead-magnets | 2.0.1 | 2026-10-27 |
+| link-building | 1.0.4 | 2026-11-17 |
 | marketing-council | 1.0.0 | 2026-07-06 |
 | marketing-ideas | 2.0.0 | 2026-05-05 |
 | marketing-loops | 1.2.0 | 2026-07-10 |
@@ -33,7 +39,6 @@ Current versions of all skills. Agents can compare against local versions to che
 | marketing-psychology | 2.0.0 | 2026-05-05 |
 | offers | 1.0.0 | 2026-06-16 |
 | onboarding | 2.0.0 | 2026-05-05 |
-| ads | 2.2.1 | 2026-10-22 |
 | paywalls | 2.0.0 | 2026-05-05 |
 | popups | 2.0.0 | 2026-05-05 |
 | pricing | 2.0.1 | 2026-06-16 |
