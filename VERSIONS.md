@@ -63,16 +63,18 @@ Current versions of all skills. Agents can compare against local versions to che
 ### 2.8.23 (2026-11-19)
 
 - **A built page's primary action works**: copywriting (2.1.7) keeps the
-  primary CTA a usable link when no destination was supplied: it points
-  at a section of the same page, that section carries the CTA too (the
-  link the owner swaps), and the owner is told so in an HTML comment or
-  the hand-off message. A form's CTA is its submit button, and a phone
-  number or address in the brief is linked with `tel:` / `mailto:`. It is never shipped
-  disabled, without a link, or beside copy telling visitors the action is
-  unavailable, and no URL is made up.
+  primary CTA a usable control when no destination was supplied: it
+  links to a section the page already has, that section carries the CTA
+  too (the link the owner swaps), a form keeps its submit button and
+  `method="post"`, and the owner is told in a comment or the hand-off
+  message. A phone number or email address the brief gives for the action
+  is linked with `tel:` / `mailto:`. The CTA is never shipped disabled,
+  dead, or beside copy saying the action is unavailable for want of a
+  URL (a limit the brief states stays), and no URL is made up.
 - **A correction keeps what is right**: emails (2.0.3) repairs a draft by
-  changing only the lines the facts contradict or cannot support; the
-  draft's accurate specifics stay in the corrected sequence.
+  changing only the lines the facts contradict or cannot support, plus
+  what the request itself names; the draft's accurate specifics stay in
+  the corrected sequence.
 - **The positioning is the plan's spine**: marketing-plan (1.2.3) reuses
   the positioning line's own words in each channel's message, phase theme
   and test variant, and every roadmap phase, the last included, names what

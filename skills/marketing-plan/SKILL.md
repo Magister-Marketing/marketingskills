@@ -155,9 +155,10 @@ reader auditing the table sees a plan that does not add up.
 
 When the request supplies a positioning line, or the plan sets one, it is
 the plan's spine. Quote it once in full, then reuse its own words in each
-channel's message, each phase's theme, and each test variant, so a reader
-can trace every message back to it. A paraphrase that drops its terms
-reads as a different positioning. Every phase of the roadmap, the last one
+channel's message and wherever a phase or a calendar entry states its
+message, so a reader can trace every message back to it. A paraphrase
+that drops its terms reads as a different positioning; a test that tries
+another angle on purpose is labelled as the challenger to it. Every phase of the roadmap, the last one
 included, names what ships in it and what it depends on: a final phase
 that says only "scale what works" is not sequenced.
 

@@ -104,21 +104,34 @@ separate message.
 
 ### A Built Page's Primary Action Works
 On a page you build (HTML, a component, a template), the primary CTA is a
-control a visitor can use: an `<a href>` styled as the button, pointing at
-the destination the request or the brand supplies (the form's own submit
-button when the action is a form on the page; `tel:` or `mailto:` when the
-brief gives a phone number or an address rather than a URL). With no
-destination supplied, the CTA still works. Link it to a section of the same page that
-carries the matching `id` (the "next step" section), and put the CTA in
-that section too: where a visitor lands is where they act, and a closing
-section with nothing to click is a dead end. That second link is the one
-the owner swaps for the real destination; say so where the owner reads and
-the visitor does not, in an HTML comment beside it or in the hand-off
-message. Never ship
-the CTA disabled, without a link, or beside copy telling visitors the
-action is unavailable ("ordering opens soon", "not available here yet"). A missing
-URL is a note for the owner, not a reason to switch off the one thing the
-page is for, and it is no license to make up a URL either.
+control a visitor can use. For a link, that is an `<a href>` styled as the
+button, pointing at the destination the request or the brand supplies for
+that action: a URL, or `tel:` / `mailto:` when what the brief gives for it
+is a phone number or an email address. For a form, it is the form's own
+submit button. A placeholder (`#`, `example.com`, "TBD") is not a
+destination.
+
+With no destination supplied, the CTA still works:
+
+- Link it to a section the page already has (its closing or "next step"
+  section, by `id`; add no section the request did not ask for), and put
+  the CTA in that section too, linked to the part of it that says what
+  happens next. Where a visitor lands is where they act: a closing section
+  with nothing to click is a dead end, and so is `href="#"`.
+- A form with no endpoint keeps its fields, its submit button and
+  `method="post"`, so nothing a visitor types lands in the address bar,
+  and no script pretends the form was sent.
+- The link in the closing section, or the form's `action`, is what the
+  owner swaps for the real destination. Say so where the owner reads and
+  the visitor does not: a comment beside it in the file's own syntax, or
+  the hand-off message.
+
+Never ship the CTA disabled, without a working link or submit, or beside
+copy telling visitors the action is unavailable ("ordering opens soon",
+"not available here yet") because you lack a URL. A limit the brief states
+(a date, a region, a waitlist) is a fact and stays beside the CTA. A
+missing URL is a note for the owner, not a reason to switch off the one
+thing the page is for, and it is no license to make up a URL either.
 
 ---
 
