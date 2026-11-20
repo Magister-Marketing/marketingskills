@@ -2,7 +2,7 @@
 name: emails
 description: "Design lifecycle email sequences — welcome, drip, nurture, onboarding, re-engagement, win-back — with timing, subject lines, and copy."
 metadata:
-  version: 2.0.2
+  version: 2.0.3
 ---
 
 # Email Sequence Design
@@ -263,6 +263,16 @@ When the request fixes the output — "output only the corrected sequence,"
 change log, no "what I removed and why," no declined-items list, no notes
 after the last email. Those belong in a separate message if they are needed
 at all. A sequence delivered with an appendix is not "only the sequence."
+
+A correction changes what is wrong and keeps what is right. When the
+request is to repair or correct a draft, every detail in it that the facts
+support stays in the corrected version, unless the request itself asks
+for it to go (a cut to length): what the product does and for whom, its
+specifics, the terms of the offer. Rewrite or remove only the lines the
+facts contradict or cannot support, plus what the request names (a typo,
+a tone). A repaired sequence that is
+accurate but has lost the draft's accurate specifics is a rewrite, and the
+reader lost content nobody asked to remove.
 
 
 ### Sequence Overview
