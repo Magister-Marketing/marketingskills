@@ -68,13 +68,6 @@ Current versions of all skills. Agents can compare against local versions to che
   in an HTML comment or the hand-off message. It is never shipped
   disabled, without a link, or beside copy telling visitors the action is
   unavailable, and no URL is made up.
-- **The owner is a source**: copywriting (2.1.7) writes what the owner
-  states about their own business (a material, a price, a shipping time)
-  as stated, without asking for a document. A supplied source that says
-  otherwise, a claim about what other people think, and a claim that needs
-  proof whoever makes it (a certification, a health or results promise, a
-  comparison) are still declined; a brief passing on someone else's wish
-  is a request to check.
 - **A correction keeps what is right**: emails (2.0.3) repairs a draft by
   changing only the lines the facts contradict or cannot support; the
   draft's accurate specifics stay in the corrected sequence.
