@@ -66,7 +66,8 @@ Current versions of all skills. Agents can compare against local versions to che
   primary CTA a usable link when no destination was supplied: it points
   at a section of the same page, that section carries the CTA too (the
   link the owner swaps), and the owner is told so in an HTML comment or
-  the hand-off message. It is never shipped
+  the hand-off message. A form's CTA is its submit button, and a phone
+  number or address in the brief is linked with `tel:` / `mailto:`. It is never shipped
   disabled, without a link, or beside copy telling visitors the action is
   unavailable, and no URL is made up.
 - **A correction keeps what is right**: emails (2.0.3) repairs a draft by

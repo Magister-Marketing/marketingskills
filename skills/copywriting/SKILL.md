@@ -105,8 +105,10 @@ separate message.
 ### A Built Page's Primary Action Works
 On a page you build (HTML, a component, a template), the primary CTA is a
 control a visitor can use: an `<a href>` styled as the button, pointing at
-the destination the request or the brand supplies. With no destination
-supplied, the CTA still works. Link it to a section of the same page that
+the destination the request or the brand supplies (the form's own submit
+button when the action is a form on the page; `tel:` or `mailto:` when the
+brief gives a phone number or an address rather than a URL). With no
+destination supplied, the CTA still works. Link it to a section of the same page that
 carries the matching `id` (the "next step" section), and put the CTA in
 that section too: where a visitor lands is where they act, and a closing
 section with nothing to click is a dead end. That second link is the one

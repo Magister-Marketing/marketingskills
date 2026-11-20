@@ -268,7 +268,8 @@ A correction changes what is wrong and keeps what is right. When the
 request is to repair or correct a draft, every detail in it that the facts
 support stays in the corrected version: what the product does and for
 whom, its specifics, the terms of the offer. Rewrite or remove only the
-lines the facts contradict or cannot support. A repaired sequence that is
+lines the facts contradict or cannot support, plus anything else the
+request itself names (a typo, a tone, a length). A repaired sequence that is
 accurate but has lost the draft's accurate specifics is a rewrite, and the
 reader lost content nobody asked to remove.
 
