@@ -64,8 +64,9 @@ Current versions of all skills. Agents can compare against local versions to che
 
 - **A built page's primary action works**: copywriting (2.1.7) keeps the
   primary CTA a usable link when no destination was supplied: it points
-  at a section of the same page, and the owner is told which link to swap
-  in an HTML comment or the hand-off message. It is never shipped
+  at a section of the same page, that section carries the CTA too (the
+  link the owner swaps), and the owner is told so in an HTML comment or
+  the hand-off message. It is never shipped
   disabled, without a link, or beside copy telling visitors the action is
   unavailable, and no URL is made up.
 - **A correction keeps what is right**: emails (2.0.3) repairs a draft by

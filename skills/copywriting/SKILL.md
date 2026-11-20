@@ -107,9 +107,12 @@ On a page you build (HTML, a component, a template), the primary CTA is a
 control a visitor can use: an `<a href>` styled as the button, pointing at
 the destination the request or the brand supplies. With no destination
 supplied, the CTA still works. Link it to a section of the same page that
-carries the matching `id` (the "next step" or contact section), and tell
-the owner which link to swap where the owner reads and the visitor does
-not: an HTML comment beside the link, or the hand-off message. Never ship
+carries the matching `id` (the "next step" section), and put the CTA in
+that section too: where a visitor lands is where they act, and a closing
+section with nothing to click is a dead end. That second link is the one
+the owner swaps for the real destination; say so where the owner reads and
+the visitor does not, in an HTML comment beside it or in the hand-off
+message. Never ship
 the CTA disabled, without a link, or beside copy telling visitors the
 action is unavailable ("ordering opens soon", "not available here yet"). A missing
 URL is a note for the owner, not a reason to switch off the one thing the
