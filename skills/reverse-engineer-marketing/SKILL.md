@@ -34,8 +34,6 @@ Three limits change how the stages run:
 - **Collector calls are counted.** A team has a small hourly allowance, one command may run at a time, and one site may only be read so often. Quick mode needs about ten calls, a full teardown about 25, so run them one at a time and never repeat a call that answered. A 429 says how long to wait. Only the first 64 KB of a page is read; when an answer's `notes` names a site, "not found" there means "not found in the first 64 KB".
 - **GitHub star history is not available.** `adoption` returns npm and PyPI downloads and the current star count.
 
-A site built on Webflow whose owner connected it is read only through the Webflow connection. When a collector is refused for that reason, record it and move on; do not look for another way to read the site.
-
 ## Before Starting
 
 **Check for product marketing context first:**
