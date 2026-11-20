@@ -2,7 +2,7 @@
 name: marketing-plan
 description: "Produce an fCMO-grade 12-month marketing plan — 13 AARRR sections, 90-day roadmap, budget math, ops stack — as a Notion-ready doc."
 metadata:
-  version: 1.2.2
+  version: 1.2.3
 ---
 
 # Marketing Plan
@@ -152,6 +152,14 @@ named in its rationale ("$800 of the $5,000 paid-social line is held for
 creative tests"), not added as a reserve, contingency, or "held" row:
 a fourth line makes the three channels sum to less than the total, and a
 reader auditing the table sees a plan that does not add up.
+
+When the request supplies a positioning line, or the plan sets one, it is
+the plan's spine. Quote it once in full, then reuse its own words in each
+channel's message, each phase's theme, and each test variant, so a reader
+can trace every message back to it. A paraphrase that drops its terms
+reads as a different positioning. Every phase of the roadmap, the last one
+included, names what ships in it and what it depends on: a final phase
+that says only "scale what works" is not sequenced.
 
 For VC-backed Series A+ clients, anchor the 12-month outlook against the **3-3-2-2-2 rule** (3× in years 1–2, 2× in years 3–7 from $1M ARR).
 

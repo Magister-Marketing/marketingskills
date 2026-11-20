@@ -20,11 +20,11 @@ Current versions of all skills. Agents can compare against local versions to che
 | content-strategy | 2.0.1 | 2026-10-27 |
 | conversion-tracking | 1.0.6 | 2026-11-17 |
 | copy-editing | 2.0.0 | 2026-05-05 |
-| copywriting | 2.1.6 | 2026-10-27 |
+| copywriting | 2.1.7 | 2026-11-19 |
 | cro | 2.0.0 | 2026-05-05 |
 | customer-research | 2.0.1 | 2026-07-10 |
 | directory-submissions | 2.0.1 | 2026-07-30 |
-| emails | 2.0.2 | 2026-10-06 |
+| emails | 2.0.3 | 2026-11-19 |
 | events | 1.0.3 | 2026-11-17 |
 | free-tools | 2.0.0 | 2026-05-05 |
 | image | 2.0.3 | 2026-10-27 |
@@ -35,7 +35,7 @@ Current versions of all skills. Agents can compare against local versions to che
 | marketing-council | 1.0.0 | 2026-07-06 |
 | marketing-ideas | 2.0.0 | 2026-05-05 |
 | marketing-loops | 1.2.0 | 2026-07-10 |
-| marketing-plan | 1.2.2 | 2026-10-27 |
+| marketing-plan | 1.2.3 | 2026-11-19 |
 | marketing-psychology | 2.0.0 | 2026-05-05 |
 | offers | 1.0.0 | 2026-06-16 |
 | onboarding | 2.0.0 | 2026-05-05 |
@@ -59,6 +59,22 @@ Current versions of all skills. Agents can compare against local versions to che
 | video | 2.1.2 | 2026-10-27 |
 
 ## Recent Changes
+
+### 2.8.23 (2026-11-19)
+
+- **A built page's primary action works**: copywriting (2.1.7) keeps the
+  primary CTA a usable link when no destination was supplied: it points
+  at a section of the same page, and the owner is told which link to swap
+  in an HTML comment or the hand-off message. It is never shipped
+  disabled, without a link, or beside copy telling visitors the action is
+  unavailable, and no URL is made up.
+- **A correction keeps what is right**: emails (2.0.3) repairs a draft by
+  changing only the lines the facts contradict or cannot support; the
+  draft's accurate specifics stay in the corrected sequence.
+- **The positioning is the plan's spine**: marketing-plan (1.2.3) reuses
+  the positioning line's own words in each channel's message, phase theme
+  and test variant, and every roadmap phase, the last included, names what
+  ships and what it depends on.
 
 ### 2.8.22 (2026-11-09)
 

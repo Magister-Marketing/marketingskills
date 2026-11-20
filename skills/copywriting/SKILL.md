@@ -2,7 +2,7 @@
 name: copywriting
 description: "Write, rewrite, or draft persuasive site and brand copy — homepage, landing, pricing, feature pages; headlines, value props, CTAs. Claims must be supportable; a declined claim names the evidence that would unlock it."
 metadata:
-  version: 2.1.6
+  version: 2.1.7
 ---
 
 # Copywriting
@@ -101,6 +101,19 @@ the reply is that form and nothing else. An HTML document starts at
 commentary around it; a fenced or annotated document is not "only the
 document." Say anything you need to say inside the deliverable or in a
 separate message.
+
+### A Built Page's Primary Action Works
+On a page you build (HTML, a component, a template), the primary CTA is a
+control a visitor can use: an `<a href>` styled as the button, pointing at
+the destination the request or the brand supplies. With no destination
+supplied, the CTA still works. Link it to a section of the same page that
+carries the matching `id` (the "next step" or contact section), and tell
+the owner which link to swap where the owner reads and the visitor does
+not: an HTML comment beside the link, or the hand-off message. Never ship
+the CTA disabled, without a link, or beside copy telling visitors the
+action is unavailable ("ordering opens soon", "not available here yet"). A missing
+URL is a note for the owner, not a reason to switch off the one thing the
+page is for, and it is no license to make up a URL either.
 
 ---
 
