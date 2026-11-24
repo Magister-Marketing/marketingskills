@@ -1,6 +1,6 @@
 # AI Image Prompting Guide
 
-How to write effective prompts for AI image generation models (Gemini/Nano Banana, Flux, Ideogram, DALL-E, Midjourney).
+How to write effective prompts for AI image generation models (Gemini image, Flux, Ideogram, GPT Image, Midjourney).
 
 ---
 
@@ -130,49 +130,49 @@ modern SaaS product presentation style,
 
 ### Gemini Image (Google)
 
-- Best all-around for marketing images — good quality, reasonable cost
+- A general-purpose option for marketing images
 - Supports **image editing** — upload an existing image and describe changes
-- Decent text rendering — can handle short headlines
+- Renders text; keep it to short headlines
 - Specify "high resolution" for best output
 - Works well with detailed, descriptive prompts
-- Same API as text generation — easy to integrate
+- Called through the Gemini API; takes up to 14 reference images in one request
 
 ### Flux (Black Forest Labs)
 
-- **Multi-image reference** is the killer feature — upload product screenshots, brand assets, or style references
-- Best for **brand consistency** across a set of images
-- Use Flux Pro for final assets, Flux Dev for rapid iteration
-- Flux Klein for high-volume batch generation (cheapest)
+- **Multi-image reference** is the main reason to pick it: upload product screenshots, brand assets, or style references (up to ten on FLUX 3 Image)
+- Fits **brand consistency** across a set of images
+- Use FLUX 3 Image for final assets and a Klein tier for drafts. FLUX.2 [dev] has open weights for local, non-commercial use only
+- The Klein tiers are the lower-cost option for high-volume batches (check [BFL pricing](https://docs.bfl.ai/quick_start/pricing))
 - Style transfer via reference images > style keywords in prompt
 - Prompts can be shorter than other models — the references do heavy lifting
 
 ### Ideogram
 
-- **Best text rendering** of any model (industry-leading accuracy)
+- **Strong text rendering**, its main differentiator
 - Use when you need headlines, taglines, or brand names in the image
-- Style reference system (up to 3 images) for brand consistency
+- Style references (up to 10 images through the API) for brand consistency
 - Supports "Magic Prompt" auto-enhancement
 - Keep text requests simple — 3-5 words max for reliability
-- Best for social graphics and banners that need text baked in
+- Fits social graphics and banners that need text baked in
 
 ### GPT Image (OpenAI)
 
-- Current models: `gpt-image-1` and variants (DALL-E 3 is deprecated)
+- OpenAI points new integrations to `gpt-image-2.6-sunburst` or `gpt-image-2.6-flare` (checked 2026-11-19). Older IDs are on a shutdown schedule; check OpenAI's deprecations page before pinning one
 - Integrated with ChatGPT — conversational image generation
 - Good at following detailed prompts
-- Decent text rendering (behind Ideogram, comparable to Gemini)
+- Renders text; test your headline before relying on it
 - Automatic prompt rewriting — may deviate from exact request
-- Best for quick one-offs through ChatGPT interface
+- Fits quick one-offs through the ChatGPT interface
 - API gives more control than ChatGPT interface
 
 ### Midjourney
 
-- Highest aesthetic quality for artistic/editorial images
+- Known for stylised, art-directed output
 - No official API — Discord-based or web interface
 - **Not agent-friendly** — use for manual creative exploration only
 - Style flags: `--style raw` for less stylized, `--ar 16:9` for aspect ratio
-- Best for hero images where pure visual quality matters most
-- V6+ has improved text rendering but still unreliable
+- Fits hero images where art direction matters more than exact control
+- Text rendering has improved across versions but is harder to control than in the text-focused models. Check the current version's notes
 
 ---
 
@@ -222,7 +222,7 @@ When you need multiple images with consistent style (e.g., a blog series or soci
 
 ## Cost Optimization
 
-- **Iterate at low quality first** — use Flux Dev or Gemini Flash for drafts, upgrade for finals
+- **Iterate at low quality first** — use FLUX.2 [dev] or Gemini Flash for drafts, upgrade for finals
 - **Use references over long prompts** — Flux multi-reference produces more consistent results with fewer retries
 - **Batch similar requests** — generate all blog headers in one session with the same style
 - **Cache and reuse** — abstract backgrounds, patterns, and textures can be reused across multiple images

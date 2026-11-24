@@ -1,18 +1,30 @@
 #!/usr/bin/env node
 
+const rawArgs = process.argv.slice(2)
 const API_KEY = process.env.SAVVYCAL_API_KEY
 const BASE_URL = 'https://api.savvycal.com/v1'
 
-if (!API_KEY) {
+if ((!API_KEY) && rawArgs.length > 0) {
   console.error(JSON.stringify({ error: 'SAVVYCAL_API_KEY environment variable required' }))
   process.exit(1)
 }
+
+
+function requestSignal() {
+  const raw = args['timeout-ms'] ?? '120000'
+  const ms = Number(raw)
+  if (typeof raw !== 'string' || !/^\d+$/.test(raw) || !Number.isSafeInteger(ms) || ms < 1 || ms > 600000) {
+    throw new Error('--timeout-ms must be an integer from 1 to 600000')
+  }
+  return AbortSignal.timeout(ms)
+}
+
 
 async function api(method, path, body) {
   if (args['dry-run']) {
     return { _dry_run: true, method, url: `${BASE_URL}${path}`, headers: { Authorization: '***', 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: body || undefined }
   }
-  const res = await fetch(`${BASE_URL}${path}`, {
+  const res = await fetch(`${BASE_URL}${path}`, { signal: requestSignal(),
     method,
     headers: {
       'Authorization': `Bearer ${API_KEY}`,
@@ -21,6 +33,7 @@ async function api(method, path, body) {
     },
     body: body ? JSON.stringify(body) : undefined,
   })
+  if (res.status >= 400) process.exitCode = 1
   const text = await res.text()
   try {
     return JSON.parse(text)
@@ -49,7 +62,7 @@ function parseArgs(args) {
   return result
 }
 
-const args = parseArgs(process.argv.slice(2))
+const args = parseArgs(rawArgs)
 const [cmd, sub, ...rest] = args._
 
 async function main() {
@@ -68,60 +81,67 @@ async function main() {
           params.set('limit', String(limit))
           if (args.after) params.set('after', args.after)
           if (args.before) params.set('before', args.before)
-          result = await api('GET', `/scheduling-links?${params}`)
+          for (const key of ['state', 'scope', 'q']) if (args[key]) params.set(key, args[key])
+          result = await api('GET', `/links?${params}`)
           break
         }
         case 'get': {
           const id = args.id
           if (!id) { result = { error: '--id required' }; break }
-          result = await api('GET', `/scheduling-links/${id}`)
+          result = await api('GET', `/links/${id}`)
           break
         }
         case 'create': {
           const name = args.name
           if (!name) { result = { error: '--name required' }; break }
+          if (args.duration) { result = { error: 'Duration is not a SavvyCal API field. Set durations in SavvyCal or through its MCP server.' }; break }
           const body = { name }
           if (args.slug) body.slug = args.slug
-          if (args.duration) body.duration_minutes = Number(args.duration)
-          result = await api('POST', '/scheduling-links', body)
+          if (args.description) body.description = args.description
+          if (args['private-name']) body.private_name = args['private-name']
+          if (args.type) body.type = args.type
+          result = await api('POST', '/links', body)
           break
         }
         case 'update': {
           const id = args.id
           if (!id) { result = { error: '--id required' }; break }
+          if (args.duration) { result = { error: 'Duration is not a SavvyCal API field. Set durations in SavvyCal or through its MCP server.' }; break }
           const body = {}
           if (args.name) body.name = args.name
           if (args.slug) body.slug = args.slug
-          if (args.duration) body.duration_minutes = Number(args.duration)
-          result = await api('PATCH', `/scheduling-links/${id}`, body)
+          if (args.description) body.description = args.description
+          if (args['private-name']) body.private_name = args['private-name']
+          if (args.type) body.type = args.type
+          result = await api('PATCH', `/links/${id}`, body)
           break
         }
         case 'delete': {
           const id = args.id
           if (!id) { result = { error: '--id required' }; break }
-          result = await api('DELETE', `/scheduling-links/${id}`)
+          result = await api('DELETE', `/links/${id}`)
           break
         }
         case 'duplicate': {
           const id = args.id
           if (!id) { result = { error: '--id required' }; break }
-          result = await api('POST', `/scheduling-links/${id}/duplicate`)
+          result = await api('POST', `/links/${id}/duplicate`)
           break
         }
         case 'toggle': {
           const id = args.id
           if (!id) { result = { error: '--id required' }; break }
-          result = await api('POST', `/scheduling-links/${id}/toggle`)
+          result = await api('POST', `/links/${id}/toggle`)
           break
         }
         case 'slots': {
           const id = args.id
           if (!id) { result = { error: '--id required' }; break }
           const params = new URLSearchParams()
-          if (args['start-time']) params.set('start_time', args['start-time'])
-          if (args['end-time']) params.set('end_time', args['end-time'])
+          if (args.from) params.set('from', args.from)
+          if (args.until) params.set('until', args.until)
           const qs = params.toString()
-          result = await api('GET', `/scheduling-links/${id}/slots${qs ? '?' + qs : ''}`)
+          result = await api('GET', `/links/${id}/slots${qs ? '?' + qs : ''}`)
           break
         }
         default:
@@ -136,6 +156,8 @@ async function main() {
           params.set('limit', String(limit))
           if (args.after) params.set('after', args.after)
           if (args.before) params.set('before', args.before)
+          for (const key of ['period', 'from', 'until', 'state', 'link', 'attendance', 'q', 'direction']) if (args[key]) params.set(key, args[key])
+          if (args['time-zone']) params.set('time_zone', args['time-zone'])
           result = await api('GET', `/events?${params}`)
           break
         }
@@ -148,16 +170,19 @@ async function main() {
         case 'create': {
           const linkId = args['link-id']
           const startAt = args['start-at']
+          const endAt = args['end-at']
+          const timeZone = args['time-zone']
           const name = args.name
           const email = args.email
-          if (!linkId || !startAt || !name || !email) {
-            result = { error: '--link-id, --start-at, --name, and --email required' }
+          if (!linkId || !startAt || !endAt || !timeZone || !name || !email) {
+            result = { error: '--link-id, --start-at, --end-at, --time-zone, --name, and --email required' }
             break
           }
-          result = await api('POST', '/events', {
-            scheduling_link_id: linkId,
+          result = await api('POST', `/links/${encodeURIComponent(linkId)}/events`, {
             start_at: startAt,
-            name,
+            end_at: endAt,
+            time_zone: timeZone,
+            display_name: name,
             email,
           })
           break
@@ -165,7 +190,7 @@ async function main() {
         case 'cancel': {
           const id = args.id
           if (!id) { result = { error: '--id required' }; break }
-          result = await api('POST', `/events/${id}/cancel`)
+          result = await api('POST', `/events/${id}/cancel`, args.reason ? { cancel_reason: args.reason } : undefined)
           break
         }
         default:
@@ -185,9 +210,8 @@ async function main() {
         }
         case 'create': {
           const url = args.url
-          const events = args.events?.split(',')
-          if (!url || !events) { result = { error: '--url and --events (comma-separated) required' }; break }
-          result = await api('POST', '/webhooks', { url, events })
+          if (!url) { result = { error: '--url required' }; break }
+          result = await api('POST', '/webhooks', { url })
           break
         }
         case 'delete': {
@@ -206,14 +230,15 @@ async function main() {
         error: 'Unknown command',
         usage: {
           me: 'me',
-          links: 'links [list | get --id <id> | create --name <name> | update --id <id> | delete --id <id> | duplicate --id <id> | toggle --id <id> | slots --id <id>]',
-          events: 'events [list | get --id <id> | create --link-id <id> --start-at <iso> --name <name> --email <email> | cancel --id <id>]',
-          webhooks: 'webhooks [list | create --url <url> --events <e1,e2> | delete --id <id>]',
+          links: 'links [list [--state <state>] [--scope <id>] [--q <text>] | get --id <id> | create --name <name> [--slug <slug>] [--description <text>] [--private-name <name>] [--type recurring|single] | update --id <id> | delete --id <id> | duplicate --id <id> | toggle --id <id> | slots --id <id> [--from <iso>] [--until <iso>]]',
+          events: 'events [list [--period upcoming|past|fixed|all] [--from <date>] [--until <date>] [--time-zone <iana>] [--state <state>] [--link <id>] [--attendance attending|any] [--q <text>] [--direction asc|desc] | get --id <id> | create --link-id <id> --start-at <iso> --end-at <iso> --time-zone <iana> --name <name> --email <email> | cancel --id <id> [--reason <text>]]',
+          webhooks: 'webhooks [list | create --url <url> | delete --id <id>]',
           options: '--limit <n> --after <cursor> --before <cursor>',
         }
       }
   }
 
+  if (result?.error && rawArgs.length > 0) process.exitCode = 1
   console.log(JSON.stringify(result, null, 2))
 }
 

@@ -1,19 +1,31 @@
 #!/usr/bin/env node
 
+const rawArgs = process.argv.slice(2)
 const API_KEY = process.env.WISTIA_API_KEY
 const BASE_URL = 'https://api.wistia.com/v1'
 
-if (!API_KEY) {
+if ((!API_KEY) && rawArgs.length > 0) {
   console.error(JSON.stringify({ error: 'WISTIA_API_KEY environment variable required' }))
   process.exit(1)
 }
 
-async function api(method, path, body) {
-  const auth = 'Basic ' + Buffer.from(`${API_KEY}:`).toString('base64')
-  if (args['dry-run']) {
-    return { _dry_run: true, method, url: `${BASE_URL}${path}`, headers: { 'Authorization': '***', 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: body || undefined }
+
+function requestSignal() {
+  const raw = args['timeout-ms'] ?? '120000'
+  const ms = Number(raw)
+  if (typeof raw !== 'string' || !/^\d+$/.test(raw) || !Number.isSafeInteger(ms) || ms < 1 || ms > 600000) {
+    throw new Error('--timeout-ms must be an integer from 1 to 600000')
   }
-  const res = await fetch(`${BASE_URL}${path}`, {
+  return AbortSignal.timeout(ms)
+}
+
+
+async function api(method, path, body) {
+  const auth = `Bearer ${API_KEY}`
+  if (args['dry-run']) {
+    return { _dry_run: true, method, url: `${BASE_URL}${path}`, headers: { 'Authorization': 'Bearer ***', 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: body || undefined }
+  }
+  const res = await fetch(`${BASE_URL}${path}`, { signal: requestSignal(),
     method,
     headers: {
       'Authorization': auth,
@@ -22,6 +34,7 @@ async function api(method, path, body) {
     },
     body: body ? JSON.stringify(body) : undefined,
   })
+  if (res.status >= 400) process.exitCode = 1
   const text = await res.text()
   try {
     return JSON.parse(text)
@@ -50,7 +63,7 @@ function parseArgs(args) {
   return result
 }
 
-const args = parseArgs(process.argv.slice(2))
+const args = parseArgs(rawArgs)
 const [cmd, sub, ...rest] = args._
 const page = args.page ? Number(args.page) : 1
 const perPage = args['per-page'] ? Number(args['per-page']) : 25
@@ -74,7 +87,10 @@ async function main() {
           const name = args.name
           if (!name) { result = { error: '--name required' }; break }
           const body = { name }
-          if (args.public) body.public = true
+          if (args.public !== undefined) {
+            if (![true, 'true', 'false'].includes(args.public)) { result = { error: '--public must be true or false' }; break }
+            body.public = args.public !== 'false'
+          }
           result = await api('POST', '/projects.json', body)
           break
         }
@@ -237,7 +253,7 @@ async function main() {
       result = {
         error: 'Unknown command',
         usage: {
-          projects: 'projects [list | get --id <id> | create --name <name> | update --id <id> --name <name> | delete --id <id>]',
+          projects: 'projects [list | get --id <id> | create --name <name> [--public true|false] | update --id <id> --name <name> | delete --id <id>]',
           medias: 'medias [list [--project <id>] | get --id <id> | update --id <id> --name <name> | delete --id <id> | copy --id <id> [--target-project <id>] | stats --id <id>]',
           stats: 'stats [account | project --id <id> | media --id <id> | media-by-date --id <id> [--start <date> --end <date>] | engagement --id <id> | visitors | visitor --key <key> | events [--media-id <id>]]',
           account: 'account',
@@ -247,6 +263,7 @@ async function main() {
       }
   }
 
+  if (result?.error && rawArgs.length > 0) process.exitCode = 1
   console.log(JSON.stringify(result, null, 2))
 }
 

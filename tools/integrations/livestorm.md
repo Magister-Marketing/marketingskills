@@ -1,5 +1,7 @@
 # Livestorm
 
+> **◆ Verified Partner integration.** Livestorm sponsors Marketing Skills. This integration is disclosed and vetted for fit; it does **not** change what any skill recommends. It's listed here alongside the neutral options for the same job — use it when it's the right fit, not because it's a partner. See [Verified Partners](../REGISTRY.md#verified-partners).
+
 Video engagement platform for webinars, virtual events, and online meetings with built-in analytics and integrations.
 
 ## Capabilities
@@ -7,7 +9,7 @@ Video engagement platform for webinars, virtual events, and online meetings with
 | Integration | Available | Notes |
 |-------------|-----------|-------|
 | API | ✓ | Events, Sessions, People, Recordings, Webhooks |
-| MCP | - | Not available |
+| MCP | ✓ | Official remote server at `mcp.livestorm.co` ([docs](https://developers.livestorm.co/docs/model-context-protocol-mcp)), checked 2026-10-27 |
 | CLI | ✓ | [livestorm.js](../clis/livestorm.js) |
 | SDK | - | REST API with JSON:API format |
 
@@ -136,15 +138,20 @@ Headers:
   "data": {
     "type": "people",
     "attributes": {
-      "fields": {
-        "email": "attendee@example.com",
-        "first_name": "Jane",
-        "last_name": "Doe"
-      }
+      "fields": [
+        { "id": "email", "value": "attendee@example.com" },
+        { "id": "first_name", "value": "Jane" },
+        { "id": "last_name", "value": "Doe" }
+      ]
     }
   }
 }
 ```
+
+Registration fields are an array of `id`/`value` pairs, including the required
+email field. See the official [registration contract](https://developers.livestorm.co/reference/post_sessions-id-people).
+Private API tokens are sent directly in `Authorization`, as described in
+[API token authentication](https://developers.livestorm.co/docs/api-token-authentication).
 
 ### List session participants
 
@@ -218,8 +225,8 @@ Headers:
   "data": {
     "type": "webhooks",
     "attributes": {
-      "target_url": "https://example.com/webhook",
-      "event_name": "attendance"
+      "url": "https://example.com/webhook",
+      "event": "people.attended"
     }
   }
 }
@@ -282,9 +289,10 @@ Livestorm follows the JSON:API specification:
 - `last_name` - Last name
 
 ### Webhook Events
-- `attendance` - Triggered on session attendance
-- `registration` - Triggered on new registration
-- `unregistration` - Triggered on unregistration
+- `event.created`, `event.published` - Event lifecycle
+- `session.created`, `session.started`, `session.ended` - Session lifecycle
+- `people.registered`, `people.attended`, `people.not_attended`, `people.watched_replay` - Registrant activity
+- `job.ended`
 
 ## When to Use
 
@@ -305,9 +313,7 @@ Livestorm follows the JSON:API specification:
 
 ## Relevant Skills
 
-- webinar-marketing
-- event-marketing
-- lead-generation
+- events
+- emails
+- co-marketing
 - content-strategy
-- lifecycle-marketing
-- customer-engagement

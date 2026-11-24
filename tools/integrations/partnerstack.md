@@ -7,7 +7,7 @@ Partner and affiliate program management platform for SaaS companies with deal t
 | Integration | Available | Notes |
 |-------------|-----------|-------|
 | API | ✓ | Vendor API v2 for partnerships, deals, customers, transactions |
-| MCP | - | Not available |
+| MCP | ✓ | Official remote server at `mcp.partnerstack.com`, checked 2026-10-27 |
 | CLI | ✓ | [partnerstack.js](../clis/partnerstack.js) |
 | SDK | - | No official SDK; REST API with Basic Auth |
 
@@ -93,12 +93,16 @@ POST https://api.partnerstack.com/api/v2/deals
 
 ### Record an action (event-based rewards)
 
+The CLI maps `--customer-key` to the customer target and `--action-key` to
+the action `type`. `--value` is the number of occurrences, defaulting to one.
+
 ```bash
 POST https://api.partnerstack.com/api/v2/actions
 
 {
-  "customer_key": "cust_abc123",
-  "key": "signup_completed",
+  "target_key": "cust_abc123",
+  "target_type": "customer",
+  "type": "signup_completed",
   "value": 1
 }
 ```
@@ -142,11 +146,14 @@ GET https://api.partnerstack.com/api/v2/groups
 
 ### Manage webhooks
 
+Both the destination URL and a nonempty event list are required when creating
+a webhook (`--target` and `--events` in the CLI).
+
 ```bash
 POST https://api.partnerstack.com/api/v2/webhooks
 
 {
-  "target": "https://example.com/webhooks/partnerstack",
+  "target_url": "https://example.com/webhooks/partnerstack",
   "events": ["deal.created", "transaction.created", "customer.created"]
 }
 ```

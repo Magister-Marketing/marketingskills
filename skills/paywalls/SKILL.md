@@ -2,7 +2,7 @@
 name: paywalls
 description: "Design in-app paywalls and upgrade screens — feature gates, usage limits, trial expiration, free-to-paid conversion moments and timing."
 metadata:
-  version: 2.0.0
+  version: 2.1.5
 ---
 
 # Paywall and Upgrade Screen CRO
@@ -95,7 +95,7 @@ After X days of free use:
 
 6. **CTA** - Specific and value-oriented: "Start Getting [Benefit]"
 
-7. **Escape Hatch** - Clear "Not now" or "Continue with Free"
+7. **Escape Hatch** - Clear "Not now", or "Continue with Free" when a free plan exists (paid-only products still need a visible way back)
 
 ---
 
@@ -196,6 +196,8 @@ What you've accomplished:
 
 **For comprehensive experiment ideas**: See [references/experiments.md](references/experiments.md)
 
+**For consumer iOS/Android subscription apps** (paywall inside onboarding, yearly-first plans, trials and reminders, store fees, web checkout, revenue per download): See [references/mobile-subscription-paywalls.md](references/mobile-subscription-paywalls.md)
+
 ---
 
 ## Anti-Patterns to Avoid
@@ -204,6 +206,7 @@ What you've accomplished:
 - Hiding the close button
 - Confusing plan selection
 - Guilt-trip copy
+- Fake countdowns or "limited" offers with no real deadline
 
 ### Conversion Killers
 - Asking before value delivered

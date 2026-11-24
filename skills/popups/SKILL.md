@@ -2,7 +2,7 @@
 name: popups
 description: "Create converting popups, modals, slide-ins, and banners — exit-intent, scroll, and click triggers; frequency caps, copy, compliance."
 metadata:
-  version: 2.0.0
+  version: 2.0.4
 ---
 
 # Popup CRO
@@ -451,7 +451,6 @@ Ideas to A/B test with expected outcomes
 ## Related Skills
 
 - **lead-magnets**: For planning lead magnets to promote via popups
-- **cro**: For optimizing the form inside the popup
-- **cro**: For the page context around popups
+- **cro**: For optimizing the form inside the popup and the page around it
 - **emails**: For what happens after popup conversion
 - **ab-testing**: For testing popup variations

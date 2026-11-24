@@ -2,7 +2,7 @@
 name: marketing-plan
 description: "Produce an fCMO-grade 12-month marketing plan — 13 AARRR sections, 90-day roadmap, budget math, ops stack — as a Notion-ready doc."
 metadata:
-  version: 1.2.3
+  version: 1.2.6
 ---
 
 # Marketing Plan
@@ -38,6 +38,8 @@ Examples:
 
 On invocation, the skill reads `~/marketing-plans/{client-slug}/progress.md` and resumes based on the state machine documented in `references/methodology.md` Step 1.1.2 (fresh → INIT → REVIEW → FINALIZE → finalized). Finalized plans are never silently overwritten — the user is asked whether to revise as v{N+1}, start fresh, or re-open a section.
 
+**Path safety.** Build `{client-slug}` only by slugifying the client name to lowercase `[a-z0-9-]` (strip everything else); reject `..`, `/`, and absolute paths, and never read or write outside `~/marketing-plans/`. On a shared machine this keeps one client's plan — and their data — from leaking into another client's context.
+
 ## The three phases
 
 The full workflow lives in `references/methodology.md`. Quick summary:
@@ -62,7 +64,7 @@ Save each confirmed section to the progress file as you go. The skill is resumab
 
 Compile all 13 sections into `final_plan.md`. Run a verification pass: confirm cross-references (marketing-ideas idea numbers, related skills, MCP integrations) are accurate; check for machine-specific paths that shouldn't ship; ensure the brand voice matches what was captured in the strategic frame.
 
-Optionally offer to publish to a shared GitHub repo (e.g., `{client-org}/{client-context}/marketing/plan.md`) if the user wants to share it with the team.
+Optionally offer to publish to a **private GitHub repo** (e.g., `{client-org}/{client-context}/marketing/plan.md`), only with explicit client authorization to share this plan with that repo's members. Plans contain confidential budgets, metrics, and funding details. Before cloning, copying, committing, or pushing, verify private visibility and confirm client authorization; if either is missing or cannot be verified, keep the plan local and explain the blocker.
 
 ## The 13-section plan structure
 
@@ -100,6 +102,34 @@ When the plan defines stage metrics, every rate divides matching closed
 windows: an activation rate counts only cohorts whose observation window has
 ended (a trial still inside its window is pending, not failed — keep it out of
 the denominator and label it pending).
+
+## Marketing as investing — the north-star framing
+
+AARRR gives the plan its *structure*. This gives it its *spine*. Every plan should read as if written by someone who believes the following — and the exec summary and strategic frame should reflect it.
+
+Adapted from *Founding Marketing* by Corey Haines (Ch. 1).
+
+- **Marketing is like investing.** Treat the plan as a **compounding portfolio**, not a campaign calendar. Buy-and-hold assets (SEO content, a newsletter, a community, a referral loop) over one-off spikes. Diversify — no single channel carries the plan. Time in market beats timing the market.
+- **No silver bullets, a hundred golden pellets.** There is no one move that fixes growth. The plan wins by stacking many small compounding assets. Be suspicious of any recommendation that promises to be *the* thing.
+- **One asset, many returns.** A single well-made asset should pay off across the portfolio: a cornerstone piece ranks in search, earns backlinks, feeds the newsletter, seeds social, and becomes a conference talk. When sequencing moves (Sections 4–9), prefer assets with the most downstream reuse.
+- **Audition, not an auction.** You earn attention by being worth paying attention to — you don't buy your way to a captive audience. Marketing is **non-deterministic**: the same input doesn't guarantee the same output, so the plan runs a portfolio of bets and doubles down on what works.
+- **Hope is not a strategy.** Every move in the plan names its mechanism and its leading indicator. "Post more and hope it works" is not a line item. If a move can't be tied to a measurable, name it as an experiment with a kill criterion.
+
+### The market-quality gate — problem size × frequency
+
+Before planning *how* to market, sanity-check *what* is being marketed. Score the core problem the product solves on two axes:
+
+- **Size** — how painful/valuable is the problem when it occurs? (small → large)
+- **Frequency** — how often does the customer feel it? (rare → constant)
+
+|  | **Low frequency** | **High frequency** |
+|---|---|---|
+| **Large problem** | Winnable but expensive to keep top-of-mind (long sales cycles, retargeting-heavy) | **Best quadrant — build here.** Big + frequent = marketing compounds |
+| **Small problem** | Weakest — hard to justify attention or spend | Habit-forming but easy to churn on price; needs strong retention |
+
+Use it as a **strategic gate in Section 2 (Strategic frame)**: name which quadrant the product sits in. Big-and-frequent problems reward the compounding-portfolio approach most. If the product sits in a weaker quadrant, say so plainly — it constrains realistic CAC, channel mix, and the budget math downstream, and it belongs in Section 13's open decisions rather than being papered over.
+
+When the gate raises "is this market big enough?", size it with `references/market-sizing.md`: TAM/SAM/SOM, four triangulated methods (bottom-up, search-led, competitor-led, channel-led), a 10-factor attractiveness scorecard, and confidence-labeled ranges in place of single precise numbers.
 
 ## The current-state rubric
 
@@ -171,6 +201,8 @@ Pitch decks show hockey sticks. Real growth is a series of S-curves with plateau
 - **Phase identification** — $0–10K ARR (grueling), $10K–100K (treacherous middle), $100K–1M (acceleration). Section 3 names the current phase; Section 10 sequences the next.
 - **Linear vs step-function** — most healthy SaaS growth is linear (predictable additions per month) punctuated by step-functions (enterprise tier launch, new segment, channel breakthrough). The plan should describe both honestly — not promise exponential.
 - **S-curve layering** — Channel × Product × Market. Start the next S-curve while the current one is still growing. Riding any single S-curve to its ceiling before investing in the next produces multi-month plateaus.
+- **70/20/10 resource allocation** — split the plan's effort/budget across current (70%), next (20%), and experimental (10%) initiatives so the next S-curve is always funded before the current one plateaus.
+- **Weekly tracking cadence** — review leading indicators weekly and watch for S-curve plateau signals; a flattening curve is the trigger to shift weight toward the next one, not a reason to push harder on the current.
 
 ## Team and agency model
 

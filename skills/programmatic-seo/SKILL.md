@@ -2,7 +2,7 @@
 name: programmatic-seo
 description: "Build SEO pages at scale from templates and data (pSEO) — location, comparison, integration, glossary playbooks; avoid thin content."
 metadata:
-  version: 2.0.0
+  version: 2.1.3
 ---
 
 # Programmatic SEO
@@ -54,7 +54,7 @@ Hierarchy of data defensibility:
 5. Public (anyone can use—weakest)
 
 ### 3. Clean URL Structure
-**Use subfolders, not subdomains** — subfolders consolidate domain authority while subdomains split it:
+**Prefer subfolders to subdomains.** Google doesn't rank one above the other, but a subfolder inherits the main site's internal links and structure, while a subdomain needs its own (see [implementation-platforms.md](references/implementation-platforms.md)):
 - Good: `yoursite.com/templates/resume/`
 - Bad: `templates.yoursite.com/resume/`
 
@@ -163,6 +163,10 @@ You can layer multiple playbooks (e.g., "Best coworking spaces in San Diego").
 - Noindex very thin variations
 - Manage crawl budget thoughtfully
 - Separate sitemaps by page type
+
+### 6. Choose the Build Platform
+
+Check that the platform can hold the page count, refresh the data, render server-side HTML, branch on data for conditional sections, and control indexation per page. Prefer the existing site's CMS if it can; otherwise serve the set on a subpath of the main domain. Options and tradeoffs: [references/implementation-platforms.md](references/implementation-platforms.md).
 
 ---
 

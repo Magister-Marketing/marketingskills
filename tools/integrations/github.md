@@ -151,6 +151,15 @@ node tools/clis/github-prospects.js rate-limit
 - `--format csv`: output CSV; default is JSON
 - `--dry-run`: preview the request without sending
 
+### Enrichment failures
+
+If profile enrichment fails because of authentication, rate limits, or another
+HTTP error, `stargazers`, `forks`, and `watchers` exit with status 1 and a JSON
+diagnostic on stderr. They do not print a partial CSV or a misleading successful
+empty JSON export. A missing (404) user profile can still be skipped; a valid
+profile that does not match the requested filters is also skipped.
+
+
 ## When to Use
 
 - **SaaS account research** (primary use case): which companies' developers star a competitor, complement, or category-defining repo
@@ -188,3 +197,10 @@ See `skills/prospecting/references/saas-prospecting.md` and `data-sources.md` fo
 - prospecting (primary use case)
 - cold-email (outreach to buyers at interested companies, sourced elsewhere)
 - competitor-profiling (deeper research on the companies that show interest)
+
+### CSV export of public profiles
+
+`github-prospects.js --format csv` prefixes formula-like profile strings with
+an apostrophe so spreadsheet imports treat them as text. Numeric counts remain
+numeric. Use the default JSON format when you need the original unmodified
+profile values. CSV quoting alone does not prevent spreadsheet formula execution.

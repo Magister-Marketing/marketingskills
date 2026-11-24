@@ -7,6 +7,7 @@ Reusable content block patterns optimized for answer engines and AI citation.
 ## Contents
 - Answer Engine Optimization (AEO) Patterns (Definition Block, Step-by-Step Block, Comparison Table Block, Pros and Cons Block, FAQ Block, Listicle Block)
 - Generative Engine Optimization (GEO) Patterns (Statistic Citation Block, Expert Quote Block, Authoritative Claim Block, Self-Contained Answer Block, Evidence Sandwich Block)
+- Fact-Family Fan-Out Matrix
 - Domain-Specific GEO Tactics (Technology Content, Health/Medical Content, Financial Content, Legal Content, Business/Marketing Content)
 - Voice Search Optimization (Question Formats for Voice, Voice-Optimized Answer Structure)
 
@@ -160,17 +161,17 @@ Use for "Best [X]", "Top [X]", "[Number] ways to [X]" queries.
 
 ## Generative Engine Optimization (GEO) Patterns
 
-These patterns optimize content for citation by AI assistants like ChatGPT, Claude, Perplexity, and Gemini.
+These patterns optimize content for citation by AI assistants like ChatGPT, Claude, Perplexity, and Gemini. The examples show the shape only: their numbers, quotes, and sources are illustrative, not citable facts. Replace them with real, dated sources.
 
 ### Statistic Citation Block
 
-Statistics increase AI citation rates by 15-30%. Always include sources.
+Adding statistics raised visibility about 31% in the Princeton GEO study (KDD 2024). Always include sources.
 
 ```markdown
 [Claim statement]. According to [Source/Organization], [specific statistic with number and timeframe]. [Context for why this matters].
 ```
 
-**Example:**
+**Example (illustrative, not real data):**
 ```markdown
 Mobile optimization is no longer optional for SEO success. According to Google's 2024 Core Web Vitals report, 70% of web traffic now comes from mobile devices, and pages failing mobile usability standards see 24% higher bounce rates. This makes mobile-first indexing a critical ranking factor.
 ```
@@ -183,7 +184,7 @@ Named expert attribution adds credibility and increases citation likelihood.
 "[Direct quote from expert]," says [Expert Name], [Title/Role] at [Organization]. [1 sentence of context or interpretation].
 ```
 
-**Example:**
+**Example (illustrative, not real data):**
 ```markdown
 "The shift from keyword-driven search to intent-driven discovery represents the most significant change in SEO since mobile-first indexing," says Rand Fishkin, Co-founder of SparkToro. This perspective highlights why content strategies must evolve beyond traditional keyword optimization.
 ```
@@ -209,7 +210,7 @@ Create quotable, standalone statements that AI can extract directly.
 **[Topic/Question]**: [Complete, self-contained answer that makes sense without additional context. Include specific details, numbers, or examples in 2-3 sentences.]
 ```
 
-**Example:**
+**Example (illustrative, not real data):**
 ```markdown
 **Ideal blog post length for SEO**: The optimal length for SEO blog posts is 1,500-2,500 words for competitive topics. This range allows comprehensive topic coverage while maintaining reader engagement. HubSpot research shows long-form content earns 77% more backlinks than short articles, directly impacting search rankings.
 ```
@@ -228,6 +229,29 @@ Evidence supporting this includes:
 
 [Concluding statement connecting evidence to actionable insight].
 ```
+
+---
+
+## Fact-Family Fan-Out Matrix
+
+Engines rewrite a prompt into several background searches before answering, and those searches are often plain fact lookups even when the prompt asked for advice. In Profound's 14-day tracking of 10,000 prompts, ChatGPT, Perplexity, and Copilot each ran roughly 1.4–2 searches per answer, but 91% of ChatGPT's search queries were unique across repeated runs, against 14% for Perplexity and 47% for Copilot (Profound, April 2026; observational, vendor research). Exact query strings won't repeat, so plan content around the stable **fact families** underneath them.
+
+1. **Pick a prompt family**, with its audience, buying stage, engine, and market.
+2. **List the fan-outs.** Use observed queries where you have them (ChatGPT's background queries can be extracted; see [format-volatility.md](format-volatility.md)). Otherwise infer them, and mark every inferred row as a hypothesis.
+3. **Break the job into fact families:** entities and category terms, factual sub-questions, comparison criteria, constraints (price, compatibility, location, recency), and the evidence that settles them (standards, definitions, reviews, primary data).
+4. **Fill the matrix**, one row per fact family:
+
+| Fact family | Observed or inferred | What the buyer needs | Current best source | Competitor source | Our owning page | Gap |
+|---|---|---|---|---|---|---|
+| Pricing for 10 seats | Observed | Monthly cost at 10 seats, annual discount | Third-party review (2025 prices) | Competitor pricing page | /pricing | Per-seat price not stated in text |
+| SOC 2 status | Inferred | Report type and date | None | Competitor trust page | /security | Page says "enterprise-grade," no report type |
+
+5. **Give each fact one owning page.** Improve or consolidate an existing page before creating a new one, and create one only when a real information gap exists. One strong page can answer several fact families. Never build a doorway page per fan-out query.
+6. **Retest across repeated runs and engines.** Expect different retrieval paths each time; judge by whether the fact family gets answered from your page.
+
+Engine priors to verify before relying on them: ChatGPT ranges widely across vocabulary and adjacent questions; Perplexity stays close to the prompt's own terms; Copilot compresses prompts into short search-style queries.
+
+*Adapted (re-expressed and restructured) from Profound's MIT-licensed ai-retrieval-fanout-mapper skill and its April 2026 study, credited.*
 
 ---
 

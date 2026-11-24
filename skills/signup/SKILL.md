@@ -2,7 +2,7 @@
 name: signup
 description: "Optimize signup and registration flows — field reduction, social auth, multi-step design, trust signals, drop-off fixes, trial activation."
 metadata:
-  version: 2.0.0
+  version: 2.0.3
 ---
 
 # Signup Flow CRO
@@ -353,6 +353,10 @@ Organized by:
 5. What happens immediately after signup?
 
 ---
+
+## Enrichment and Sales-Assisted Routing
+
+If a signup needs enriched company data for a sales-assist handoff, use the [revops inbound-routing playbook](https://github.com/coreyhaines31/marketingskills/blob/main/skills/revops/references/inbound-routing.md). Keep account creation separate from enrichment availability; a timeout or ambiguous company match must not become an implicit signup rejection.
 
 ## Related Skills
 

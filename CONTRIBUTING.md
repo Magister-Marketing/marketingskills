@@ -35,7 +35,7 @@ Optional frontmatter fields: `license` (default: MIT), `metadata` (author, versi
 
 - **Directory name**: lowercase, hyphens only (e.g., `emails`)
 - **Name field**: must match directory name exactly
-- **Description**: 1-1024 characters, include trigger phrases
+- **Description**: 1-500 characters: what the skill does, when to use it, and which related skill to use instead
 
 ### 4. Structure your skill
 
@@ -65,16 +65,34 @@ skills/your-skill-name/
 3. Keep changes focused and minimal
 4. Update the version in metadata if making significant changes
 
+## Mentioning Tools (the integrity rubric)
+
+This library is open source and contributions are welcome from **anyone — including the makers of tools, and paid partners.** We gate on the *content*, not the contributor. A contribution that names a tool (yours or anyone's) is fine as long as it makes an agent **aware** of the right option at the moment it's relevant, without manufacturing a recommendation. Concretely:
+
+- **Options, not one answer.** Present a tool alongside the real alternatives for the same job (including the free / DIY path), so the agent picks on fit — not because only one is named.
+- **At the point of relevance.** Surface a tool where an agent genuinely needs it (e.g. the implementation step), not injected into unrelated sections.
+- **No forced endorsement.** No "best," "recommended," or "use X instead." Describe what each option does and when it fits.
+- **One short description per tool, the same shape for every tool.** In a skill, a tool gets one clause on what it is and one on when to reach for it (see the Tools table in [`skills/link-building/SKILL.md`](skills/link-building/SKILL.md)). That is enough for an agent to bring the tool up where it fits. Setup, features, and commands belong in the tool's guide in `tools/integrations/`. Longer wording doesn't make an agent name a tool more often; it makes the agent name it first and name fewer alternatives ([tool awareness eval](evals/tool-awareness/README.md)).
+- **Facts over framing.** Recipes, code, capabilities, and honest tradeoffs (cost, effort, lead time) — verifiable, not marketing copy.
+- **Disclose self-interest.** If you're the tool's maker or a partner, say so. Partner tools are marked ◆ in [`tools/REGISTRY.md`](tools/REGISTRY.md#verified-partners); house tools (built by the maintainer) carry stricter disclosure.
+- **The swap test.** If you swapped your tool for a competitor, the section should still read as fair. If removing it breaks the guidance, it was shilling — rework it.
+
+The maintainer holds final editorial control and may edit or cut anything for neutrality and accuracy. Core skills stay editorially independent: sponsorship and contributions add content, they never buy a recommendation. Full program rules and boundaries — the tool taxonomy, what sponsorship buys and never buys, disclosure, and the partner lifecycle — are in [`tools/PARTNERS.md`](tools/PARTNERS.md).
+
+### Adding an integration guide for your own tool
+
+Makers are welcome to add a neutral guide to [`tools/integrations/`](tools/integrations/). It has to clear the [usefulness bar](tools/PARTNERS.md#toolsintegrations-spec-any-tool-partner-or-not): it lets an agent do the work (endpoints, MCP setup, CLI commands, auth), not sell the tool. Say in your PR that you build or work for the tool. These PRs are reviewed in a monthly batch. A merged guide is listed in the registry; featured placement (the ◆ badge, README and site listing, a launch announcement) comes with the [partner program](https://marketing-skills.com/sponsorship).
+
 ## Submitting Your Contribution
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/new-skill-name`)
 3. Make your changes
 4. Test locally with an AI agent
-5. Submit a pull request using the appropriate template:
-   - [New Skill](?template=new-skill.md)
-   - [Skill Update](?template=skill-update.md)
-   - [Documentation](?template=documentation.md)
+5. Submit a pull request using the appropriate template (append `?template=<name>.md` to the PR URL to pre-fill it):
+   - [New Skill](.github/PULL_REQUEST_TEMPLATE/new-skill.md) — `?template=new-skill.md`
+   - [Skill Update](.github/PULL_REQUEST_TEMPLATE/skill-update.md) — `?template=skill-update.md`
+   - [Documentation](.github/PULL_REQUEST_TEMPLATE/documentation.md) — `?template=documentation.md`
 
 ## Skill Quality Checklist
 
@@ -83,6 +101,21 @@ skills/your-skill-name/
 - [ ] Instructions are clear and actionable
 - [ ] No sensitive data or credentials
 - [ ] Follows existing skill patterns in the repo
+- [ ] Any tool mentions follow the [integrity rubric](#mentioning-tools-the-integrity-rubric) — options not one answer, disclosed, passes the swap test
+
+## Security
+
+This repo is mostly markdown (`skills/`, `tools/integrations/`) plus the zero-dependency Node.js CLIs in `tools/clis/` and the helper scripts in `scripts/`. An agent that installs a skill follows its text, so instructions hidden from a reviewer are the main risk, not only code.
+
+Pull requests to `main` that touch `skills/` or `tools/` run `node scripts/check-hidden-content.mjs`. It reports every HTML comment and `[//]: #` comment in markdown (`.md`, `.markdown`, `.mdx`) (GitHub hides them when it renders the file), runs of more than 20 blank lines, zero-width, bidi, filler and Unicode tag characters, downloaded scripts piped into a shell (`curl ... | sh`), webhook-catcher URLs, requests to send a secret such as `.env` or an API key to a URL or email address, NUL bytes and symlinks. It is a set of simple pattern checks, not a full review, and for now CI only warns. Run it locally before you open a PR:
+
+```bash
+node scripts/check-hidden-content.mjs
+```
+
+If a hit is legitimate, add an entry to `scripts/hidden-content-allowlist.json` with the `path`, the `rule`, the whole flagged `line` copied from the file (trimmed), and a `reason`, and say why in the PR. Blank runs, NUL bytes and symlinks can't be allowlisted; fix the file instead.
+
+To report a skill or file that looks malicious, open an issue that names the file and line. If you want to review changes before they reach your agent, install from a release tag (`v<x.y.z>`, see [Releases](https://github.com/coreyhaines31/marketingskills/releases)) instead of `main`.
 
 ## Questions?
 
