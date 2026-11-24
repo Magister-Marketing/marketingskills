@@ -1,0 +1,30 @@
+name: Magister pin bump
+
+# When main moves, open or refresh one draft PR on magister-marketing that
+# points its magister-marketingskills submodule here. Merging that PR ships
+# nothing; `make skills-publish` does. See .github/magister/README.md.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: magister-pin-bump
+  cancel-in-progress: true
+
+jobs:
+  bump:
+    if: github.repository == 'Magister-Marketing/marketingskills-magister'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Open or refresh the pin-bump PR
+        env:
+          GH_TOKEN: ${{ secrets.MAGISTER_SYNC_TOKEN }}
+          NEW_SHA: ${{ github.sha }}
+        run: bash .github/magister/pin-bump.sh

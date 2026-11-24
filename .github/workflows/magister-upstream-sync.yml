@@ -1,0 +1,50 @@
+name: Magister upstream sync
+
+# Weekly: merge coreyhaines31/marketingskills main into a branch of this fork
+# and open one PR (or, on conflicts, one issue). See .github/magister/README.md.
+
+on:
+  schedule:
+    - cron: "0 16 * * 1" # Mondays 16:00 UTC (08:00 or 09:00 Pacific)
+  workflow_dispatch:
+
+concurrency:
+  group: magister-upstream-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    if: github.repository == 'Magister-Marketing/marketingskills-magister'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.MAGISTER_SYNC_TOKEN }}
+
+      - name: Check out magister-marketing for the network scan
+        uses: actions/checkout@v4
+        with:
+          repository: Magister-Marketing/magister-marketing
+          token: ${{ secrets.MAGISTER_SYNC_TOKEN }}
+          path: .magister-marketing
+          sparse-checkout: |
+            scripts
+            gateway/app
+          submodules: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: pip install --quiet pytest pyyaml
+
+      - name: Merge upstream and open the sync PR
+        env:
+          GH_TOKEN: ${{ secrets.MAGISTER_SYNC_TOKEN }}
+          MM_DIR: ${{ github.workspace }}/.magister-marketing
+        run: bash .github/magister/upstream-sync.sh
