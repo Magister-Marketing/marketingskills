@@ -20,13 +20,14 @@ coreyhaines31/marketingskills ──weekly sync PR──▶ marketingskills-magi
 
 ## Weekly sync (Mondays 16:00 UTC, or Actions → "Magister upstream sync" → Run workflow)
 
-`upstream-sync.sh` merges upstream `main` into the branch `magister/upstream-sync` and opens one PR. It never pushes to `main`, and it runs no code from upstream or from the sync branch: the fork's validators and tests (upstream's own workflows, which come with the merge) run as the PR's checks. Some of them skip draft PRs, and a conflict PR has no merge to check, so run them locally (rule 7) before merging those.
+`upstream-sync.sh` merges upstream `main` into the branch `magister/upstream-sync` and opens one PR. It never pushes `main` itself, and it runs no code from upstream or from the sync branch.
 
-- **Clean merge:** the PR body has the result of magister-marketing's network-surface scan, the same gate `make skills-publish` applies. The PR is a draft unless the scan passed.
-- **Conflicts:** a draft PR whose head is upstream's tip, listing the conflicting files and the commands to resolve them.
-- **A sync PR left open:** the next run merges `main` and the new upstream into that branch, so fixes pushed to it are kept. If that merge conflicts, the run leaves the branch alone and comments once with the commands.
-- A leftover `magister/upstream-sync` branch with no open PR is replaced only when every commit it has beyond `main` and upstream is the bot's. One with a person's commit stops the run.
-- Any change under `.github/` keeps the PR a draft and is listed in it: read each one (rule 5) before merging.
+- **Upstream's workflow files never come over.** Every sync keeps the fork's own `.github/workflows`, and the PR names the upstream workflow changes that were held back. A workflow on the sync branch runs as soon as the branch is pushed, so upstream's could act before anyone read them. Nothing is copied by hand: the fork simply keeps its own CI.
+- **Clean merge, scan passed, nothing under `.github` changed, nobody pushed to the PR:** the PR waits for the checks that run on it, then merges itself with a merge commit. If a check fails, it goes back to draft with a comment, and the run fails so it shows in Actions.
+- **Otherwise the PR waits for a person:** a draft when the network-surface scan (the `make skills-publish` gate) lists surfaces to Magisterify or could not run, or when someone changed a file under `.github`.
+- **Conflicts:** a draft PR whose head is upstream's tip plus the fork's workflows, listing the conflicting files and the commands to resolve them.
+- **A sync PR a person pushed to** is built on, so their work is kept. If merging into it conflicts, the run leaves the branch alone and comments once with the commands. A branch with only the bot's commits is rebuilt from `main`. One with a person's commits and no open PR stops the run.
+- Merging into the fork's `main` ships nothing. The pin-bump PR on magister-marketing is where the Magister layer is checked on a lane, and `make skills-publish` is what reaches machines.
 
 ### Resolving: the layer rule
 
@@ -36,7 +37,7 @@ Take upstream's content and keep the Magister layer.
 2. Where upstream adds `.agents/brand.md`, keep the fork's `BRAND.md` block.
 3. Where upstream adds `curl`, `npx`, `fetch(`, `git clone` or a loopback call, keep or write the hosted form: a typed `magister-*` tool, or `execution_unavailable` with a user-side step.
 4. Where the fork's text is just an older upstream copy (check with `git log`), take upstream's.
-5. Read every added or changed workflow. A workflow that runs on the fork must not use `environment:` or `secrets.`, or ask for write `permissions:`. Workflows that publish or write `main` (today `release.yml` and `sync-skills.yml`) get or keep the fork's `if: github.repository == 'coreyhaines31/marketingskills'` guard, so they run only upstream. Once a workflow is on `main` it can name the `magister-sync` environment and read the token.
+5. Keep the fork's `.github/workflows` (`git checkout origin/main -- .github/workflows` after removing upstream's), as the script does. A workflow the fork adds must not use `environment:` or `secrets.`, or ask for write `permissions:`: once it is on `main` it could name the `magister-sync` environment and read the token. `release.yml` and `sync-skills.yml` keep their `if: github.repository == 'coreyhaines31/marketingskills'` guard.
 6. Check that every network surface is resolved. The script only reads the monorepo checkout:
    ```bash
    bash .github/magister/network-scan.sh <path to a magister-marketing checkout>
@@ -57,7 +58,7 @@ Every push to `main` opens or refreshes the draft PR `bump/marketingskills-magis
    - Turn off "Allow GitHub Actions to create and approve pull requests".
    - Check that no organization secret is shared with this repo.
 
-   Upstream's workflows run on the sync PR with this repo's `GITHUB_TOKEN`, and a workflow can raise its own permissions with a `permissions:` key, so rule 5 also applies to any new upstream workflow that asks for write access.
+   The fork's workflows run upstream's scripts (validators, tests) on the sync PR with this repo's `GITHUB_TOKEN`, so keep that token read-only.
 4. Settings → Rules: protect `main` (pull request required). Add a ruleset that restricts updates and deletions on all branches and tags, and exclude `main` and `magister/upstream-sync` from its targets. Rulesets bypass by actor, not by branch. The environment rule is only as strong as who can push `main`.
 5. Merge the first catch-up sync, which adds the guard on `release.yml` and `sync-skills.yml` (rule 5), and this automation.
 6. Actions → enable workflows for this fork.

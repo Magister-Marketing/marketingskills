@@ -2,10 +2,13 @@
 # Weekly upstream sync: merge coreyhaines31/marketingskills main into the
 # branch magister/upstream-sync and open (or refresh) one PR. Never pushes main.
 #
-# Clean merge -> the branch holds the merge. The PR body has magister-marketing's
-#                network-surface scan and opens as a draft unless the scan
-#                passed. The fork's own checks run as the PR's workflows.
-# Conflicts   -> a draft PR whose head is upstream's tip, listing the files and
+# Clean merge -> the branch holds the merge, with the fork's own workflows
+#                (upstream's are held back). The PR body has magister-marketing's
+#                network-surface scan; it opens as a draft unless the scan passed
+#                and nothing under .github changed; otherwise it merges itself
+#                once the checks that run on it pass.
+# Conflicts   -> a draft PR whose head is upstream's tip (with the fork's
+#                workflows), listing the files and
 #                the commands to resolve. When a sync PR with someone's work on
 #                it is open, it gets one comment per new upstream/main pair instead.
 # Up to date  -> nothing.
@@ -38,7 +41,15 @@ if [ -n "${MM_DIR:-}" ] && [ -d "$MM_DIR/scripts" ]; then
   MM_DIR="$MM_SNAP"
 fi
 run() { if [ "$DRY" = 1 ]; then echo "DRY_RUN: $*"; else "$@"; fi; }
-bot() { git -c user.name="magister-sync[bot]" -c user.email="magister-sync@users.noreply.github.com" "$@"; }
+BOT_EMAIL="magister-sync@users.noreply.github.com"
+bot() { git -c user.name="magister-sync[bot]" -c user.email="$BOT_EMAIL" "$@"; }
+# Upstream's workflow files never come into the fork: they would run on the
+# sync branch as soon as it is pushed. Make .github/workflows match $1's.
+hold_back_workflows() {
+  git rm -rq --cached --ignore-unmatch .github/workflows
+  rm -rf .github/workflows
+  if git cat-file -e "$1:.github/workflows" 2>/dev/null; then git checkout "$1" -- .github/workflows; fi
+}
 
 git remote get-url upstream >/dev/null 2>&1 || git remote add upstream "https://github.com/$UPSTREAM.git"
 git fetch -q upstream main
@@ -60,24 +71,22 @@ PR_NUM="$(gh pr list -R "$REPO" --head "$BRANCH" --state open --json number,isCr
 REMOTE="$(git ls-remote origin "refs/heads/$BRANCH" | cut -f1)"
 [ -n "$REMOTE" ] && git fetch -q origin "$BRANCH"
 
-# Build on an open sync PR's branch so fixes pushed to it are kept, unless its
-# head is only an upstream commit (the placeholder of a conflict PR).
+# Who worked on the branch beyond main and upstream? (A failed git log stops the run.)
+AUTHORS=""
+if [ -n "$REMOTE" ]; then AUTHORS="$(git log --format=%ae "$REMOTE" --not "$BASE" "$UP")"; fi
+HUMAN=0
+if [ -n "$AUTHORS" ] && grep -qvx "$BOT_EMAIL" <<<"$AUTHORS"; then HUMAN=1; fi
+# Build on the branch only when a person pushed to it and its PR is open, so
+# their work is kept. A bot-only branch (an earlier run's merge or conflict
+# placeholder) is rebuilt from main. A person's branch with no open PR stops the run.
 ON_PR=0
-if [ -n "$PR_NUM" ] && [ -n "$REMOTE" ] && ! git merge-base --is-ancestor "$REMOTE" "$UP"; then
+if [ "$HUMAN" = 1 ]; then
+  if [ -z "$PR_NUM" ]; then
+    echo "origin/$BRANCH (${REMOTE:0:7}) has a person's commits that are not on main or upstream, and no open PR." >&2
+    echo "Open a PR from it or delete it, then re-run." >&2
+    exit 1
+  fi
   ON_PR=1
-fi
-# A leftover branch with its own commits and no open PR may be someone's work.
-# Commits only this bot made (say, a run whose PR create failed) may be replaced.
-# (Read the authors first: a failed git log must stop the run, not count as "bot only".)
-if [ -z "$PR_NUM" ] && [ -n "$REMOTE" ]; then
-  AUTHORS="$(git log --format=%ae "$REMOTE" --not "$BASE" "$UP")"
-else
-  AUTHORS=""
-fi
-if [ -n "$AUTHORS" ] && grep -qvx "magister-sync@users.noreply.github.com" <<<"$AUTHORS"; then
-  echo "origin/$BRANCH (${REMOTE:0:7}) has commits that are not on main or upstream, and no open PR." >&2
-  echo "Open a PR from it or delete it, then re-run." >&2
-  exit 1
 fi
 # Every replacing push expects the branch exactly as read above (absent if empty).
 LEASE="--force-with-lease=refs/heads/$BRANCH:$REMOTE"
@@ -94,12 +103,24 @@ fi
 if [ "$merge_ok" = 1 ] && ! git merge-base --is-ancestor "$UP" HEAD; then
   STAGE=upstream
   bot merge --no-ff --no-edit -m "Merge upstream $UPSTREAM main ($UP_VERSION) into the Magister fork" "$UP" >>"$LOG" 2>&1 || merge_ok=0
+  if [ "$merge_ok" = 1 ] && ! git diff --quiet HEAD^1 HEAD -- .github/workflows; then
+    hold_back_workflows HEAD^1
+    bot commit -q --amend --no-edit
+  fi
 fi
+# Upstream's workflow changes since the last sync, held back (named in the PR only).
+HELD="$(git diff --name-only "$(git merge-base "$BASE" "$UP")" "$UP" -- .github/workflows)"
 # The open PR already holds this merge (say, a person pushed the resolution):
 # scan it and refresh the PR, but push nothing.
 PUSH=1
 if [ "$merge_ok" = 1 ] && [ "$(git rev-parse HEAD)" = "$REMOTE" ]; then
   echo "The open sync PR already contains upstream ${UP:0:7} and main ${BASE:0:7}; rescanning it."
+  PUSH=0
+elif [ "$merge_ok" = 1 ] && [ "$ON_PR" = 0 ] && [ -n "$REMOTE" ] \
+     && git merge-base --is-ancestor "$BASE" "$REMOTE" && git merge-base --is-ancestor "$UP" "$REMOTE" \
+     && git diff --quiet "$REMOTE" HEAD; then
+  # The bot's earlier merge of the same main and upstream: keep it, push nothing.
+  git checkout -q -B "$BRANCH" "$REMOTE"
   PUSH=0
 fi
 
@@ -121,12 +142,18 @@ git push origin $BRANCH       # no -f: the next run then merges upstream"
     CMDS="git fetch origin && git fetch https://github.com/$UPSTREAM.git main
 git checkout -B $BRANCH origin/$BRANCH
 git merge FETCH_HEAD          # resolve, then run the checks in the README
+git rm -rq --cached .github/workflows && rm -rf .github/workflows \\
+  && git checkout HEAD -- .github/workflows   # keep this branch's workflows, not upstream's
+git commit                    # finish the merge
 git push origin $BRANCH       # no -f: keeps the fixes already on this branch"
   else
     HEADING="Upstream \`${UP:0:7}\` ($UP_VERSION) conflicts with main (\`${BASE:0:7}\`) in $N files"
     CMDS="git fetch origin && git fetch https://github.com/$UPSTREAM.git main
 git checkout -B $BRANCH origin/main
 git merge FETCH_HEAD          # resolve, then run the checks in the README
+git rm -rq --cached .github/workflows && rm -rf .github/workflows \\
+  && git checkout origin/main -- .github/workflows   # keep the fork's workflows, not upstream's
+git commit                    # finish the merge
 git push --force-with-lease origin $BRANCH   # replaces this PR's placeholder head"
   fi
   MARKER="<!-- magister-upstream-sync up=$UP main=$BASE -->"
@@ -160,8 +187,16 @@ $(printf '%s\n' "$CONFLICTS" | sed 's/^/- `/; s/$/`/')
 Upstream changes: $COMPARE
 
 $CONFLICT_MD"
-  # Upstream's tip as the head: GitHub shows the PR as conflicting until resolved.
-  [ "$UP" = "$REMOTE" ] || run git push -q "$LEASE" origin "$UP:refs/heads/$BRANCH"
+  # Head: upstream's tip with the fork's workflows, so GitHub shows the PR as
+  # conflicting until resolved and none of upstream's workflows run on it.
+  git checkout -q --detach "$UP"
+  hold_back_workflows "$BASE"
+  git diff --cached --quiet || bot commit -q -m "Keep the fork's workflows (upstream's are held back)"
+  PLACE="$(git rev-parse HEAD)"
+  # Same tree as the bot's earlier placeholder: nothing to push.
+  if [ -z "$REMOTE" ] || ! git diff --quiet "$REMOTE" "$PLACE"; then
+    run git push -q "$LEASE" origin "$PLACE:refs/heads/$BRANCH"
+  fi
   if [ -n "$PR_NUM" ]; then run gh pr edit "$PR_NUM" -R "$REPO" --title "$TITLE" --body "$BODY"
   else run gh pr create -R "$REPO" --draft --base main --head "$BRANCH" --title "$TITLE" --body "$BODY"; fi
   [ "$DRY" = 1 ] && printf '%s\n' "$BODY"
@@ -197,19 +232,20 @@ Upstream changes: $COMPARE
 
 - magister-marketing network-surface scan (the \`make skills-publish\` gate): $SCAN_ROW
 - The fork's validators and tests run as this PR's checks once it is out of draft (some skip drafts).
-$( [ -n "$WORKFLOWS" ] && printf '\n## Changed under .github (read each before merging)\n\nKeep this PR a draft until each file is checked: a workflow that runs on the fork must not use `environment:`, `secrets.` or write `permissions:`, and anything that publishes or writes `main` gets the upstream-only guard (README rule 5).\n\n```\n%s\n```\n' "$WORKFLOWS" || true)
+$( [ -n "$WORKFLOWS" ] && printf '\n## Changed under .github (read each before merging)\n\nThese were pushed to this branch, not brought from upstream. Keep this PR a draft until each file is checked: a workflow that runs on the fork must not use `environment:`, `secrets.` or write `permissions:` (README rule 5).\n\n```\n%s\n```\n' "$WORKFLOWS" || true)
+$( [ -n "$HELD" ] && printf '\n## Upstream workflow changes held back\n\nThe fork keeps its own `.github/workflows`; these upstream changes were not brought over:\n\n```\n%s\n```\n' "$HELD" || true)
 $( [ -n "$SCAN" ] && printf '\n## Magisterify before merging\n\nPublishing would refuse these surfaces. Rewrite each one for the hosted runtime (a typed `magister-*` tool, or `execution_unavailable`), push to this branch, and re-run `.github/magister/network-scan.sh`:\n\n```\n%s\n```\n' "$SCAN" || true)
 
-## Before merging
+## Merging
 
-- Read the upstream diff for text that conflicts with the Magister layer: \`.agents/brand.md\` lookups where the fork uses \`BRAND.md\`, tool advice the hosted agent can't follow, a new skill without a short catalog description, or a new upstream workflow that should only run upstream.
-- Merge with a merge commit. Merging opens the magister-marketing pin-bump PR, and nothing ships until that PR runs \`make skills-publish\`."
+$( if [ -z "$DRAFT" ] && [ "$HUMAN" = 0 ]; then echo "This PR merges itself (merge commit) once the checks that run on it pass."; else echo "Merge with a merge commit once the items above are done."; fi )
+Merging opens the magister-marketing pin-bump PR, which is where the Magister layer is checked on a lane; nothing ships until that PR runs \`make skills-publish\`."
 
 # Put an open PR back in draft before its branch changes, if it must be one.
 IS_DRAFT=""
 [ -n "$PR_NUM" ] && IS_DRAFT="$(gh pr view "$PR_NUM" -R "$REPO" --json isDraft --jq .isDraft)"
-if [ -n "$DRAFT" ] && [ "$IS_DRAFT" = false ]; then
-  run gh pr ready "$PR_NUM" -R "$REPO" --undo
+if [ -n "$DRAFT" ] && [ -n "$PR_NUM" ]; then
+  [ "$IS_DRAFT" = false ] && run gh pr ready "$PR_NUM" -R "$REPO" --undo
 fi
 if [ "$PUSH" = 0 ]; then
   :
@@ -225,6 +261,24 @@ if [ -n "$PR_NUM" ]; then
   fi
 else
   run gh pr create -R "$REPO" --base main --head "$BRANCH" --title "$TITLE" --body "$BODY" ${DRAFT:+--draft}
+  PR_NUM="$(gh pr list -R "$REPO" --head "$BRANCH" --state open --json number,isCrossRepository \
+    --jq '[.[] | select(.isCrossRepository | not)][0].number // empty')"
+fi
+# A clean, scanned, bot-only sync merges itself once the checks that ran on it
+# pass. Fork main is not production: the pin-bump PR and `make skills-publish` are.
+if [ -z "$DRAFT" ] && [ "$HUMAN" = 0 ]; then
+  if [ "$DRY" = 1 ]; then
+    echo "DRY_RUN: wait for the checks on #${PR_NUM:-<new PR>}, then gh pr merge --merge"
+  else
+    sleep 60   # let the PR's workflows register
+    NCHECKS="$(gh pr checks "$PR_NUM" -R "$REPO" --json name --jq length 2>/dev/null || true)"
+    if [ "${NCHECKS:-0}" != 0 ] && ! gh pr checks "$PR_NUM" -R "$REPO" --watch --fail-fast --interval 30 >/dev/null; then
+      gh pr ready "$PR_NUM" -R "$REPO" --undo
+      gh pr comment "$PR_NUM" -R "$REPO" --body "A check failed, so this sync was not merged. Fix it on this branch (README, rule 7), mark it ready and merge it with a merge commit."
+      exit 1
+    fi
+    gh pr merge "$PR_NUM" -R "$REPO" --merge
+  fi
 fi
 [ "$DRY" = 1 ] && printf '%s\n' "$BODY"
 exit 0

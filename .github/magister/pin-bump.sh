@@ -86,7 +86,7 @@ ${COMMITS:-none}
 
 ## Before and after
 
-Not run yet. Before this leaves draft, run the dev cycle in \`AGENTS.md\` on a lane: the same chats on \`main\` and on this branch for the changed skills, judged by the raw tool results.
+Not run yet. Before this leaves draft, run the dev cycle in \`AGENTS.md\` on a lane: the same chats on \`main\` and on this branch for the changed skills, judged by the raw tool results. Clean upstream syncs reach this PR without a person reading them, so also check the new text against the Magister layer: \`.agents/brand.md\` lookups where Magister uses \`BRAND.md\`, tool advice the hosted agent can't follow, and new skills without a short catalog description.
 
 ## Tests
 
