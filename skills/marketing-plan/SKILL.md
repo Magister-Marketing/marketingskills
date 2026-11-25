@@ -265,7 +265,7 @@ What separates a good plan from a generic one:
 
 ## Output format
 
-The final deliverable is a single markdown file under the selected plan root: `final_plan.md`. In a Magister hosted workspace the default root is `resources/marketing-plans/{client-slug}/`; elsewhere retain `~/marketing-plans/{client-slug}/` or the user's explicit destination.
+The final deliverable is a single markdown file, `<selected plan root>/{client-slug}/final_plan.md`. In a Magister hosted workspace the default root is `resources/marketing-plans/`; elsewhere retain `~/marketing-plans/` or the user's explicit destination.
 
 Headers (`## 1. Executive summary`, etc.) are H2 for clean Notion paste. Tables for any structured comparison (RACI, idea bank, ops stack). Status legend for the idea bank. Internal references to other sections use `§N` (e.g., "see §5 for Activation detail").
 

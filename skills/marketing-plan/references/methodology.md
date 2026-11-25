@@ -11,7 +11,7 @@ The three-phase workflow that produces a comprehensive marketing plan. SKILL.md 
 Canonical file layout for every plan:
 
 ```
-~/marketing-plans/{client-slug}/
+<selected plan root>/{client-slug}/
 ├── materials/         # Client-provided files (decks, audit output, brand-voice doc, etc.)
 ├── research.md        # Written in Phase 1 (INIT)
 ├── progress.md        # State machine — see Step 1.1.1 for schema
@@ -325,7 +325,7 @@ Before printing:
 
 Output `final_plan.md` to the plan folder. Print a summary to chat:
 
-> *"Marketing Plan v1 saved to `~/marketing-plans/{client-slug}/final_plan.md`. ~X,XXX words across 13 sections. Ready to paste into Notion or share with the team."*
+> *"Marketing Plan v1 saved to `<selected plan root>/{client-slug}/final_plan.md`. ~X,XXX words across 13 sections. Ready to paste into Notion or share with the team."*
 
 ### Step 3.4 — Publish (optional)
 
