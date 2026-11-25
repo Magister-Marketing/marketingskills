@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   release:
-    # Magister fork: tag, release and auto-commit only upstream.
+    # Magister fork: tag and publish releases only upstream.
     if: github.repository == 'coreyhaines31/marketingskills'
     runs-on: ubuntu-latest
     steps:
