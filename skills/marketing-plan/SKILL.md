@@ -274,7 +274,7 @@ Length expectation: ~8,000–12,000 words for a comprehensive plan. Shorter is f
 ## File layout per plan
 
 ```
-<selected marketing-plans root>/
+<selected plan root>/
 └── {client-slug}/
     ├── materials/         # Client-provided files (decks, audit output, brand-voice doc, etc.)
     ├── research.md        # Research record written during INIT

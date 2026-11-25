@@ -25,7 +25,7 @@ Canonical file layout for every plan:
 
 ### Step 1.1.1 — `progress.md` state schema
 
-Every plan tracks a single `progress.md` file at the plan root. It's the source of truth for resumption. Schema:
+Every plan tracks a single `progress.md` file in the plan folder (`<selected plan root>/{client-slug}/progress.md`). It's the source of truth for resumption. Schema:
 
 ```markdown
 # {Client} — Marketing Plan Progress
@@ -59,7 +59,7 @@ sections/02.md, sections/03.md, ... (list as they're written)
 
 ### Step 1.1.2 — Resumption decision tree
 
-**Path safety (applies to every step below).** `{client-slug}` is the client name slugified to lowercase `[a-z0-9-]` only — reject `..`, `/`, and absolute paths, and never read, create, or delete outside the selected plan root (see SKILL.md Path safety; `~/marketing-plans/` outside a Magister hosted workspace).
+**Path safety (applies to every step below).** `{client-slug}` is the client name slugified to lowercase `[a-z0-9-]` only — reject `..`, `/`, and absolute paths, and never read, create, or delete outside the selected plan root (see SKILL.md Path safety; `~/marketing-plans/` or the user's explicit destination outside a Magister hosted workspace).
 
 On every invocation, check state in this order:
 
