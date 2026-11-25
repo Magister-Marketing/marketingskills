@@ -1,27 +1,40 @@
 #!/usr/bin/env node
 
+const rawArgs = process.argv.slice(2)
 const API_TOKEN = process.env.LIVESTORM_API_TOKEN
 const BASE_URL = 'https://api.livestorm.co/v1'
 
-if (!API_TOKEN) {
+if ((!API_TOKEN) && rawArgs.length > 0) {
   console.error(JSON.stringify({ error: 'LIVESTORM_API_TOKEN environment variable required' }))
   process.exit(1)
 }
 
+
+function requestSignal() {
+  const raw = args['timeout-ms'] ?? '120000'
+  const ms = Number(raw)
+  if (typeof raw !== 'string' || !/^\d+$/.test(raw) || !Number.isSafeInteger(ms) || ms < 1 || ms > 600000) {
+    throw new Error('--timeout-ms must be an integer from 1 to 600000')
+  }
+  return AbortSignal.timeout(ms)
+}
+
+
 async function api(method, path, body) {
   const headers = {
-    'Authorization': `Bearer ${API_TOKEN}`,
+    'Authorization': API_TOKEN,
     'Content-Type': 'application/vnd.api+json',
     'Accept': 'application/vnd.api+json',
   }
   if (args['dry-run']) {
     return { _dry_run: true, method, url: `${BASE_URL}${path}`, headers: { ...headers, Authorization: '***' }, body: body || undefined }
   }
-  const res = await fetch(`${BASE_URL}${path}`, {
+  const res = await fetch(`${BASE_URL}${path}`, { signal: requestSignal(),
     method,
     headers,
     body: body ? JSON.stringify(body) : undefined,
   })
+  if (res.status >= 400) process.exitCode = 1
   const text = await res.text()
   try {
     return JSON.parse(text)
@@ -50,7 +63,7 @@ function parseArgs(args) {
   return result
 }
 
-const args = parseArgs(process.argv.slice(2))
+const args = parseArgs(rawArgs)
 const [cmd, sub, ...rest] = args._
 
 async function main() {
@@ -169,9 +182,9 @@ async function main() {
           if (!id) { result = { error: '--id (session id) required' }; break }
           const email = args.email
           if (!email) { result = { error: '--email required' }; break }
-          const fields = { email }
-          if (args['first-name']) fields.first_name = args['first-name']
-          if (args['last-name']) fields.last_name = args['last-name']
+          const fields = [{ id: 'email', value: email }]
+          if (args['first-name']) fields.push({ id: 'first_name', value: args['first-name'] })
+          if (args['last-name']) fields.push({ id: 'last_name', value: args['last-name'] })
           result = await api('POST', `/sessions/${id}/people`, {
             data: {
               type: 'people',
@@ -240,14 +253,14 @@ async function main() {
         }
         case 'create': {
           const url = args.url
-          if (!url) { result = { error: '--url required' }; break }
-          const eventName = args.event || 'attendance'
+          if (!url || url === true) { result = { error: '--url required' }; break }
+          if (!args.event || args.event === true) { result = { error: '--event required (e.g. people.registered, people.attended, session.ended)' }; break }
           result = await api('POST', '/webhooks', {
             data: {
               type: 'webhooks',
               attributes: {
-                target_url: url,
-                event_name: eventName,
+                url,
+                event: args.event,
               },
             },
           })
@@ -283,6 +296,7 @@ async function main() {
       }
   }
 
+  if (result?.error && rawArgs.length > 0) process.exitCode = 1
   console.log(JSON.stringify(result, null, 2))
 }
 

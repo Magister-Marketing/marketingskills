@@ -2,7 +2,7 @@
 name: analytics
 description: "Set up or audit tracking — GA4, GTM, Mixpanel, Segment; tracking plans, event naming, UTM conventions, conversion and attribution debugging. Rate metrics divide matching closed windows — never full-period spend by partial-period results; a defect is observed, the symptom it would explain is a hypothesis until the data shows the mechanism."
 metadata:
-  version: 2.3.2
+  version: 2.3.3
 ---
 
 # Analytics Tracking
@@ -138,6 +138,7 @@ checkout_payment_completed
 - Include context in properties, not event name
 - Avoid spaces and special characters
 - Document decisions
+- Keep provider-defined names when using automatic or recommended events (e.g. GA4 `click`, `view_search_results`, `purchase`). Map internal business names explicitly; naming a custom event does not make the provider collect it automatically.
 
 ---
 
@@ -194,10 +195,12 @@ checkout_payment_completed
 4. Configure custom events
 5. Mark conversions in Admin
 
-### Custom Event Example
+### Event Example
 
 ```javascript
-gtag('event', 'signup_completed', {
+// GA4's recommended sign_up event, not a custom name, so it feeds built-in reports.
+// Your tracking plan can still call this signup_completed; map the name explicitly.
+gtag('event', 'sign_up', {
   'method': 'email',
   'plan': 'free'
 });
@@ -239,15 +242,44 @@ dataLayer.push({
 |-----------|---------|---------|
 | utm_source | Traffic source | google, newsletter |
 | utm_medium | Marketing medium | cpc, email, social |
-| utm_campaign | Campaign name | spring_sale |
-| utm_content | Differentiate versions | hero_cta |
-| utm_term | Paid search keywords | running+shoes |
+| utm_campaign | Campaign name | spring-sale |
+| utm_content | Differentiate versions | hero-cta |
+| utm_term | Paid search keywords | running-shoes |
 
 ### Naming Conventions
-- Lowercase everything
-- Use underscores or hyphens consistently
-- Be specific but concise: `blog_footer_cta`, not `cta1`
-- Document all UTMs in a spreadsheet
+- **Lowercase everything.** GA4 treats `LinkedIn` and `linkedin` as two sources, and the split never merges back.
+- **Hyphens between words.** No spaces, underscores, or `+`. Pick one separator for the whole company; this skill uses hyphens.
+- **One spelling per source.** `linkedin`, never also `li` or `linkedin.com`. Keep the allowed values in a shared sheet and build links from it.
+- **No personal data.** Never put emails, names, phone numbers, or user IDs in a UTM. They land in analytics reports and in referrer logs, and Google's terms prohibit sending PII to GA4.
+- **Specific but short:** `blog-footer-cta`, not `cta1`.
+- **Test the final URL.** Shorteners and redirects can drop or double parameters. Click the live link and check the landing URL before the campaign ships.
+
+### UTM Patterns by Partner Type
+
+Partner links break most often because each deal gets named on the spot. Fix the pattern per partner type once: `utm_medium` names the kind of deal, `utm_source` names who sent the traffic.
+
+| Partner type | utm_source | utm_medium | utm_campaign | utm_content |
+|---|---|---|---|---|
+| Newsletter | `{partner}` (one per partner, across all their publications) | `newsletter` | `{partner}-{publication}-{yyyy}-{mm}` | `{placement}-{yyyy-mm-dd}` |
+| Creator (YouTube, LinkedIn, TikTok) | `{platform}` | `creator` | `{creator}` | `{post-date}` or the video ID |
+| Podcast | `{podcast}` | `podcast` | `{podcast}-{yyyy}-{mm}` | `{spot}-{yyyy-mm-dd}` (pre-roll, mid-roll) |
+| Affiliate | `{partner}` | `affiliate` | `{partner}-affiliate` | placement, if they have several |
+| Community | `{community}` | `community` | `{community}-{program}` | the channel or post, if known |
+
+- **Use `creator` as the medium for paid creator deals**, not `social` (which mixes them with your organic posts) or `video` (which mixes them with paid video ads). The platform goes in `utm_source`.
+- **One link per placement.** A newsletter that runs you on two dates gets two links, so each date's clicks stay separate. The monthly `utm_campaign` rolls them up.
+- **Add a custom channel group in GA4.** GA4's default grouping sends mediums like `newsletter`, `creator`, `podcast`, and `community` to Unassigned (only `affiliate` and `email` map to a default channel). Create a channel group with a rule per medium so partner traffic shows up as its own channels.
+- Podcast and video links often aren't clickable, so pair the UTM link with a promo code or vanity URL. See **influencer-marketing** for the rest of partner measurement.
+
+*The partner-type pattern is adapted from Wispr Flow's link-creator skill (MIT), published in the skills.marketing library.*
+
+### Traffic From AI Assistants
+
+You can't tag links that ChatGPT, Claude, Perplexity, Gemini, or Copilot put in their answers. Some of those visits arrive with a referrer (`chatgpt.com`, `perplexity.ai`) or an assistant-added `utm_source`; many arrive as direct, or come later through a branded search.
+
+- Add a GA4 channel group rule that matches known assistant referrers and sources into an "AI assistants" channel, and update the list as new assistants appear.
+- Treat that channel as the floor. Assistant-driven visits that show up as direct or branded search can be most of the effect, and they won't carry the referrer.
+- For measuring the full effect (exposure, delayed visits, and longer attribution windows), see **ai-seo**. For reconciling it with other sources, see **attribution**.
 
 ---
 
@@ -341,21 +373,25 @@ dataLayer.push({
 
 ## Tool Integrations
 
-For implementation, see the [tools registry](../../tools/REGISTRY.md). Key analytics tools:
+For implementation, see the [tools registry](https://github.com/coreyhaines31/marketingskills/blob/main/tools/REGISTRY.md). Key analytics tools:
 
-| Tool | Best For | MCP | Guide |
+| Tool | Fits | MCP | Guide |
 |------|----------|:---:|-------|
-| **GA4** | Web analytics, Google ecosystem | ✓ | [ga4.md](../../tools/integrations/ga4.md) |
-| **Mixpanel** | Product analytics, event tracking | - | [mixpanel.md](../../tools/integrations/mixpanel.md) |
-| **Amplitude** | Product analytics, cohort analysis | - | [amplitude.md](../../tools/integrations/amplitude.md) |
-| **PostHog** | Open-source analytics, session replay | - | [posthog.md](../../tools/integrations/posthog.md) |
-| **Segment** | Customer data platform, routing | - | [segment.md](../../tools/integrations/segment.md) |
+| **GA4** | Web analytics, Google ecosystem | ✓ | [ga4.md](https://github.com/coreyhaines31/marketingskills/blob/main/tools/integrations/ga4.md) |
+| **Mixpanel** | Product analytics, event tracking | ✓ | [mixpanel.md](https://github.com/coreyhaines31/marketingskills/blob/main/tools/integrations/mixpanel.md) |
+| **Amplitude** | Product analytics, cohort analysis | ✓ | [amplitude.md](https://github.com/coreyhaines31/marketingskills/blob/main/tools/integrations/amplitude.md) |
+| **PostHog** | Open-source analytics, session replay | ✓ | [posthog.md](https://github.com/coreyhaines31/marketingskills/blob/main/tools/integrations/posthog.md) |
+| **Segment** | Customer data platform, routing | - | [segment.md](https://github.com/coreyhaines31/marketingskills/blob/main/tools/integrations/segment.md) |
+
+To see GA4, Search Console, and ad platform numbers in one place, the options include pipelines into sheets and BI tools ([Supermetrics](https://github.com/coreyhaines31/marketingskills/blob/main/tools/integrations/supermetrics.md), [Coupler](https://github.com/coreyhaines31/marketingskills/blob/main/tools/integrations/coupler.md)), a dashboard tool such as Looker Studio, and [Magister](https://github.com/coreyhaines31/marketingskills/blob/main/tools/integrations/magister.md), where an agent reads the connected accounts over MCP. Magister is built by this repository's maintainer; say so if you name it.
 
 ---
 
 ## Related Skills
 
 - **ab-testing**: For experiment tracking
+- **conversion-tracking**: For getting conversions (including GA4 key events from forms and bookings) to ad platforms and GA4, and verifying they arrive
+- **attribution**: For attribution models, multi-touch/MMM/incrementality, and reconciling conflicting numbers across tools (once tracking is live)
 - **seo-audit**: For organic traffic analysis
 - **cro**: For conversion optimization (uses this data)
 - **revops**: For pipeline metrics, CRM tracking, and revenue attribution

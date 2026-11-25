@@ -21,7 +21,7 @@ marketingskills/
 │   └── skill-name/
 │       └── SKILL.md       # Required skill file
 ├── tools/
-│   ├── clis/              # Zero-dependency Node.js CLI tools (51 tools)
+│   ├── clis/              # Zero-dependency Node.js CLI tools (67 tools)
 │   ├── composio/          # Composio integration layer (quick start + toolkit mapping)
 │   ├── integrations/      # API integration guides per tool
 │   └── REGISTRY.md        # Tool index with capabilities
@@ -36,13 +36,14 @@ marketingskills/
 - YAML frontmatter is valid
 - `name` field matches directory name exactly
 - `name` is 1-64 chars, lowercase alphanumeric and hyphens only
-- `description` is 1-1024 characters
+- `description` is 1-500 characters (the spec allows 1024; this repo caps it, see below)
 
 **CLI tools** (`tools/clis/*.js`) are zero-dependency Node.js scripts (Node 18+). Verify with:
 ```bash
 node --check tools/clis/<name>.js   # Syntax check
 node tools/clis/<name>.js           # Show usage (no args = help)
 node tools/clis/<name>.js <cmd> --dry-run  # Preview request without sending
+node --test tests/clis/*.test.cjs   # Contract tests (mocked fetch, no live calls)
 ```
 
 ## Versioning
@@ -60,6 +61,14 @@ Do not bump y for content added to an existing skill, no matter how substantial 
 **Per-skill version** — `metadata.version` in each SKILL.md, mirrored in the `VERSIONS.md` table. Bump on ANY shipped change to that skill: the update check compares `VERSIONS.md` against users' local skill metadata, so an unbumped change is invisible to installed users. Minor for new capability or description triggers, patch for fixes and clarifications.
 
 Bump the repo release version in the same PR that ships the change (2.7.0 and 2.8.0 shipped without touching plugin.json/marketplace.json and needed a catch-up later).
+
+CI enforces both layers on PRs. Fetch first so `origin/main` is current, then run it locally before pushing:
+
+```bash
+node scripts/check-versions.mjs --base origin/main
+```
+
+It fails if a changed skill didn't bump `metadata.version`, if `VERSIONS.md` disagrees with any SKILL.md, if the repo version didn't bump (or has no `### x.y.z` block), or if a file in `references/` isn't linked from anywhere in its skill. Changes only under a skill's `evals/` don't need a bump, since they don't change what installed users get.
 
 ## Agent Skills Specification
 
@@ -79,7 +88,7 @@ description: What this skill does and when to use it. Include trigger phrases.
 | Field         | Required | Constraints                                                      |
 |---------------|----------|------------------------------------------------------------------|
 | `name`        | Yes      | 1-64 chars, lowercase `a-z`, numbers, hyphens. Must match dir.   |
-| `description` | Yes      | 1-1024 chars. Describe what it does and when to use it.          |
+| `description` | Yes      | 1-500 chars in this repo (spec: 1024). What it does, when to use. |
 | `license`     | No       | License name (default: MIT)                                      |
 | `metadata`    | No       | Key-value pairs (author, version, etc.)                          |
 
@@ -136,8 +145,18 @@ skills/skill-name/
 
 The `description` is critical for skill discovery. Include:
 1. What the skill does
-2. When to use it (trigger phrases)
-3. Related skills for scope boundaries
+2. When to use it: the distinct situations it covers and the questions it answers ("or asks whether a result is real"), not a list of synonyms. Descriptions that only say what a skill makes lose advice questions the model thinks it can answer alone
+3. Any operative rule that must shape behavior before the body is read
+4. Related skills for scope boundaries
+
+**Keep it to 500 characters or fewer, and the whole pack to 24,000.** Claude Code caps the skill listing it sends the model at about 30,000 characters, and skills past the cap appear as a bare name with no description. At 42,000 characters, half the pack lost its descriptions; at 19,300, none did (with the pack alone), and the right skill was picked more often (see [evals/triggers/README.md](evals/triggers/README.md)). `scripts/check-versions.mjs` enforces both limits. Models match on meaning, so near-synonym trigger phrases cost space without adding much.
+
+Test description changes with the trigger eval before shipping:
+
+```bash
+node scripts/trigger-eval.mjs --label before
+node scripts/trigger-eval.mjs --prompts evals/triggers/heldout.json --label before-heldout
+```
 
 ```yaml
 description: When the user wants to optimize conversions on any marketing page. Use when the user says "CRO," "conversion rate optimization," "this page isn't converting." For signup flows, see signup.
@@ -174,7 +193,7 @@ Follow the [Conventional Commits](https://www.conventionalcommits.org/) specific
 
 - [ ] `name` matches directory name exactly
 - [ ] `name` follows naming rules (lowercase, hyphens, no `--`)
-- [ ] `description` is 1-1024 chars with trigger phrases
+- [ ] `description` is 1-500 chars and says when to use the skill
 - [ ] `SKILL.md` is under 500 lines
 - [ ] No sensitive data or credentials
 
@@ -183,9 +202,10 @@ Follow the [Conventional Commits](https://www.conventionalcommits.org/) specific
 This repository includes a tools registry for agent-compatible marketing tools.
 
 - **Tool discovery**: Read `tools/REGISTRY.md` to see available tools and their capabilities
+- **Connecting accounts**: For a new local setup, follow `tools/SETUP.md`: check the environment, configure only chosen tools, keep secrets local, and verify a read before proposing broader work
 - **Integration details**: See `tools/integrations/{tool}.md` for API endpoints, auth, and common operations
-- **MCP-enabled tools**: ga4, stripe, mailchimp, google-ads, resend, zapier, zoominfo, clay, supermetrics, coupler, outreach, crossbeam, introw, composio
-- **Composio** (integration layer): Adds MCP access to OAuth-heavy tools without native MCP servers (HubSpot, Salesforce, Meta Ads, LinkedIn Ads, Google Sheets, Slack, etc.). See `tools/integrations/composio.md`
+- **MCP-enabled tools** (checked 2026-10-30; the registry is the source of truth): ga4, stripe, mailchimp, google-ads, meta-ads, resend, zapier, zoominfo, clay, supermetrics, coupler, outreach, crossbeam, introw, cloro, exa, apollo, hubspot, attio, close, instantly, lemlist, heyreach, hunter, truelist, fullenrich, leadmagic, rowbound, theirstack, apify, scrapecreators, firecrawl, browserbase, calendly, savvycal, mixpanel, amplitude, posthog, semrush, ahrefs, similarweb, salesforce, kit, klaviyo, brevo, activecampaign, beehiiv, optimizely, customer-io, typeform, buffer, post-bridge, livestorm, partnerstack, tolt, twilio, attentive, webflow, composio, magister, postonce, socialtoai, seomator
+- **Composio** (integration layer): Adds MCP access to OAuth-heavy tools without native MCP servers (Salesforce, LinkedIn Ads, Google Sheets, Slack, etc.). See `tools/integrations/composio.md`
 
 ### Registry Structure
 
@@ -207,7 +227,7 @@ Skills reference relevant tools for implementation. For example:
 - `emails` skill → customer-io, mailchimp, resend guides
 - `ads` skill → google-ads, meta-ads, linkedin-ads guides
 
-For tools without native MCP servers (HubSpot, Salesforce, Meta Ads, LinkedIn Ads, Google Sheets, Slack, Notion), Composio provides MCP access via a single server. See `tools/integrations/composio.md` for setup and `tools/composio/marketing-tools.md` for the full toolkit mapping.
+For tools without native MCP servers (Salesforce, LinkedIn Ads, Google Sheets, Slack, Notion), Composio provides MCP access via a single server. See `tools/integrations/composio.md` for setup and `tools/composio/marketing-tools.md` for the full toolkit mapping.
 
 ## Checking for Updates
 

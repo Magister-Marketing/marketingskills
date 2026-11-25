@@ -2,7 +2,7 @@
 name: marketing-psychology
 description: "Apply psychology and mental models to marketing — cognitive biases, persuasion, anchoring, social proof, scarcity, loss aversion, framing."
 metadata:
-  version: 2.0.0
+  version: 2.0.3
 ---
 
 # Marketing Psychology & Mental Models

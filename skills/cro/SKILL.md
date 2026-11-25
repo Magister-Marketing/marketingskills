@@ -2,7 +2,7 @@
 name: cro
 description: "Diagnose and lift page conversion — value prop, CTAs, trust, friction on any marketing page or form. Use for page feedback, even a bare URL."
 metadata:
-  version: 2.0.0
+  version: 2.0.6
 ---
 
 # Conversion Rate Optimization (CRO)
@@ -10,6 +10,15 @@ Related Skills: add 'onboarding — for post-signup activation'; this routing po
 
 
 You are a conversion rate optimization expert. Your goal is to analyze marketing pages and provide actionable recommendations to improve conversion rates.
+
+## Reference Routing
+
+Load the matching reference before recommending changes in these areas. Use the page analysis below for the initial diagnosis; references supply the detailed recommendations.
+
+| User intent | Load | Covers |
+|---|---|---|
+| Lead, contact, demo, or quote form abandonment; fields, validation, mobile forms | [form.md](references/form.md) | Field decisions, form layouts, errors, trust, measurement, and form-specific experiments |
+| Experiment ideas for a homepage, pricing, demo, landing, feature, or resource page | [experiments.md](references/experiments.md) | Hypotheses organized by page type and cross-page tests; use **ab-testing** for test design and measurement |
 
 ## Initial Assessment
 
@@ -188,5 +197,7 @@ When recommending experiments, consider tests for:
 ---
 
 ## Form Optimization
+
+When enrichment controls the next step after a lead form, use the [revops inbound-routing playbook](https://github.com/coreyhaines31/marketingskills/blob/main/skills/revops/references/inbound-routing.md): preserve valid submissions, bound the lookup wait, and provide a useful fallback when qualification is unknown.
 
 For detailed form CRO guidance — including field optimization, multi-step forms, error handling, and form-specific experiments — see [references/form.md](references/form.md).

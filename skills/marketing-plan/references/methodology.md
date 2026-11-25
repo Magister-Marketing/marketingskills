@@ -11,7 +11,7 @@ The three-phase workflow that produces a comprehensive marketing plan. SKILL.md 
 Canonical file layout for every plan:
 
 ```
-~/marketing-plans/{client-slug}/
+<selected plan root>/{client-slug}/
 ├── materials/         # Client-provided files (decks, audit output, brand-voice doc, etc.)
 ├── research.md        # Written in Phase 1 (INIT)
 ├── progress.md        # State machine — see Step 1.1.1 for schema
@@ -25,7 +25,7 @@ Canonical file layout for every plan:
 
 ### Step 1.1.1 — `progress.md` state schema
 
-Every plan tracks a single `progress.md` file at the plan root. It's the source of truth for resumption. Schema:
+Every plan tracks a single `progress.md` file in the plan folder (`<selected plan root>/{client-slug}/progress.md`). It's the source of truth for resumption. Schema:
 
 ```markdown
 # {Client} — Marketing Plan Progress
@@ -58,6 +58,8 @@ sections/02.md, sections/03.md, ... (list as they're written)
 ```
 
 ### Step 1.1.2 — Resumption decision tree
+
+**Path safety (applies to every step below).** `{client-slug}` is the client name slugified to lowercase `[a-z0-9-]` only — reject `..`, `/`, and absolute paths, and never read, create, or delete outside the selected plan root (see SKILL.md Path safety; `~/marketing-plans/` or the user's explicit destination outside a Magister hosted workspace).
 
 On every invocation, check state in this order:
 
@@ -323,14 +325,21 @@ Before printing:
 
 Output `final_plan.md` to the plan folder. Print a summary to chat:
 
-> *"Marketing Plan v1 saved to `~/marketing-plans/{client-slug}/final_plan.md`. ~X,XXX words across 13 sections. Ready to paste into Notion or share with the team."*
+> *"Marketing Plan v1 saved to `<selected plan root>/{client-slug}/final_plan.md`. ~X,XXX words across 13 sections. Ready to paste into Notion or share with the team."*
 
 ### Step 3.4 — Publish (optional)
 
-Ask the user:
-> *"Want me to publish this to a shared GitHub repo so the team can access it? If yes, what's the target repo and path (e.g., `{client-org}/{client-context}/marketing/plan.md`)?"*
+Client plans contain confidential budgets, metrics, and funding details. Publish only to a **verified private repository**, and only with **explicit client authorization** to share this plan with that repository's members.
 
-If yes:
+Ask the user:
+> *"Want me to publish this to a private GitHub repo so the team can access it? If yes, what's the target repo and path (e.g., `{client-org}/{client-context}/marketing/plan.md`), and has the client explicitly authorized sharing this plan with that repo's members?"*
+
+Before cloning, copying, committing, or pushing:
+- Confirm explicit client authorization for this plan and repository audience. A generic "yes, publish" is not enough.
+- Verify private visibility using read-only repository metadata; do not infer it from the repo name or organization.
+- If the repo is public, visibility cannot be verified, or client authorization is missing, keep `final_plan.md` local, explain the blocker, and ask for a private destination or the missing confirmation. Do not clone, copy, commit, or push while either condition is unmet.
+
+Only when both conditions are met:
 - Clone (or assume cloned) target repo
 - Check out a feature branch or push direct to main per user's preference
 - Copy `final_plan.md` to the target path

@@ -1,21 +1,32 @@
 #!/usr/bin/env node
 
+const rawArgs = process.argv.slice(2)
 const API_KEY = process.env.TRUSTPILOT_API_KEY
 const API_SECRET = process.env.TRUSTPILOT_API_SECRET
 const BUSINESS_UNIT_ID = process.env.TRUSTPILOT_BUSINESS_UNIT_ID
 const BASE_URL = 'https://api.trustpilot.com/v1'
+const INVITATIONS_URL = 'https://invitations-api.trustpilot.com/v1'
 
-if (!API_KEY) {
+if ((!API_KEY) && rawArgs.length > 0) {
   console.error(JSON.stringify({ error: 'TRUSTPILOT_API_KEY environment variable required' }))
   process.exit(1)
 }
 
 let accessToken = null
 
+function requestSignal() {
+  const raw = args['timeout-ms'] ?? '120000'
+  const ms = Number(raw)
+  if (typeof raw !== 'string' || !/^\d+$/.test(raw) || !Number.isSafeInteger(ms) || ms < 1 || ms > 600000) {
+    throw new Error('--timeout-ms must be an integer from 1 to 600000')
+  }
+  return AbortSignal.timeout(ms)
+}
+
 async function getAccessToken() {
   if (accessToken) return accessToken
   if (!API_SECRET) return null
-  const res = await fetch(`${BASE_URL}/oauth/oauth-business-users-for-applications/accesstoken`, {
+  const res = await fetch(`${BASE_URL}/oauth/oauth-business-users-for-applications/accesstoken`, { signal: requestSignal(),
     method: 'POST',
     headers: {
       'Authorization': 'Basic ' + Buffer.from(`${API_KEY}:${API_SECRET}`).toString('base64'),
@@ -24,6 +35,9 @@ async function getAccessToken() {
     body: 'grant_type=client_credentials',
   })
   const data = await res.json()
+  if (res.status >= 400) {
+    throw new Error(data.error_description || data.error || 'Failed to obtain access token')
+  }
   if (data.access_token) {
     accessToken = data.access_token
     return accessToken
@@ -31,7 +45,7 @@ async function getAccessToken() {
   return null
 }
 
-async function api(method, path, body, auth = 'apikey') {
+async function api(method, path, body, auth = 'apikey', baseUrl = BASE_URL) {
   if (args['dry-run']) {
     const maskedHeaders = { 'Content-Type': 'application/json', 'Accept': 'application/json' }
     if (auth === 'bearer') {
@@ -39,7 +53,8 @@ async function api(method, path, body, auth = 'apikey') {
     } else {
       maskedHeaders['apikey'] = '***'
     }
-    return { _dry_run: true, method, url: `${BASE_URL}${path}`, headers: maskedHeaders, body: body || undefined }
+    if (baseUrl === INVITATIONS_URL && args['business-user-id']) maskedHeaders['x-business-user-id'] = args['business-user-id']
+    return { _dry_run: true, method, url: `${baseUrl}${path}`, headers: maskedHeaders, body: body || undefined }
   }
   const headers = {
     'Content-Type': 'application/json',
@@ -54,11 +69,13 @@ async function api(method, path, body, auth = 'apikey') {
   } else {
     headers['apikey'] = API_KEY
   }
-  const res = await fetch(`${BASE_URL}${path}`, {
+  if (baseUrl === INVITATIONS_URL && args['business-user-id']) headers['x-business-user-id'] = args['business-user-id']
+  const res = await fetch(`${baseUrl}${path}`, { signal: requestSignal(),
     method,
     headers,
     body: body ? JSON.stringify(body) : undefined,
   })
+  if (res.status >= 400) process.exitCode = 1
   const text = await res.text()
   try {
     return JSON.parse(text)
@@ -87,7 +104,7 @@ function parseArgs(args) {
   return result
 }
 
-const args = parseArgs(process.argv.slice(2))
+const args = parseArgs(rawArgs)
 const [cmd, sub, ...rest] = args._
 
 async function main() {
@@ -101,7 +118,12 @@ async function main() {
         case 'search': {
           const query = args.query
           if (!query) { result = { error: '--query required' }; break }
-          result = await api('GET', `/business-units/search?query=${encodeURIComponent(query)}&limit=${limit}`)
+          if (args.page !== undefined && !/^[1-9]\d*$/.test(String(args.page))) { result = { error: '--page must be a positive integer' }; break }
+          if (!Number.isSafeInteger(limit) || limit < 1) { result = { error: '--limit must be a positive integer' }; break }
+          const params = new URLSearchParams({ query, perpage: String(limit) })
+          if (args.page !== undefined) params.set('page', args.page)
+          if (args.country) params.set('country', args.country)
+          result = await api('GET', `/business-units/search?${params}`)
           break
         }
         case 'get': {
@@ -190,11 +212,15 @@ async function main() {
             consumerName: name,
             referenceNumber: args.reference || '',
             senderEmail: args['sender-email'] || undefined,
+            senderName: args['sender-name'] || undefined,
             replyTo: args['reply-to'] || undefined,
-            templateId: templateId || undefined,
-            redirectUri,
+            type: 'email',
+            serviceReviewInvitation: {
+              templateId: templateId || undefined,
+              redirectUri,
+            },
           }
-          result = await api('POST', `/private/business-units/${businessUnitId}/email-invitations`, payload, 'bearer')
+          result = await api('POST', `/private/business-units/${businessUnitId}/email-invitations`, payload, 'bearer', INVITATIONS_URL)
           break
         }
         case 'link': {
@@ -208,12 +234,12 @@ async function main() {
             name,
             referenceId: args.reference || '',
             redirectUri: args['redirect-uri'] || 'https://trustpilot.com',
-          }, 'bearer')
+          }, 'bearer', INVITATIONS_URL)
           break
         }
         case 'templates': {
           if (!businessUnitId) { result = { error: '--business-unit or TRUSTPILOT_BUSINESS_UNIT_ID required' }; break }
-          result = await api('GET', `/private/business-units/${businessUnitId}/templates`, null, 'bearer')
+          result = await api('GET', `/private/business-units/${businessUnitId}/templates`, null, 'bearer', INVITATIONS_URL)
           break
         }
         default:
@@ -258,7 +284,7 @@ async function main() {
       result = {
         error: 'Unknown command',
         usage: {
-          business: 'business [search --query <q> | get | profile | categories | web-links]',
+          business: 'business [search --query <q> [--limit <n>] [--page <n>] [--country <cc>] | get | profile | categories | web-links]',
           reviews: 'reviews [list | get --id <id> | private | latest | reply --id <id> --message <msg> | delete-reply --id <id>]',
           invitations: 'invitations [create --email <e> --name <n> | link --email <e> --name <n> | templates]',
           tags: 'tags [get --id <id> | add --id <id> --group <g> --value <v> | remove --id <id> --group <g> --value <v>]',
@@ -267,6 +293,7 @@ async function main() {
       }
   }
 
+  if (result?.error && rawArgs.length > 0) process.exitCode = 1
   console.log(JSON.stringify(result, null, 2))
 }
 

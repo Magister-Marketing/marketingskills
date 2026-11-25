@@ -7,7 +7,7 @@ SEO toolset for backlink analysis, keyword research, and competitive research.
 | Integration | Available | Notes |
 |-------------|-----------|-------|
 | API | ✓ | REST API for Site Explorer, Keywords Explorer |
-| MCP | - | Not available |
+| MCP | ✓ | Official remote server at `https://api.ahrefs.com/mcp` ([docs](https://docs.ahrefs.com/docs/mcp/introduction)); the older local npm server is archived, checked 2026-10-27 |
 | CLI | - | Not available |
 | SDK | - | API-only |
 
@@ -22,7 +22,7 @@ SEO toolset for backlink analysis, keyword research, and competitive research.
 ### Domain rating
 
 ```bash
-GET https://api.ahrefs.com/v3/site-explorer/domain-rating?target=example.com
+GET https://api.ahrefs.com/v3/site-explorer/domain-rating?target=example.com&date=2026-09-30
 
 Authorization: Bearer {api_token}
 ```
@@ -38,7 +38,7 @@ Authorization: Bearer {api_token}
 ### Referring domains
 
 ```bash
-GET https://api.ahrefs.com/v3/site-explorer/refdomains?target=example.com&mode=domain&limit=100
+GET https://api.ahrefs.com/v3/site-explorer/refdomains?target=example.com&mode=domain&limit=100&select=domain,domain_rating,links_to_target
 
 Authorization: Bearer {api_token}
 ```
@@ -46,7 +46,7 @@ Authorization: Bearer {api_token}
 ### Backlinks list
 
 ```bash
-GET https://api.ahrefs.com/v3/site-explorer/backlinks?target=example.com&mode=domain&limit=100
+GET https://api.ahrefs.com/v3/site-explorer/all-backlinks?target=example.com&mode=domain&limit=100&select=url_from,url_to,anchor,is_dofollow
 
 Authorization: Bearer {api_token}
 ```
@@ -54,7 +54,7 @@ Authorization: Bearer {api_token}
 ### Organic keywords
 
 ```bash
-GET https://api.ahrefs.com/v3/site-explorer/organic-keywords?target=example.com&mode=domain&country=us&limit=100
+GET https://api.ahrefs.com/v3/site-explorer/organic-keywords?target=example.com&mode=domain&country=us&limit=100&date=2026-09-30&select=keyword
 
 Authorization: Bearer {api_token}
 ```
@@ -62,7 +62,7 @@ Authorization: Bearer {api_token}
 ### Top pages
 
 ```bash
-GET https://api.ahrefs.com/v3/site-explorer/top-pages?target=example.com&mode=domain&country=us&limit=50
+GET https://api.ahrefs.com/v3/site-explorer/top-pages?target=example.com&mode=domain&country=us&limit=50&date=2026-09-30&select=url
 
 Authorization: Bearer {api_token}
 ```
@@ -70,7 +70,7 @@ Authorization: Bearer {api_token}
 ### Keyword overview
 
 ```bash
-GET https://api.ahrefs.com/v3/keywords-explorer/overview?keywords=keyword1,keyword2&country=us
+GET https://api.ahrefs.com/v3/keywords-explorer/overview?keywords=keyword1,keyword2&country=us&select=keyword,volume,difficulty,cpc
 
 Authorization: Bearer {api_token}
 ```
@@ -78,7 +78,7 @@ Authorization: Bearer {api_token}
 ### Keyword suggestions
 
 ```bash
-GET https://api.ahrefs.com/v3/keywords-explorer/matching-terms?keyword=seed+keyword&country=us&limit=100
+GET https://api.ahrefs.com/v3/keywords-explorer/matching-terms?keywords=seed+keyword&country=us&limit=100&select=keyword,volume,difficulty
 
 Authorization: Bearer {api_token}
 ```
@@ -86,7 +86,7 @@ Authorization: Bearer {api_token}
 ### SERP overview
 
 ```bash
-GET https://api.ahrefs.com/v3/keywords-explorer/serp-overview?keyword=target+keyword&country=us
+GET https://api.ahrefs.com/v3/serp-overview/serp-overview?keyword=target+keyword&country=us&select=position,url,title,type
 
 Authorization: Bearer {api_token}
 ```
@@ -140,3 +140,26 @@ Authorization: Bearer {api_token}
 - seo-audit
 - content-strategy
 - competitors
+
+## Dated reports in the CLI
+
+`domain-rating get`, `keywords organic`, and `top-pages list` accept an explicit
+`--date YYYY-MM-DD`, defaulting to today's UTC date when omitted. Organic
+keywords and top pages supply default columns; `--select` overrides them.
+The CLI validates calendar dates and rejects empty column lists before a request.
+Choose fields from the provider response schema:
+
+- [Domain rating](https://docs.ahrefs.com/en/api/reference/site-explorer/get-domain-rating)
+- [Organic keywords](https://docs.ahrefs.com/en/api/reference/site-explorer/get-organic-keywords)
+- [Top pages](https://docs.ahrefs.com/en/api/reference/site-explorer/get-top-pages)
+
+## Backlink report columns
+
+`backlinks list` calls `all-backlinks` and defaults to
+`url_from,url_to,anchor,is_dofollow`. `refdomains list` defaults to
+`domain,domain_rating,links_to_target`. Both APIs require `select`; use
+`--select` to choose other columns. These defaults omit columns marked with
+additional unit costs in the schemas. Requests still consume API units.
+
+- [Backlinks](https://docs.ahrefs.com/en/api/reference/site-explorer/get-all-backlinks)
+- [Refdomains](https://docs.ahrefs.com/en/api/reference/site-explorer/get-refdomains)

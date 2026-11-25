@@ -7,7 +7,7 @@ A/B testing and experimentation platform with a REST API for managing projects, 
 | Integration | Available | Notes |
 |-------------|-----------|-------|
 | API | ✓ | Projects, Experiments, Campaigns, Audiences, Results |
-| MCP | - | Not available |
+| MCP | ✓ | Official server ([help article](https://support.optimizely.com/hc/en-us/articles/45320607594893)), checked 2026-10-27 |
 | CLI | ✓ | [optimizely.js](../clis/optimizely.js) |
 | SDK | ✓ | JavaScript, Python, Ruby, Java, Go, C#, PHP, React, Swift, Android |
 
@@ -70,12 +70,14 @@ POST https://api.optimizely.com/v2/experiments
 ### Update Experiment
 
 ```bash
-PATCH https://api.optimizely.com/v2/experiments/{experiment_id}
+PATCH https://api.optimizely.com/v2/experiments/{experiment_id}?action=start
 
 {
-  "status": "running"
+  "name": "Homepage CTA Test v2"
 }
 ```
+
+State changes use the `action` query parameter (`publish`, `start`, `pause`, `resume`, `unarchive`); `status` is read-only on the experiment.
 
 ### List Campaigns
 

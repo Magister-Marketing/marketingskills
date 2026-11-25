@@ -1,20 +1,32 @@
 #!/usr/bin/env node
 
+const rawArgs = process.argv.slice(2)
 const API_KEY = process.env.LEMLIST_API_KEY
 const BASE_URL = 'https://api.lemlist.com/api'
 
-if (!API_KEY) {
+if ((!API_KEY) && rawArgs.length > 0) {
   console.error(JSON.stringify({ error: 'LEMLIST_API_KEY environment variable required' }))
   process.exit(1)
 }
 
 const AUTH = 'Basic ' + Buffer.from(`:${API_KEY}`).toString('base64')
 
+
+function requestSignal() {
+  const raw = args['timeout-ms'] ?? '120000'
+  const ms = Number(raw)
+  if (typeof raw !== 'string' || !/^\d+$/.test(raw) || !Number.isSafeInteger(ms) || ms < 1 || ms > 600000) {
+    throw new Error('--timeout-ms must be an integer from 1 to 600000')
+  }
+  return AbortSignal.timeout(ms)
+}
+
+
 async function api(method, path, body) {
   if (args['dry-run']) {
     return { _dry_run: true, method, url: `${BASE_URL}${path}`, headers: { Authorization: '***', 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: body || undefined }
   }
-  const res = await fetch(`${BASE_URL}${path}`, {
+  const res = await fetch(`${BASE_URL}${path}`, { signal: requestSignal(),
     method,
     headers: {
       'Authorization': AUTH,
@@ -23,6 +35,7 @@ async function api(method, path, body) {
     },
     body: body ? JSON.stringify(body) : undefined,
   })
+  if (res.status >= 400) process.exitCode = 1
   const text = await res.text()
   try {
     return JSON.parse(text)
@@ -51,7 +64,7 @@ function parseArgs(args) {
   return result
 }
 
-const args = parseArgs(process.argv.slice(2))
+const args = parseArgs(rawArgs)
 const [cmd, sub, ...rest] = args._
 
 async function main() {
@@ -86,7 +99,11 @@ async function main() {
         }
         case 'stats': {
           if (!args.id) { result = { error: '--id required' }; break }
-          result = await api('GET', `/campaigns/${args.id}/stats`)
+          if (typeof args['start-date'] !== 'string' || typeof args['end-date'] !== 'string') {
+            result = { error: '--start-date and --end-date required (ISO 8601, e.g. 2026-01-01T00:00:00.000Z)' }; break
+          }
+          const params = new URLSearchParams({ startDate: args['start-date'], endDate: args['end-date'] })
+          result = await api('GET', `/v2/campaigns/${encodeURIComponent(args.id)}/stats?${params}`)
           break
         }
         case 'export': {
@@ -184,7 +201,7 @@ async function main() {
         case 'create': {
           if (!args['target-url']) { result = { error: '--target-url required' }; break }
           if (!args.event) { result = { error: '--event required' }; break }
-          result = await api('POST', '/hooks', { targetUrl: args['target-url'], event: args.event })
+          result = await api('POST', '/hooks', { targetUrl: args['target-url'], type: args.event })
           break
         }
         case 'delete': {
@@ -202,7 +219,7 @@ async function main() {
         error: 'Unknown command',
         usage: {
           team: 'team info',
-          campaigns: 'campaigns [list | get --id <id> | stats --id <id> | export --id <id>] [--offset 0] [--limit 100]',
+          campaigns: 'campaigns [list | get --id <id> | stats --id <id> --start-date <iso> --end-date <iso> | export --id <id>] [--offset 0] [--limit 100]',
           leads: 'leads [list | get --email <email> | add --email <email> | delete --email <email>] --campaign-id <id> [--first-name <name>] [--last-name <name>] [--company <name>]',
           unsubscribes: 'unsubscribes [list | add --email <email> | delete --email <email>] [--offset 0] [--limit 100]',
           activities: 'activities list [--campaign-id <id>] [--type emailsSent|emailsOpened|emailsClicked|emailsReplied|emailsBounced] [--offset 0] [--limit 100]',
@@ -212,6 +229,7 @@ async function main() {
       }
   }
 
+  if (result?.error && rawArgs.length > 0) process.exitCode = 1
   console.log(JSON.stringify(result, null, 2))
 }
 

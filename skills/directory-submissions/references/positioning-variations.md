@@ -1,6 +1,6 @@
 # Positioning Variations Library
 
-Directory audiences respond to different framings. Never copy-paste the same description everywhere — AI engines penalize duplicate content, and each directory type rewards a different opener.
+Directory audiences respond to different framings. Never copy-paste the same description everywhere — identical copy adds no new signal for AI engines, and each directory type rewards a different opener.
 
 Use this library to generate per-tier variants. Swap `[product]`, `[category]`, `[competitors]`, `[use-case]`, and `[audience]` with the real values.
 
@@ -94,7 +94,7 @@ Use this library to generate per-tier variants. Swap `[product]`, `[category]`, 
 
 ## Template: Agent / MCP Registries
 
-**Target:** Glama, APITracker, Linux Foundation MCP Registry, AI Agents List, AI Agent Store, AgentHunter
+**Target:** Official MCP Registry (`server.json` description), Smithery, Glama, MCP.so, MCP Market, APITracker, AI Agents List, AI Agent Store, AgentHunter
 
 **Tagline:**
 > MCP-native [category] for AI agents.

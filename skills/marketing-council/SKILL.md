@@ -2,7 +2,7 @@
 name: marketing-council
 description: "Convene a simulated advisor board of legendary marketers (Godin, Ogilvy, Hormozi, Dunford...) — conflicting takes, debate, synthesis."
 metadata:
-  version: 1.0.0
+  version: 1.0.3
 ---
 
 # Marketing Council

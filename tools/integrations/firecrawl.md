@@ -7,9 +7,11 @@ Web scraping API that turns single pages or full sites into clean LLM-ready mark
 | Integration | Available | Notes |
 |-------------|-----------|-------|
 | API | ✓ | REST API + Python/Node SDKs |
-| MCP | ✓ | Official Firecrawl MCP server |
-| CLI | - | None official |
+| MCP | ✓ | Official hosted server: `https://mcp.firecrawl.dev/v2/mcp` with a Bearer API key (unattended), `/v2/mcp-oauth` for OAuth; a keyless tier covers scrape, search, and parse ([docs](https://docs.firecrawl.dev/mcp-server)) |
+| CLI | ✓ | [firecrawl.js](../clis/firecrawl.js) |
 | SDK | ✓ | Node, Python, Go, Rust |
+
+Full API reference: https://docs.firecrawl.dev
 
 ## Authentication
 
@@ -24,7 +26,7 @@ Web scraping API that turns single pages or full sites into clean LLM-ready mark
 ### Scrape a single page
 
 ```bash
-POST https://api.firecrawl.dev/v1/scrape
+POST https://api.firecrawl.dev/v2/scrape
 Authorization: Bearer fc-YOUR_API_KEY
 
 {
@@ -38,7 +40,7 @@ Returns the page as clean markdown (LLM-ready, no nav cruft) plus optional raw H
 ### Map a site (discover all URLs)
 
 ```bash
-POST https://api.firecrawl.dev/v1/map
+POST https://api.firecrawl.dev/v2/map
 
 {
   "url": "https://example.com",
@@ -51,7 +53,7 @@ Returns a list of URLs found on the site. Use this to identify key pages (`/pric
 ### Crawl multiple pages
 
 ```bash
-POST https://api.firecrawl.dev/v1/crawl
+POST https://api.firecrawl.dev/v2/crawl
 
 {
   "url": "https://example.com",
@@ -64,28 +66,35 @@ POST https://api.firecrawl.dev/v1/crawl
 
 Crawls multiple pages from a single site. **Use sparingly** — costs scale with pages. Set `limit` and `includePaths` to target specific URL patterns.
 
-### Extract structured data
+### Structured data (scrape JSON mode)
 
 ```bash
-POST https://api.firecrawl.dev/v1/extract
+POST https://api.firecrawl.dev/v2/scrape
 
 {
-  "urls": ["https://joescoffeeshop.com"],
-  "schema": {
-    "phone": "string",
-    "address": "string",
-    "hours": "string",
-    "email": "string"
-  }
+  "url": "https://joescoffeeshop.com",
+  "formats": [{
+    "type": "json",
+    "prompt": "Extract the business contact details",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "phone": { "type": "string" },
+        "address": { "type": "string" },
+        "hours": { "type": "string" },
+        "email": { "type": "string" }
+      }
+    }
+  }]
 }
 ```
 
-Returns data matching the schema — useful when you want consistent fields across many sites rather than raw markdown.
+Returns structured data under `data.json` matching the schema — useful when you want consistent fields across many sites rather than raw markdown.
 
 ### Search the web
 
 ```bash
-POST https://api.firecrawl.dev/v1/search
+POST https://api.firecrawl.dev/v2/search
 
 {
   "query": "\"Joe's Coffee Shop\" Boulder Colorado",
@@ -93,7 +102,30 @@ POST https://api.firecrawl.dev/v1/search
 }
 ```
 
-Web search + scrape of top results. Useful for cross-source verification (find a business's official site when you only have a name + location).
+Web search useful for cross-source verification (find a business's official site when you only have a name + location). v2 groups results by source under `data.web` / `data.news` / `data.images`; add `scrapeOptions` to also pull page content for each result (billed separately).
+
+### Podcast transcripts (Alexandria)
+
+Firecrawl's Alexandria library adds third-party data providers behind the same API. Its podcast provider, Particle, indexes podcast episodes with speaker-labelled transcripts, so a search returns quotes with timestamps, the show and episode, and the people who appear. Firecrawl states 4,000,000+ episodes with about 150,000 added a week (checked 2026-11-23).
+
+```bash
+POST https://api.firecrawl.dev/v2/scrape
+
+{
+  "alexandria": {
+    "provider": "particle",
+    "capability": "podcasts/episodes/search",
+    "options": { "semantic_search": "AI agents", "limit": 2 }
+  }
+}
+```
+
+- The API key's team needs Alexandria enabled. Keyless access doesn't include it.
+- Credits per call, as published: episode search 15, show search 5, episode transcript 15, episode segment 5.
+- Firecrawl's own examples use `semantic_search` in one place and `keyword_search` in another. Check the provider's page for the current option names.
+- Some providers need an organization admin to accept third-party data terms first. If a call returns `THIRD_PARTY_DATA_TERMS_REQUIRED`, stop and ask the user; don't accept terms on their behalf.
+
+Uses: what is being said about a topic, a competitor, or the user's brand; finding shows and guests for podcast outreach; and people who describe a problem in their own words (see the prospecting skill's signal plays).
 
 ## MCP Tools (when used via MCP server)
 
@@ -102,8 +134,26 @@ Web search + scrape of top results. Useful for cross-source verification (find a
 | `firecrawl_scrape` | Single-page extraction |
 | `firecrawl_map` | URL discovery on a site |
 | `firecrawl_crawl` | Multi-page crawl |
-| `firecrawl_extract` | Schema-driven structured data |
 | `firecrawl_search` | Web search + scrape |
+
+## CLI
+
+A zero-dependency Node CLI ships in [`tools/clis/firecrawl.js`](../clis/firecrawl.js). Set `FIRECRAWL_API_KEY` and run any of `scrape`, `search`, `map`, `crawl`, or `crawl-status`. Output is JSON on stdout (pipe to `jq`); add `--dry-run` to preview a request without sending it.
+
+```bash
+# Scrape a single business site to markdown
+node tools/clis/firecrawl.js scrape --url https://joescoffeeshop.com
+
+# Find a business's official site
+node tools/clis/firecrawl.js search "\"Joe's Coffee Shop\" Boulder Colorado" --limit 5
+
+# Discover a site's key pages before scraping
+node tools/clis/firecrawl.js map --url https://example.com --search pricing
+
+# Crawl a section, then poll the async job
+node tools/clis/firecrawl.js crawl --url https://example.com --limit 20 --include-paths /pricing,/about
+node tools/clis/firecrawl.js crawl-status --id <crawlId>
+```
 
 ## When to Use
 
@@ -142,3 +192,34 @@ Web search + scrape of top results. Useful for cross-source verification (find a
 - competitor-profiling (primary use: full-site competitor analysis)
 - ai-seo (scrape your own content for AI search optimization)
 - content-strategy (scrape industry sites for content gap analysis)
+
+## Inspecting asynchronous crawl results in the CLI
+
+`crawl` starts a job and returns its ID. `crawl-status` retrieves a single result
+page; it does not wait for completion or fetch every page automatically:
+
+```bash
+node tools/clis/firecrawl.js crawl-status --id <crawlId>
+# If the returned next URL ends in ?skip=26, request that next result page:
+node tools/clis/firecrawl.js crawl-status --id <crawlId> --skip 26
+node tools/clis/firecrawl.js crawl-errors --id <crawlId>
+```
+
+Read the returned `next` URL and use its `skip` value unchanged for the same job.
+Do not invent the offset from `completed` or increment it by a guessed page size.
+A `completed` status can still have more result pages: Firecrawl uses pagination
+for responses over 10MB. Follow returned pages until `next` is absent or null.
+If the job is still `scraping`, a currently empty page does not establish that
+there will be no more results; check status again later using your existing
+workflow. `--dry-run` previews either read request with authorization masked.
+
+Job completion does not prove every discovered URL was successfully scraped.
+Inspect `crawl-errors` for failed scrapes and `robotsBlocked`, and inspect each
+returned page's `metadata.statusCode` for target-site HTTP failures. Firecrawl's
+error endpoint may omit some internal failure classes, so an empty error list is
+not a guarantee of complete coverage. Keep the result page, job status and error
+output together when reporting crawl coverage.
+
+See [crawl response handling](https://docs.firecrawl.dev/features/crawl#response-handling)
+and [crawl error reporting](https://docs.firecrawl.dev/api-reference/endpoint/crawl-get-errors)
+for the current provider contracts.

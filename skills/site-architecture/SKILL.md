@@ -2,7 +2,7 @@
 name: site-architecture
 description: "Plan site structure — page hierarchy, navigation, URL patterns, internal linking, visual sitemaps. Not XML sitemaps (see seo-audit)."
 metadata:
-  version: 2.0.0
+  version: 2.1.3
 ---
 
 # Site Architecture
@@ -28,6 +28,7 @@ Gather this context (ask if not provided):
 - New site or restructuring an existing one?
 - If restructuring: what's broken? (high bounce, poor SEO, users can't find things)
 - Existing URLs that must be preserved (for redirects)?
+- What platform is it on, and is a platform change on the table? (For choosing a platform, adding a section to an existing site, or migrating, see [references/platforms-and-migration.md](references/platforms-and-migration.md).)
 
 ### 3. Site Type
 - SaaS marketing site
@@ -358,3 +359,4 @@ Mermaid diagram showing page relationships and navigation zones. Use `graph TD` 
 - **cro**: For optimizing individual pages for conversion
 - **schema**: For implementing breadcrumb and site navigation structured data
 - **competitors**: For comparison page frameworks and URL patterns
+- **launch**: For site go-live QA after a build or migration

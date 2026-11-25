@@ -7,7 +7,7 @@ Competitive traffic intelligence platform providing website analytics, traffic s
 | Integration | Available | Notes |
 |-------------|-----------|-------|
 | API | ✓ | Traffic, Search, Referrals, Competitors, Geography |
-| MCP | - | Not available |
+| MCP | ✓ | Official server ([docs](https://www.similarweb.com/corp/ai/mcp/)), checked 2026-10-27 |
 | CLI | ✓ | [similarweb.js](../clis/similarweb.js) |
 | SDK | - | REST API only |
 
@@ -52,7 +52,7 @@ GET https://api.similarweb.com/v1/website/example.com/traffic-sources/overview?a
 ### Top Referral Sites
 
 ```bash
-GET https://api.similarweb.com/v1/website/example.com/traffic-sources/referrals?api_key={key}&start_date=2024-01&end_date=2024-03
+GET https://api.similarweb.com/v4/website/example.com/traffic-sources/referrals?api_key={key}&start_date=2024-01&end_date=2024-03&country=world
 ```
 
 ### Organic Keywords
@@ -82,7 +82,7 @@ GET https://api.similarweb.com/v1/website/example.com/category-rank/category-ran
 ### Traffic by Country
 
 ```bash
-GET https://api.similarweb.com/v1/website/example.com/geo/traffic-by-country?api_key={key}&start_date=2024-01&end_date=2024-03
+GET https://api.similarweb.com/v4/website/example.com/geo/traffic-by-country?api_key={key}&start_date=2024-01&end_date=2024-03
 ```
 
 ## Key Metrics
@@ -148,3 +148,17 @@ GET https://api.similarweb.com/v1/website/example.com/geo/traffic-by-country?api
 - competitors
 - ads
 - content-strategy
+
+## CLI referral reports
+
+Referral reports use the endpoint-specific `v4` route. The required country
+scope defaults to `world`; specify `--country us` (or another permitted country)
+to select a market. Other existing CLI routes retain their version.
+
+```bash
+node tools/clis/similarweb.js referrals --domain example.com --start 2026-01 --end 2026-02 --country us
+```
+
+API keys are encoded as a single query parameter and masked by parameter name
+in previews, even when their value matches part of the requested domain.
+Contract: [Referrals — Desktop](https://developers.similarweb.com/reference/referrals-desktop).

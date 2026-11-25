@@ -2,7 +2,7 @@
 name: ad-creative
 description: "Generate and iterate ad creative at scale — RSA headlines, Meta/TikTok copy, static ad batches, iMessage and motion video ads, review pages. Test hypotheses must be falsifiable — name the metric, comparison, and expected direction."
 metadata:
-  version: 2.9.4
+  version: 2.13.5
 ---
 
 # Ad Creative
@@ -15,6 +15,8 @@ You are an expert performance creative strategist. Your goal is to generate high
 
 **Check for product marketing context first:**
 If `.agents/product-marketing.md` exists (or `.claude/product-marketing.md`, or the legacy `product-marketing-context.md` filename, in older setups), read it before asking questions. Use that context and only ask for information not already covered or specific to this task.
+
+Check its **Learnings** section before drafting: angles, offers, and formats already tested there shouldn't be re-proposed as new ideas, and active lessons apply unless the user says otherwise.
 
 **Apply the project's brand:**
 If `BRAND.md` exists, read it before asking questions and apply it to everything you produce — its voice, messaging, and audience for anything written, and its colors, typography, and logo for anything visual. Never ask for a brand fact it already answers. If it lacks something you need, name the missing fact instead of inventing one or quietly falling back to a generic default.
@@ -67,6 +69,8 @@ Pull performance data → Identify winning patterns → Generate new variations 
 
 ### Mode 3: Scaled Static Batches (Grounded)
 For recurring static ad production at volume (e.g., 50 concepts per batch), work from a **grounded inputs corpus** and the [static ad template library](references/static-ad-templates.md). Every concept must trace to real source material — see "Grounded Inputs" below. To run this on a daily or weekly cadence, see the daily-creative-drop loop in **marketing-loops**. To present a batch for client or stakeholder approval, produce a [creative review page](references/creative-review-page.md).
+
+For **text-led static headlines**, select treatments by the reader's awareness stage and deliver a mobile-readable visual spec using [references/awareness-headlines.md](references/awareness-headlines.md). It complements the static templates and hook system; numerical claims still need their own evidence.
 
 ### Mode 4: Creative Strategy Loop
 For deciding **which ads are worth making before making them**: synthesize three signal sources (account performance, customer language, external organic) into evidence-ranked concepts, branch the creative mix on account state (exploration vs. scaling), maintain a capacity-checked roadmap with production tiers, and run a monthly retro that feeds the next slate. The full system lives in [references/creative-roadmap.md](references/creative-roadmap.md); for hook generation and funnel-stage diagnosis inside any mode, load [references/hook-system.md](references/hook-system.md).
@@ -170,26 +174,30 @@ For detailed specs and format variations, see [references/platform-specs.md](ref
 
 ## Generating Ad Visuals
 
-**For static ad structure**, use the 15-template library in [references/static-ad-templates.md](references/static-ad-templates.md) — layout frameworks (Us vs. Them, Stat Callout, Review Card, Before/After, Founder Message, FAQ Card, and more) with copy slots, DTC and SaaS examples, and per-concept output format. Cycle through all 15 rather than clustering on favorites: template diversity is angle diversity.
+**To decide *which format to make next*** (before briefing any specific ad), consult the Meta creative format taxonomy in [references/meta-creative-formats.md](references/meta-creative-formats.md) — a prioritized S→F catalog of ~51 formats ranked by one question: is it a *unicorn scaler* that punctures cold net-new audiences, or a *supporting cast* member that only converts mid-funnel? Leads with the persona-based Andromeda context (why creator-fronted formats top the list), S-tier callouts (founder content, partnership ads, VSL), the A-tier bench, and explicit F-tier de-prioritization (press, podcast, notes-app fake-native). Use it to pick a format and build a portfolio; the how-to-build detail lives in the static/video references below. For the account-level kill/keep/scale math once ads are live, cross-reference the `ads` skill's the **ads** skill's Meta decision system reference.
 
-**For iOS-native reveal video ads** — iMessage chat reveals (scripted thread unfolds bubble-by-bubble: screenshot hook → friend asks "what app is that?" → brand + promo code reveal → end card), ChatGPT reveals (typed question → streaming answer), Apple Notes reveals (a confessional note typed live), and AirDrop reveals (an incoming share where the accept-tap is the reveal) — see [references/imessage-video-ads.md](references/imessage-video-ads.md) for surface selection, the six concept angles, script and pacing rules, production routes (off-the-shelf, Playwright + ffmpeg pipeline, Remotion), craft details that sell the illusion, and the grounding/compliance rules for dramatized conversations (strictest for fabricated AI answers).
+**For static ad structure**, use the template library in [references/static-ad-templates.md](references/static-ad-templates.md) — layout frameworks (Us vs. Them, Stat Callout, Before/After, Founder Message, FAQ Card, Grid Static, Callout, Apology Letter, Simple Guarantee, With / Without, Signs Checklist, and more), plus visual styles (billboard, whiteboard, newspaper, vintage, meme) that restyle any template with copy slots, DTC and SaaS examples, and per-concept output format. Each template carries a **tier (S–F)** and **funnel role** (unicorn cold-scaler vs. mid-funnel supporting cast) so you reach for the right one first. Cycle through templates rather than clustering on favorites — but weight toward the S/A tiers when the goal is cold net-new reach.
+
+**For iOS-native reveal video ads** — iMessage chat reveals (scripted thread unfolds bubble-by-bubble: screenshot hook → friend asks "what app is that?" → brand + promo code reveal → end card), ChatGPT reveals (typed question → streaming answer), Apple Notes reveals (a confessional note typed live), and AirDrop reveals (an incoming share where the accept-tap is the reveal) — see [references/imessage-video-ads.md](references/imessage-video-ads.md) for surface selection, the six concept angles, script and pacing rules, production routes (Playwright + ffmpeg pipeline, code-based video), craft details that sell the illusion, and the grounding/compliance rules for dramatized conversations (strictest for fabricated AI answers).
 
 **For faceless motion-style video ads** — fully generated 15–45s concept/explainer videos (styled poster stills → image-to-video "living" motion → TTS narration → word-timed captions; roughly $3–6 and ~15 minutes per finished video) — see [references/motion-video-ads.md](references/motion-video-ads.md) for the provider-agnostic pipeline, a nine-style visual library with fill-in prompt formulas — five characterful looks (screen-print collage, flat vector explainer, papercraft diorama, pop-art comic, claymation) plus four brand-flexible token-driven styles (monoline editorial, Swiss typographic, wireglow, duotone screenprint) driven by a brand-slots contract (FIELD / INK / ACCENT / TYPE FEEL) — the motion prompt formula, and hard-earned QC gotchas (maker-hands intrusion, final-two-seconds drift, caption/label collision, TTS/whisper sound-alikes).
 
+**For creator/UGC short-form video** — a tiered format library (reaction+demo hard cuts, "no yapping" split-screen tutorials, greenscreen reactions, plus Yapper, amateur investigation, David & Goliath, authority, VSL, green-screen commentary, conversation, duet/reaction, ASMR, and street-interview formats, each with a scale-vs-support tier and mechanics) and founder / organic-vlog structures (hero's journey, math, shiny-object, niche-guide, the three-capture shooting system, and the 0.5–1s cut formula) for TikTok/Reels/Shorts growth and paid — see [references/short-form-video-specs.md](references/short-form-video-specs.md). It also carries the **vertical video production spec** that applies to *all* 9:16 video this skill makes: the cross-platform safe-zone band (720×1200 text-safe area — the most-missed constraint), the classic TikTok caption recipe (white fill + black stroke, no pill), static-caption auto-sizing, and the organic-vs-baked-music decision that affects reach. Load it before producing any vertical video.
+
 For image and video generation tools, see [references/generative-tools.md](references/generative-tools.md) for the complete guide covering:
 
-- **Image generation** — Nano Banana Pro (Gemini), Flux, Ideogram for static ad images
-- **Video generation** — Veo, Kling, Runway, Sora, Seedance, Higgsfield for video ads
+- **Image generation** — Gemini image (Nano Banana), Flux, Ideogram for static ad images
+- **Video generation** — Veo, Kling, Runway, Seedance, Higgsfield for video ads
 - **Voice & audio** — ElevenLabs, OpenAI TTS, Cartesia for voiceovers, cloning, multilingual
-- **Code-based video** — Remotion for templated, data-driven video at scale
+- **Code-based video** — Remotion or Hyperframes for templated, data-driven video at scale
 - **Platform image specs** — Correct dimensions for every ad placement
 - **Cost comparison** — Pricing for 100+ ad variations across tools
 
-**Recommended workflow for scaled production:**
+**Workflow for scaled production:**
 1. Generate hero creative with AI tools (exploratory, high-quality)
-2. Build Remotion templates based on winning patterns
-3. Batch produce variations with Remotion using data feeds
-4. Iterate — AI for new angles, Remotion for scale
+2. Build code-based video templates (Remotion or Hyperframes) based on winning patterns
+3. Batch produce variations from data feeds
+4. Iterate — AI for new angles, templates for scale
 
 ---
 
@@ -294,14 +302,6 @@ Track what was learned and what's being tested:
   brief gives, in every field of every concept, unless a short form is
   explicitly approved
 
-### Descriptions That Convert
-
-Descriptions should complement headlines, not repeat them. Use descriptions to:
-- Add proof points (numbers, testimonials, awards)
-- Handle objections ("No credit card required," "Free forever for small teams")
-- Reinforce CTAs ("Start your free trial today")
-- Add urgency when genuine ("Limited to first 500 signups")
-
 ### Test Hypotheses That Can Lose
 
 When a concept ships with a test hypothesis, write one that a result can
@@ -314,6 +314,33 @@ control on CTR among renters" can.
   ("+15% CTR vs. Concept A")
 - The hypothesis should follow from the angle's motivation, so a win or a
   loss teaches you something about the audience, not just the asset
+
+### No AI Tells
+
+Ad copy that reads as generated looks like every other ad in the feed, and generating at volume multiplies whatever tic the first draft has. Check the whole batch.
+
+Never write these:
+- **Contrast reveals**: "It's not X, it's Y." "Not because X. Because Y." State Y directly, with the reason.
+- **Negation lists**: "No X, no Y, no Z." Say what does happen. One plain absence ("No card required") is fine.
+- **Trailing pile-ons**: a full claim, then a comma and more restating clauses. End the sentence at the claim.
+- **Self-answered questions and colon reveals**: "The result? 3x faster." "The best part: it learns." FAQ questions and a question in the reader's own voice are fine.
+- **Stock phrases**: "Say goodbye to," "X, reimagined," "Unlock the power of," "Take it to the next level," "Here's the thing."
+- **Em dashes** in headlines, descriptions, and primary text.
+
+Ad-specific tells:
+- **Stacked negations to fit a character limit**: "No setup. No fees. No contracts." Keep the one that matters most and use the space for a fact.
+- **Hook slop**: a generic "POV:", "Stop scrolling," "Here's what nobody tells you about X." Earn the next second with something specific to the viewer. A POV hook is fine when the situation is hyper-specific ("POV: it's 3pm and you're on your fourth coffee").
+- **CTA slop**: "Get started today," "Join thousands of happy customers." Name the action and what they get.
+
+Across a batch, vary the sentence shapes. Ten variations that all open the same way read as generated, even when each one is fine alone. For the full blacklist, use the **copywriting** skill's AI-tells reference.
+
+### Descriptions That Convert
+
+Descriptions should complement headlines, not repeat them. Use descriptions to:
+- Add proof points (numbers, testimonials, awards)
+- Handle objections ("No credit card required," "Free forever for small teams")
+- Reinforce CTAs ("Start your free trial today")
+- Add urgency when genuine ("Limited to first 500 signups")
 
 ---
 
@@ -422,14 +449,14 @@ For large-scale creative production (Anthropic's growth team generates 100+ vari
 
 ## Tool Integrations
 
-For pulling performance data and managing campaigns, see the [tools registry](../../tools/REGISTRY.md).
+For pulling performance data and managing campaigns, see the [tools registry](https://github.com/coreyhaines31/marketingskills/blob/main/tools/REGISTRY.md).
 
 | Platform | Pull Performance Data | Manage Campaigns | Guide |
 |----------|:---------------------:|:----------------:|-------|
-| **Google Ads** | `google-ads campaigns list`, `google-ads reports get` | `google-ads campaigns create` | [google-ads.md](../../tools/integrations/google-ads.md) |
-| **Meta Ads** | `meta-ads insights get` | `meta-ads campaigns list` | [meta-ads.md](../../tools/integrations/meta-ads.md) |
-| **LinkedIn Ads** | `linkedin-ads analytics get` | `linkedin-ads campaigns list` | [linkedin-ads.md](../../tools/integrations/linkedin-ads.md) |
-| **TikTok Ads** | `tiktok-ads reports get` | `tiktok-ads campaigns list` | [tiktok-ads.md](../../tools/integrations/tiktok-ads.md) |
+| **Google Ads** | `google-ads campaigns list`, `google-ads reports get` | `google-ads campaigns create` | [google-ads.md](https://github.com/coreyhaines31/marketingskills/blob/main/tools/integrations/google-ads.md) |
+| **Meta Ads** | `meta-ads insights get` | `meta-ads campaigns list` | [meta-ads.md](https://github.com/coreyhaines31/marketingskills/blob/main/tools/integrations/meta-ads.md) |
+| **LinkedIn Ads** | `linkedin-ads analytics get` | `linkedin-ads campaigns list` | [linkedin-ads.md](https://github.com/coreyhaines31/marketingskills/blob/main/tools/integrations/linkedin-ads.md) |
+| **TikTok Ads** | `tiktok-ads reports get` | `tiktok-ads campaigns list` | [tiktok-ads.md](https://github.com/coreyhaines31/marketingskills/blob/main/tools/integrations/tiktok-ads.md) |
 
 ### Workflow: Pull Data, Analyze, Generate
 
@@ -444,6 +471,8 @@ For pulling performance data and managing campaigns, see the [tools registry](..
    mutation. For other ad providers, follow the generated tools registry and
    return `execution_unavailable` when it marks the provider unavailable.
 
+**If wiring up step 1 for each platform is the obstacle**, there are three routes: the repo's ad platform CLIs (setup in [tools/SETUP.md](https://github.com/coreyhaines31/marketingskills/blob/main/tools/SETUP.md)), a reporting connector such as [Supermetrics](https://github.com/coreyhaines31/marketingskills/blob/main/tools/integrations/supermetrics.md) or [Coupler](https://github.com/coreyhaines31/marketingskills/blob/main/tools/integrations/coupler.md), or one connection to several ad accounts through an MCP gateway such as [Composio](https://github.com/coreyhaines31/marketingskills/blob/main/tools/integrations/composio.md), [Cogny](https://github.com/coreyhaines31/marketingskills/blob/main/tools/integrations/cogny.md), or [Magister](https://github.com/coreyhaines31/marketingskills/blob/main/tools/integrations/magister.md). Magister is built by this repository's maintainer; say so if you name it.
+
 ---
 
 ## Related Skills
@@ -455,3 +484,8 @@ For pulling performance data and managing campaigns, see the [tools registry](..
 - **ab-testing**: For structuring creative tests with statistical rigor
 - **marketing-psychology**: For psychological principles behind high-performing creative
 - **copy-editing**: For polishing ad copy before launch
+
+**If the [designskills](https://github.com/zstvns/design-skills) library is installed**, hand off the visual work:
+
+- **collateral-design**: For laying out static ads in the brand's visual system
+- **art-direction**: For on-brand imagery to use in ad visuals

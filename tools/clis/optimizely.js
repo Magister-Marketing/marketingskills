@@ -1,18 +1,30 @@
 #!/usr/bin/env node
 
+const rawArgs = process.argv.slice(2)
 const API_KEY = process.env.OPTIMIZELY_API_KEY
 const BASE_URL = 'https://api.optimizely.com/v2'
 
-if (!API_KEY) {
+if ((!API_KEY) && rawArgs.length > 0) {
   console.error(JSON.stringify({ error: 'OPTIMIZELY_API_KEY environment variable required' }))
   process.exit(1)
 }
+
+
+function requestSignal() {
+  const raw = args['timeout-ms'] ?? '120000'
+  const ms = Number(raw)
+  if (typeof raw !== 'string' || !/^\d+$/.test(raw) || !Number.isSafeInteger(ms) || ms < 1 || ms > 600000) {
+    throw new Error('--timeout-ms must be an integer from 1 to 600000')
+  }
+  return AbortSignal.timeout(ms)
+}
+
 
 async function api(method, path, body) {
   if (args['dry-run']) {
     return { _dry_run: true, method, url: `${BASE_URL}${path}`, headers: { Authorization: '***', 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: body || undefined }
   }
-  const res = await fetch(`${BASE_URL}${path}`, {
+  const res = await fetch(`${BASE_URL}${path}`, { signal: requestSignal(),
     method,
     headers: {
       'Authorization': `Bearer ${API_KEY}`,
@@ -21,6 +33,7 @@ async function api(method, path, body) {
     },
     body: body ? JSON.stringify(body) : undefined,
   })
+  if (res.status >= 400) process.exitCode = 1
   const text = await res.text()
   try {
     return JSON.parse(text)
@@ -49,8 +62,10 @@ function parseArgs(args) {
   return result
 }
 
-const args = parseArgs(process.argv.slice(2))
+const args = parseArgs(rawArgs)
 const [cmd, sub, ...rest] = args._
+
+const EXPERIMENT_ACTIONS = ['publish', 'start', 'pause', 'resume', 'unarchive']
 
 async function main() {
   let result
@@ -115,11 +130,13 @@ async function main() {
         case 'update': {
           const id = args.id
           if (!id) { result = { error: '--id required' }; break }
+          if (args.status !== undefined) { result = { error: `--status is read-only on update; change state with --action ${EXPERIMENT_ACTIONS.join('|')}` }; break }
+          if (args.action !== undefined && !EXPERIMENT_ACTIONS.includes(args.action)) { result = { error: `--action must be one of: ${EXPERIMENT_ACTIONS.join(', ')}` }; break }
           const body = {}
           if (args.name) body.name = args.name
-          if (args.status) body.status = args.status
           if (args['traffic-allocation']) body.traffic_allocation = Number(args['traffic-allocation'])
-          result = await api('PATCH', `/experiments/${id}`, body)
+          const qs = args.action ? `?${new URLSearchParams({ action: args.action })}` : ''
+          result = await api('PATCH', `/experiments/${id}${qs}`, body)
           break
         }
         case 'results': {
@@ -135,7 +152,7 @@ async function main() {
         case 'archive': {
           const id = args.id
           if (!id) { result = { error: '--id required' }; break }
-          result = await api('PATCH', `/experiments/${id}`, { status: 'archived' })
+          result = await api('DELETE', `/experiments/${id}`)
           break
         }
         default:
@@ -214,7 +231,7 @@ async function main() {
         error: 'Unknown command',
         usage: {
           projects: 'projects [list | get --id <id> | create --name <name>]',
-          experiments: 'experiments [list --project-id <id> | get --id <id> | create --project-id <id> --name <name> | update --id <id> --status <status> | results --id <id> | archive --id <id>]',
+          experiments: 'experiments [list --project-id <id> | get --id <id> | create --project-id <id> --name <name> | update --id <id> [--name <name>] [--traffic-allocation <n>] [--action publish|start|pause|resume|unarchive] | results --id <id> | archive --id <id>]',
           campaigns: 'campaigns [list --project-id <id> | get --id <id> | results --id <id>]',
           audiences: 'audiences [list --project-id <id> | get --id <id>]',
           events: 'events list --project-id <id>',
@@ -224,6 +241,7 @@ async function main() {
       }
   }
 
+  if (result?.error && rawArgs.length > 0) process.exitCode = 1
   console.log(JSON.stringify(result, null, 2))
 }
 

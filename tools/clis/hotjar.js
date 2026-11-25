@@ -1,26 +1,38 @@
 #!/usr/bin/env node
 
+const rawArgs = process.argv.slice(2)
 const CLIENT_ID = process.env.HOTJAR_CLIENT_ID
 const CLIENT_SECRET = process.env.HOTJAR_CLIENT_SECRET
-const OAUTH_URL = 'https://api.hotjar.io'
-const BASE_URL = 'https://api.hotjar.io/v2'
+const OAUTH_URL = 'https://api.hotjar.io/v1'
+const BASE_URL = 'https://api.hotjar.io/v1'
 
-if (!CLIENT_ID || !CLIENT_SECRET) {
+if ((!CLIENT_ID || !CLIENT_SECRET) && rawArgs.length > 0) {
   console.error(JSON.stringify({ error: 'HOTJAR_CLIENT_ID and HOTJAR_CLIENT_SECRET environment variables required' }))
   process.exit(1)
 }
 
 let cachedToken = null
 
+
+function requestSignal() {
+  const raw = args['timeout-ms'] ?? '120000'
+  const ms = Number(raw)
+  if (typeof raw !== 'string' || !/^\d+$/.test(raw) || !Number.isSafeInteger(ms) || ms < 1 || ms > 600000) {
+    throw new Error('--timeout-ms must be an integer from 1 to 600000')
+  }
+  return AbortSignal.timeout(ms)
+}
+
+
 async function getToken() {
   if (cachedToken) return cachedToken
-  const res = await fetch(`${OAUTH_URL}/oauth/token`, {
+  const res = await fetch(`${OAUTH_URL}/oauth/token`, { signal: requestSignal(),
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: `grant_type=client_credentials&client_id=${encodeURIComponent(CLIENT_ID)}&client_secret=${encodeURIComponent(CLIENT_SECRET)}`,
   })
   const data = await res.json()
-  if (!data.access_token) {
+  if (res.status >= 400 || !data.access_token) {
     throw new Error(data.error_description || data.error || 'Failed to obtain access token')
   }
   cachedToken = data.access_token
@@ -32,7 +44,7 @@ async function api(method, path) {
     return { _dry_run: true, method, url: `${BASE_URL}${path}`, headers: { Authorization: '***', 'Content-Type': 'application/json', Accept: 'application/json' } }
   }
   const token = await getToken()
-  const res = await fetch(`${BASE_URL}${path}`, {
+  const res = await fetch(`${BASE_URL}${path}`, { signal: requestSignal(),
     method,
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -40,6 +52,7 @@ async function api(method, path) {
       'Accept': 'application/json',
     },
   })
+  if (res.status >= 400) process.exitCode = 1
   const text = await res.text()
   try {
     return JSON.parse(text)
@@ -68,7 +81,7 @@ function parseArgs(args) {
   return result
 }
 
-const args = parseArgs(process.argv.slice(2))
+const args = parseArgs(rawArgs)
 const [cmd, sub, ...rest] = args._
 
 async function main() {
@@ -91,9 +104,12 @@ async function main() {
     case 'surveys':
       if (!siteId) { result = { error: '--site-id required' }; break }
       switch (sub) {
-        case 'list':
-          result = await api('GET', `/sites/${siteId}/surveys`)
+        case 'list': {
+          const params = new URLSearchParams({ limit })
+          if (cursor) params.set('cursor', cursor)
+          result = await api('GET', `/sites/${siteId}/surveys?${params}`)
           break
+        }
         case 'responses': {
           const surveyId = args['survey-id']
           if (!surveyId) { result = { error: '--survey-id required' }; break }
@@ -158,6 +174,7 @@ async function main() {
       }
   }
 
+  if (result?.error && rawArgs.length > 0) process.exitCode = 1
   console.log(JSON.stringify(result, null, 2))
 }
 

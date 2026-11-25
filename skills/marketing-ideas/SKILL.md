@@ -2,7 +2,7 @@
 name: marketing-ideas
 description: "Recommend from 139 proven SaaS marketing ideas matched to stage, budget, and goals. Use when stuck or brainstorming growth tactics."
 metadata:
-  version: 2.0.0
+  version: 2.0.5
 ---
 
 # Marketing Ideas for SaaS
@@ -41,13 +41,16 @@ When asked for marketing ideas:
 | Launches | 77-86 | Product Hunt, Lifetime deals, Giveaways |
 | Product-Led | 87-96 | Viral loops, Powered-by marketing, Free migrations |
 | Content Formats | 97-109 | Podcasts, Courses, Annual reports, Year wraps |
-| Unconventional | 110-122 | Awards, Challenges, Guerrilla marketing |
+| Unconventional | 110-122 | Awards, Challenges, [Guerrilla marketing](references/guerrilla-marketing.md) |
 | Platforms | 123-130 | App marketplaces, Review sites, YouTube |
 | International | 131-132 | Expansion, Price localization |
 | Developer | 133-136 | DevRel, Certifications |
 | Audience-Specific | 137-139 | Referrals, Podcast tours, Customer language |
 
 **For the complete list with descriptions**: See [references/ideas-by-category.md](references/ideas-by-category.md)
+
+**Deep dives** (full framework + case library for a single idea):
+- **Guerrilla marketing (#121)**: [references/guerrilla-marketing.md](references/guerrilla-marketing.md) — the direct-mail 3-rule framework (relevance / relationship-building / precision targeting), ROI discipline, "think in stories, not campaigns," "test small before going big," and a named case library (WePay, Xero, Red Bull, Antimetal, Arrows, ProfitWell, Buzzsprout, Wistia).
 
 ---
 
@@ -166,6 +169,7 @@ When recommending ideas, provide for each:
 - **marketing-plan**: When the user wants a comprehensive plan instead of standalone ideas. Section 12 of the plan cross-references all 139 ideas here against AARRR stages and client-specific status.
 - **programmatic-seo**: For scaling SEO content (#4)
 - **competitors**: For comparison pages (#11)
+- **reverse-engineer-marketing**: For ideas drawn from how a specific company grew, with plays to copy
 - **emails**: For email marketing tactics
 - **free-tools**: For engineering as marketing (#15)
 - **referrals**: For viral growth (#93)

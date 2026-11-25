@@ -2,7 +2,7 @@
 name: video
 description: "Produce video with AI and code — Veo/Sora/Runway/Kling generation, HeyGen/Synthesia avatars, Remotion/Hyperframes templates, edit-spec copying."
 metadata:
-  version: 2.1.2
+  version: 2.4.7
 ---
 
 # Video
@@ -43,10 +43,10 @@ Gather this context (ask if not provided):
 
 Pick the right tool for the job:
 
-| Approach | Best For | Tools | When to Use |
+| Approach | Fits | Tools | When to Use |
 |----------|----------|-------|-------------|
 | **Programmatic** | Templated, data-driven, batch video | Remotion, Hyperframes | Product updates, personalized videos, recurring content |
-| **AI Generation** | Original footage from text/image prompts | Veo 3, Sora 2, Runway, Kling, Seedance | B-roll, hero shots, creative visuals you can't film |
+| **AI Generation** | Original footage from text/image prompts | Veo, Runway, Kling, Seedance | B-roll, hero shots, creative visuals you can't film |
 | **AI Avatars** | Talking-head presenter without filming | HeyGen, Synthesia | Explainers, tutorials, multilingual content |
 | **Editing/Repurposing** | Cutting long-form into short clips | Descript, Opus Clip, CapCut | Podcast/webinar → social clips |
 
@@ -54,46 +54,29 @@ Pick the right tool for the job:
 
 ## Programmatic Video
 
-Build videos with code. Best for repeatable, templated, or data-driven video at scale.
+Build videos with code. Fits repeatable, templated, or data-driven video at scale.
 
-### Hyperframes (HTML/CSS — recommended for agents)
+### Hyperframes (HTML)
 
-Open-source, Apache 2.0, from HeyGen. Uses plain HTML/CSS/JS — no framework DSL to learn. LLM-native: AI models generate better HTML than React components.
+Open-source framework from HeyGen. Compositions are plain HTML/CSS/JS files. Docs: [hyperframes.heygen.com](https://hyperframes.heygen.com/introduction).
 
 Hyperframes must already be available in the project or image. Package
 installation is a user/image-build prerequisite and is not performed by the
 Hosted Agent sandbox.
 
-**Key concept:** Each frame is an HTML document. Compose frames into a timeline, render to MP4.
+**Key concept:** A composition is one HTML file. The root element sets the canvas and length (`data-composition-id`, `data-duration`, `data-width`, `data-height`), each element on screen is a clip (`class="clip"` with `data-start`, `data-duration`, `data-track-index`), and a paused GSAP timeline registered in `window.__timelines` drives the animation. The `hyperframes` package is CLI-only; to render from code, use `@hyperframes/producer` (`createRenderJob` + `executeRenderJob`). Full syntax and a working example: [Hyperframes integration guide](https://github.com/coreyhaines31/marketingskills/blob/main/tools/integrations/hyperframes.md).
 
-```typescript
-import { render } from "hyperframes";
-
-await render({
-  frames: [
-    { html: "<h1>Welcome to Acme</h1>", duration: 3 },
-    { html: "<h2>Here's what we built</h2>", duration: 3 },
-    { html: "<p>Try it free →</p>", duration: 2 },
-  ],
-  output: "intro.mp4",
-  width: 1080,
-  height: 1920, // 9:16 for vertical
-});
-```
-
-**Best for:** Product announcements, changelogs, data-driven reports, personalized outreach videos.
-
-**Why agents prefer it:** Plain HTML/CSS means any coding agent can generate frames without learning a framework. Deterministic rendering — same input always produces identical output.
+**Fits:** Product announcements, changelogs, data-driven reports, personalized outreach videos.
 
 ### Remotion (React)
 
-Mature open-source framework. More powerful than Hyperframes but requires React knowledge.
+Framework where compositions are React components. Docs: [remotion.dev](https://www.remotion.dev/docs).
 
 Use an existing Remotion project with dependencies already present. Remote
 starter bootstrap is `execution_unavailable`; ask the user to scaffold it in
 their own terminal when necessary.
 
-**Key concept:** React components are frames. Props drive content. Render locally or via Remotion Lambda (AWS) for scale.
+**Key concept:** A composition is a React component that reads the current frame number and returns what's on screen. Props drive content.
 
 ```tsx
 export const ProductDemo: React.FC<{ title: string; features: string[] }> = ({
@@ -113,17 +96,18 @@ export const ProductDemo: React.FC<{ title: string; features: string[] }> = ({
 };
 ```
 
-**Best for:** Complex animations, interactive previews, large-scale batch rendering (Lambda).
+**Fits:** Teams that already write React and want to reuse their components.
 
 ### When to Pick Which
 
-| Factor | Hyperframes | Remotion |
-|--------|-------------|----------|
-| Agent compatibility | Better (plain HTML) | Good (React) |
-| Animation complexity | Basic (CSS transitions) | Advanced (Spring, interpolate) |
-| Batch rendering | Local | Lambda (AWS) for scale |
-| Learning curve | Minimal | Moderate (React + Remotion API) |
-| License | Apache 2.0 | Company license for commercial use |
+Both render web pages to video in a headless browser. The difference is what you write:
+
+| | Hyperframes | Remotion |
+|--|-------------|----------|
+| You write | HTML, CSS, JS | React components (TypeScript) |
+| Timing | Declared in markup; the renderer seeks a paused animation timeline | Computed in code from the current frame number |
+
+Pick the one that matches what your team and source material already are: existing HTML, CSS, or browser animations point to Hyperframes; an existing React codebase points to Remotion. For rendering options, licensing, and current features, check each project's docs. They change faster than this skill.
 
 ---
 
@@ -133,24 +117,28 @@ Generate original footage from text or image prompts. Use for B-roll, hero visua
 
 ### Model Comparison
 
-| Model | Resolution | Max Duration | Best For | Cost |
-|-------|-----------|-------------|----------|------|
-| **Veo 3** (Google) | Up to 1080p (4K varies) | Variable | Top overall quality, synced audio | API-based |
-| **Sora 2** (OpenAI) | Up to 1080p | Up to ~20 sec | Cinematic + synced audio, ChatGPT/API integration | API + ChatGPT |
-| **Runway Gen-4** | Up to 4K | ~10 sec/gen | Motion control, temporal consistency, edit-style workflows | $12-76/mo |
-| **Kling 2.5/3.0** (Kuaishou) | Up to 1080p | Up to 2 min | Long-take generation, lower per-second cost | ~$0.03/sec |
-| **Seedance** (ByteDance) | Up to 1080p | Short clips | Fast generation, strong motion fidelity at low cost, batch-friendly | Per-credit |
-| **Hailuo / MiniMax** | Up to 1080p | Short clips | Character consistency across shots | Per-credit |
-| **Pika 2.x** | 1080p | Short clips | Quick effects, image-to-video, lower bar to entry | Per-credit |
-| **Hunyuan Video / Wan 2** | 720p–1080p | Variable | Open-source self-hosted; full control, no API fees | Free (GPU) |
+Models, clip lengths, and prices change every few months. This table was checked on 2026-11-19; follow each vendor's docs before planning around a limit. For per-model detail, see the ad-creative skill's generative tools reference.
 
-**Quick picks**:
-- **Highest quality + audio**: Veo 3 or Sora 2
-- **Batch / volume / cost**: Kling, Seedance
-- **Character consistency across multiple shots**: Hailuo
-- **Self-hosted, brand-controlled**: Hunyuan Video or Wan 2 (open weights)
+| Model | Clip length | Stated strengths | Access |
+|-------|-------------|------------------|--------|
+| **Veo 3.1** (Google) | 4, 6, or 8 seconds | Generated sound, 9:16 and 16:9, up to 4K | Google Cloud; third-party APIs |
+| **Runway Gen-4.5** | See docs | Text and image to video; Aleph for editing existing video | Runway app and API |
+| **Kling 4.0** (Kuaishou) | 3-30 seconds (per Runway's listing) | Audio included, image and video references | Kling; third-party APIs |
+| **Seedance 2.5** (ByteDance) | Up to 30 seconds (per Runway's listing) | Audio generated with the video; image, video, and audio references | BytePlus; third-party APIs |
+| **Hailuo / MiniMax H3** | Up to 15 seconds | 2K by default, reference inputs | Hailuo app; MiniMax |
+| **Pika 2.5** | Short clips | An app priced in credits, with its own and other labs' models | Pika app |
+| **Wan 2.2 / HunyuanVideo** | Varies | Open weights for self-hosting. Wan is Apache-2.0; HunyuanVideo has its own community licence, which excludes the EU, UK, and South Korea | Self-hosted |
+
+**By need** (options to compare, not rankings):
+- **Sound generated with the clip**: Veo, Kling, Seedance
+- **Volume at lower cost**: the Fast, Lite, or Mini tiers of those models
+- **Consistency from reference images**: Veo, Seedance, Kling, Hailuo
+- **Self-hosted, brand-controlled**: Wan 2.2 or HunyuanVideo (read the licence first)
 - **Storyboard → video workflow**: Runway, LTX Studio
 - **Image-to-video from a still you already have**: Kling, Pika, Runway
+- **Comparing several models with one key**: Runway's API hosts Veo, Kling, and Seedance next to its own
+
+Most clips are short. Plan a 30-second video as several shots and assemble them, unless the model you chose makes that length in one pass.
 
 ### Prompting for Video Models
 
@@ -187,29 +175,32 @@ cinematic color grading, 4K
 
 Create talking-head videos without filming. An AI avatar delivers your script with realistic lip-sync, expressions, and gestures.
 
-### HeyGen (recommended — has MCP server)
+### HeyGen (has MCP server)
 
-Best lip-sync and micro-expressions. 230+ avatars, 140+ languages.
+Stock and custom avatars with lip-sync. The vendor lists 700+ stock avatars and 175+ languages and dialects on paid plans.
 
-**Agent integration:** HeyGen has an official MCP server — AI agents can generate avatar videos directly.
+**Agent integration:** HeyGen has an official MCP server (`https://mcp.heygen.com/mcp/v1/`, OAuth sign-in), so an agent can generate avatar videos directly.
 
-| Plan | Videos | Duration |
-|------|--------|----------|
-| Free | 3/mo | 3 min max |
-| Creator | Unlimited | 5 min |
-| Business | Unlimited | 20 min |
+| Plan | Monthly allowance | Max video length |
+|------|-------------------|------------------|
+| Free | 3 videos, watermarked | 1 minute |
+| Creator | 600 credits | 30 minutes |
+| Pro | 1,000 credits | 30 minutes |
+| Business | 1,500 credits | 60 minutes |
+
+Checked 2026-11-19. Paid plans are metered in credits, and credit use varies by avatar model and video length.
 
 Check [heygen.com/pricing](https://www.heygen.com/pricing) for current prices.
 
-**Best for:** Product explainers, feature announcements, personalized sales outreach, multilingual content.
+**Fits:** Product explainers, feature announcements, personalized sales outreach, multilingual content.
 
-**Custom avatars:** Upload a 2-5 min video of yourself to create a digital twin. Looks and sounds like you, generates videos from text scripts.
+**Custom avatars:** Record yourself talking to camera (15 seconds to 10 minutes; the vendor recommends about 2 minutes), plus a short consent clip, to create a digital twin that generates videos from text scripts.
 
 ### Synthesia
 
-Full-body avatars with expressive body language. Built-in script generation from URLs/docs.
+Avatar videos generated from a document, a slide deck, or a link, with an API for generating them from code.
 
-**Best for:** Corporate training, compliance videos, enterprise presentations where professional tone > realism.
+**Fits:** Corporate training, compliance videos, enterprise presentations.
 
 ### When to Use Avatars vs. Other Approaches
 
@@ -228,7 +219,7 @@ Full-body avatars with expressive body language. Built-in script generation from
 
 Turn existing content into multiple video formats.
 
-| Tool | What It Does | Best For |
+| Tool | What It Does | Fits |
 |------|-------------|----------|
 | **Descript** | Transcript-based editing — edit video by editing text | Cleaning up interviews, podcasts, webinars |
 | **Opus Clip** | Auto-clips long videos, scores virality potential | Long-form → short-form at scale |
@@ -266,6 +257,10 @@ To replicate the *style* of a video edit you admire — the cut rhythm, caption 
 5. **Voiceover** — record yourself or use AI avatar for narration
 6. **Export** at platform-appropriate specs
 
+**Scripted in-app recording:** for a repeatable demo of a web app flow (re-recorded every release, run against a local build), drive the app with Playwright and add subtitles, a visible cursor, and optional TTS narration. See [references/product-demo-recording.md](references/product-demo-recording.md) for the workflow, step modes, and local-app gotchas.
+
+**Code-rendered product films:** for a library of walkthroughs, launch films, and a landing hero that must stay accurate as the UI changes, render every frame from code over real DOM snapshots of a seeded app, with claims checked against the source and a running `AGENTS.md` of taste rules. See [references/code-rendered-product-films.md](references/code-rendered-product-films.md) for the repo setup, UI capture, audio, render, review, and measurement.
+
 ### Explainer Video
 
 1. **Script** the problem → solution → CTA arc
@@ -276,11 +271,28 @@ To replicate the *style* of a video edit you admire — the cut rhythm, caption 
 
 ### Batch Social Clips
 
-1. **Create master template** in Hyperframes/Remotion
+1. **Create master template** in Hyperframes/Remotion, one layout per aspect ratio
 2. **Feed data** — product features, testimonials, stats
-3. **Render batch** — one template, many variations
-4. **Add platform-specific captions** via CapCut or Captions.ai
-5. **Schedule** across platforms
+3. **Render batch** — the same data rows through each layout
+4. **Check frames** — look at the peak-zoom frame of each size for a cropped product, logo, or text
+5. **Add platform-specific captions** via CapCut or Captions.ai
+6. **Schedule** across platforms
+
+### Personalized Video per Account
+
+A tailored product film for each target account, made by agents. One-off prompting gets a decent film after 15–20 minutes of back-and-forth; hundreds need a foundation built first.
+
+1. **Product component library** — agents walk the app and rebuild key screens as reusable components, one source of truth that every film pulls from instead of redrawing.
+2. **Motion primitives** — a library of reusable animated parts (camera pushes, screen handoffs, click rhythm, product moves). Fix one and every film inherits the fix.
+3. **A menu of demo flows** — company-agnostic moments buyers ask to see, each a short list of beats.
+4. **Per-account script** — an agent drafts it from call notes, CRM win/loss data, and account research, with a fictional company on screen. Voiceover from a cloned narrator voice, with the narrator's consent.
+5. **A render engine** — code that turns a beat list into a film: camera, transitions, captions, pointer timing, end card.
+6. **Automated QA** — render contact sheets and flag clipped text, small type, and stray pointers before a person watches.
+7. **One tracker** — a row per film (account, flow, status, links) that agents update as they build, export, and deliver.
+
+Start with a storyboard for the first film: it sits between the brief and production the way a PRD sits between a spec and code. Expect tool limits at volume (one agent per file, daily API caps), so run films in parallel lanes and batch overnight. Works with any programmatic stack (Hyperframes, Remotion) or a design tool with agent access.
+
+*Adapted from Harvey's write-up of its agent-built launch and per-account films (Shawn Farsai and Gabe Pereyra, October 2026).*
 
 ---
 
@@ -314,10 +326,11 @@ Output: Ready-to-publish video
 
 1. **Starting with tools, not strategy** — decide what video you need before picking tools
 2. **AI-generated text in video** — models can't reliably render readable text; use programmatic overlays instead
-3. **Uncanny valley avatars** — if avatar quality matters, invest in HeyGen Creator+ tier
+3. **Uncanny valley avatars** — if avatar quality matters, test the vendor's higher-quality avatar models on a short script before committing
 4. **No captions** — 85% of social video is watched without sound
 5. **Wrong aspect ratio** — 9:16 for social, 16:9 for YouTube/website, 1:1 for feeds
 6. **Over-producing** — authentic often outperforms polished, especially on TikTok
+7. **Cropping the product** — a full-canvas photo plus a push-in cuts off product edges and logos; fit the photo inside a margin and keep zoom small (see the [Hyperframes guide](https://github.com/coreyhaines31/marketingskills/blob/main/tools/integrations/hyperframes.md#product-photos))
 
 ---
 
@@ -336,8 +349,8 @@ Output: Ready-to-publish video
 
 | Tool | Type | MCP | Guide |
 |------|------|:---:|-------|
-| **HeyGen** | AI avatars | Yes | [heygen.md](../../tools/integrations/heygen.md) |
-| **Hyperframes** | Programmatic video | - | [hyperframes.md](../../tools/integrations/hyperframes.md) |
+| **HeyGen** | AI avatars | ✓ | [heygen.md](https://github.com/coreyhaines31/marketingskills/blob/main/tools/integrations/heygen.md) |
+| **Hyperframes** | Programmatic video | - | [hyperframes.md](https://github.com/coreyhaines31/marketingskills/blob/main/tools/integrations/hyperframes.md) |
 | **Remotion** | Programmatic video | - | [remotion.dev](https://www.remotion.dev/docs) |
 | **Runway** | AI generation | - | [runwayml.com/docs](https://docs.dev.runwayml.com) |
 

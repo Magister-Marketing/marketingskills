@@ -2,7 +2,7 @@
 name: image
 description: "Create and optimize marketing images — AI generation (Nano Banana, Flux, Ideogram), Canva/Figma, banners, OG images, WebP optimization."
 metadata:
-  version: 2.0.3
+  version: 2.0.8
 ---
 
 # Image
@@ -42,10 +42,10 @@ Gather this context (ask if not provided):
 
 Pick the right tool for the job:
 
-| Approach | Best For | Tools | When to Use |
+| Approach | Fits | Tools | When to Use |
 |----------|----------|-------|-------------|
 | **AI Generation** | Original images from text prompts | Gemini/Nano Banana, Flux, Ideogram | Blog heroes, social graphics, lifestyle scenes |
-| **AI Editing** | Modify existing images | Gemini, Flux Flex | Background removal, style changes, variations |
+| **AI Editing** | Modify existing images | Gemini image, Flux, GPT Image | Background removal, style changes, variations |
 | **Design Tools** | Templated, brand-consistent assets | Canva, Figma | Profile banners, social templates, presentations |
 | **Screenshot + Overlay** | Product UI showcases | Browser screenshot + code overlay | Product mockups, feature announcements |
 | **Stock Photography** | Generic business/lifestyle scenes | Unsplash, Pexels | When speed matters more than uniqueness |
@@ -54,47 +54,51 @@ Pick the right tool for the job:
 
 ## AI Image Generation
 
-Generate original images from text prompts. The fastest way to create unique marketing visuals.
+Generate original images from text prompts.
 
 ### Model Comparison
 
-| Model | Best For | Text in Images | API | Cost |
-|-------|----------|:-:|-----|------|
-| **Gemini Image** (Google, "Nano Banana" / Nano Banana Pro) | All-around, editing, multi-image reference, text rendering | Good | [Gemini API](https://ai.google.dev/gemini-api/docs/image-generation) | Check [pricing](https://ai.google.dev/gemini-api/docs/pricing) |
-| **Flux** (Black Forest Labs — Pro 1.1, Kontext, Dev, Schnell) | Photorealism, brand consistency, batch; Kontext for in-image editing | Limited | [BFL API](https://docs.bfl.ai/), Replicate, fal.ai | Check [pricing](https://docs.bfl.ai/quick_start/pricing) |
-| **Ideogram 3.0** | Typography, branded graphics, accurate text rendering | Best | [Ideogram API](https://developer.ideogram.ai/) | Check [pricing](https://about.ideogram.ai/api-pricing) |
-| **ChatGPT Images 2.0 / GPT Image** (OpenAI) | General purpose, ChatGPT integration, native editing | Good | [OpenAI API](https://platform.openai.com/docs/guides/image-generation) | Check [pricing](https://platform.openai.com/docs/pricing) |
-| **Midjourney v7** | Artistic, high-aesthetic, art-directed visuals | Improved | No official API; Discord + Web | Subscription-based |
-| **Recraft V3** | Vector + brand-consistent illustrations, design assets | Strong | [Recraft API](https://www.recraft.ai/docs) | Per-credit |
-| **Stable Diffusion 3.5 / SDXL** | Self-hosted, customizable, fine-tunable | Varies | Open source | Free (GPU costs) |
+Models, versions, and prices change every few months. This table names each family, what its vendor says it is for, and where to check. It was checked against the vendors' docs on 2026-11-19; follow the links before pinning a model ID or quoting a price.
 
-**Note:** DALL-E 3 is fully deprecated. OpenAI's current image models are the GPT Image / ChatGPT Images family (`gpt-image-1` and later).
+| Model family | Stated strengths | API | Notes |
+|--------------|------------------|-----|-------|
+| **Gemini image** (Google, "Nano Banana") | Editing, up to 14 reference images in one request, text rendering | [Gemini API](https://ai.google.dev/gemini-api/docs/image-generation) | Several tiers, from a low-cost Lite model to Pro. `gemini-2.5-flash-image` is marked legacy. [Pricing](https://ai.google.dev/gemini-api/docs/pricing) |
+| **Flux** (Black Forest Labs) | Photorealism, generation and editing from up to ten reference images (FLUX 3 Image) | [BFL API](https://docs.bfl.ai/), Replicate, fal.ai | FLUX 3 is the current family; FLUX.2 is still supported. FLUX.2 [dev] has open weights for local, non-commercial use. [Pricing](https://docs.bfl.ai/quick_start/pricing) |
+| **Ideogram** | Text and typography in the image, up to 10 style reference images | [Ideogram API](https://developer.ideogram.ai/) | The 4.x models are current; 3.0 is still available. [Pricing](https://ideogram.ai/pricing/?pricing_tab=api) |
+| **GPT Image** (OpenAI) | General purpose, editing, the models behind image generation in ChatGPT | [OpenAI API](https://platform.openai.com/docs/guides/image-generation) | Older model IDs are on a shutdown schedule (see the note below). [Pricing](https://platform.openai.com/docs/pricing) |
+| **Midjourney** | Stylised, art-directed visuals | No official public API; Discord and web | Check the current version in [Midjourney's docs](https://docs.midjourney.com/) |
+| **Recraft** | Vector (SVG) output, illustration, brand styles | [Recraft API](https://www.recraft.ai/docs) | V4.1 is the default; V3 keeps curated styles, exact text placement, and every editing operation. Prepaid API units |
+| **Stable Diffusion 3.5** (Stability AI) | Self-hosting, fine-tuning | API, and open weights | Free under Stability's Community License below $1M in annual revenue. SDXL is a legacy model |
+
+**Note on OpenAI model IDs:** DALL-E 2 and 3 were shut down in May 2026 and `gpt-image-1` in October 2026. `gpt-image-1-mini`, `gpt-image-1.5`, and `chatgpt-image-latest` shut down on 1 Dec 2026, and `gpt-image-2` on 10 Feb 2027. OpenAI points new integrations to `gpt-image-2.6-sunburst` or `gpt-image-2.6-flare`. Check the [deprecations page](https://platform.openai.com/docs/deprecations) before pinning an ID.
 
 ### When to Use Which
 
+These are options to compare, not rankings. Run the same brief through two or three and judge the output.
+
 ```
 Need text/headlines in the image?
-├── Yes → Ideogram 3.0 (best), Gemini (good), GPT Image / ChatGPT Images (decent)
+├── Yes → options include Ideogram, Gemini image, GPT Image, Recraft
 └── No ↓
 
 Need product/brand consistency across many images?
-├── Yes → Flux (multi-image reference), Gemini Nano Banana Pro, Recraft V3
+├── Yes → options include Flux and Gemini image (multi-reference), Recraft (brand styles)
 └── No ↓
 
 Need to edit an existing image (in-place)?
-├── Yes → Gemini (native editing), Flux Kontext, ChatGPT Images
+├── Yes → options include Gemini image, Flux, GPT Image
 └── No ↓
 
 Need vector / illustrative brand assets?
-├── Yes → Recraft V3 (best for vector + brand consistency), Midjourney (artistic)
+├── Yes → options include Recraft (SVG output), Midjourney (stylised raster)
 └── No ↓
 
-Need highest visual quality / art direction?
-├── Yes → Flux Pro 1.1, Midjourney v7
+Need art-directed, high-polish visuals?
+├── Yes → options include Flux, Midjourney
 └── No ↓
 
 Need volume at low cost?
-└── Flux Schnell, Gemini Flash, Stable Diffusion (self-hosted)
+└── options include Flux's Klein tier, Gemini's Lite image model, Stable Diffusion (self-hosted)
 ```
 
 ### Prompting Basics
@@ -123,19 +127,19 @@ For templated, brand-consistent work where AI generation is overkill or too unpr
 
 ### Canva
 
-Best for non-designers who need polished output fast.
+Fits non-designers who need polished output fast.
 
 - **Strengths:** Massive template library, brand kit, Magic Resize (one design → all sizes), team collaboration
-- **Best for:** Social graphics, presentations, email headers, simple banners
+- **Fits:** Social graphics, presentations, email headers, simple banners
 - **Limitations:** Less control than Figma, templates can look generic
 - **Agent-friendliness:** Has an API but limited — better as a human-in-the-loop tool
 
 ### Figma
 
-Best for teams with design systems or pixel-perfect needs.
+Fits teams with design systems or pixel-perfect needs.
 
 - **Strengths:** Design system components, auto layout, developer handoff, plugins
-- **Best for:** OG images via templates, design system assets, complex layouts
+- **Fits:** OG images via templates, design system assets, complex layouts
 - **Limitations:** Steeper learning curve, requires design skill
 - **Agent-friendliness:** Has an API and MCP server for reading designs
 
@@ -313,7 +317,7 @@ Generate OG images programmatically for pages with dynamic content (blog posts, 
 ## Common Mistakes
 
 1. **Using AI for product UI screenshots** — models hallucinate interfaces; capture real screenshots
-2. **Skipping image optimization** — unoptimized images are the #1 page speed killer
+2. **Skipping image optimization** — unoptimized images are a common cause of slow pages, and the hero image is often the LCP element
 3. **No OG image** — shared links look broken without a preview image
 4. **Wrong aspect ratio** — always check platform specs before generating
 5. **Text-heavy images without Ideogram** — most AI models butcher text; use Ideogram or add text in post
@@ -343,3 +347,9 @@ Generate OG images programmatically for pages with dynamic content (blog posts, 
 - **seo-audit**: For image SEO (alt text, file names, lazy loading)
 - **aso**: For app store screenshot specs and optimization
 - **directory-submissions**: For Product Hunt gallery images and directory listing visuals
+
+**If the [designskills](https://github.com/zstvns/design-skills) library is installed**, hand off the visual work:
+
+- **collateral-design**: For OG images, thumbnails, and social graphics built from the brand's visual system
+- **art-direction**: For defining the photo, illustration, and icon style before generating images
+- **logo-design**: For designing or critiquing a logo

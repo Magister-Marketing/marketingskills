@@ -2,7 +2,7 @@
 name: influencer-marketing
 description: "Plan creator, influencer, and ambassador partnerships — vetting, pay, usage rights, briefs, UGC, newsletter and podcast sponsorships, FTC disclosure, and whether a sponsorship worked. For affiliate payouts, see referrals; for creator content as ads, ad-creative."
 metadata:
-  version: 1.4.3
+  version: 1.4.4
 ---
 
 # Influencer & Creator Marketing
@@ -191,7 +191,7 @@ For the community-led, unpaid advocate end of this (badges, recognition, communi
 
 For implementation, see the [tools registry](https://github.com/coreyhaines31/marketingskills/blob/main/tools/REGISTRY.md).
 
-| Tool | Best for | Guide |
+| Tool | Fits | Guide |
 |------|----------|-------|
 | **SparkToro** | Audience intelligence — where your ICP actually pays attention, and vetting a creator's real audience | [sparktoro.md](https://github.com/coreyhaines31/marketingskills/blob/main/tools/integrations/sparktoro.md) |
 

@@ -7,7 +7,7 @@ Forms and surveys platform API for creating typeforms, retrieving responses, man
 | Integration | Available | Notes |
 |-------------|-----------|-------|
 | API | ✓ | Create, Responses, Webhooks APIs |
-| MCP | - | Not available |
+| MCP | ✓ | Official server ([docs](https://www.typeform.com/developers/mcp/)), checked 2026-10-27 |
 | CLI | ✓ | [typeform.js](../clis/typeform.js) |
 | SDK | ✓ | JavaScript (@typeform/js-api-client), Embed SDK |
 
@@ -57,12 +57,14 @@ POST https://api.typeform.com/forms
 ### Update a form
 
 ```bash
-PUT https://api.typeform.com/forms/{form_id}
+PATCH https://api.typeform.com/forms/{form_id}
 
-{
-  "title": "Updated Survey Title"
-}
+[
+  { "op": "replace", "path": "/title", "value": "Updated Survey Title" }
+]
 ```
+
+Use JSON Patch for a title-only change. `PUT` replaces the full form; omitted fields and their results are deleted. See [Typeform's partial-update contract](https://www.typeform.com/developers/create/reference/update-form-patch/).
 
 ### Delete a form
 

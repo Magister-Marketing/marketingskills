@@ -2,7 +2,7 @@
 name: lead-magnets
 description: "Plan lead magnets for email capture — ebooks, checklists, templates, quizzes; buyer-stage matching, gating, delivery, promotion."
 metadata:
-  version: 2.0.1
+  version: 2.1.5
 ---
 
 # Lead Magnets
@@ -88,6 +88,8 @@ Gather this context (ask if not provided):
 | Free trial/community access | Product experience | Varies | Varies |
 
 **For detailed creation guidance per format**: See [references/format-guide.md](references/format-guide.md)
+
+**Agent skills as a lead magnet**: a course, webinar series, podcast, or newsletter archive you own can ship as an installable agent skill. See [references/content-to-skill.md](references/content-to-skill.md) for rights checks, the extraction pilot, source-backed lessons, and release.
 
 ---
 
@@ -306,9 +308,8 @@ When creating a lead magnet strategy, provide:
 - **free-tools**: For interactive tools as lead magnets (calculators, graders, quizzes)
 - **copywriting**: For writing the lead magnet content itself
 - **emails**: For nurture sequences after lead capture
-- **cro**: For optimizing lead magnet landing pages
+- **cro**: For optimizing lead magnet landing pages and capture forms
 - **popups**: For popup-based lead capture
-- **cro**: For optimizing capture forms
 - **content-strategy**: For content planning and topic selection
 - **analytics**: For measuring lead magnet performance
 - **ads**: For paid promotion of lead magnets

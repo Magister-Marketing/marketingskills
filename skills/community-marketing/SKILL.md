@@ -2,7 +2,7 @@
 name: community-marketing
 description: "Build and grow communities — Discord, Slack, Circle, Reddit strategy; launch from zero, rituals, ambassador programs, community-led growth."
 metadata:
-  version: 2.0.0
+  version: 2.0.5
 ---
 
 # Community Marketing
@@ -98,6 +98,18 @@ Design for the flywheel from day one. Every decision should ask: *Does this acce
 2. **Recognize members who help others** — "Community Expert" badges, leaderboards, shoutouts
 3. **Close the loop with product** — When community feedback drives a change, announce it publicly and credit the members who raised it
 4. **Monitor sentiment weekly** — Look for patterns in complaints or confusion before they become churn signals
+
+---
+
+## Community Models & Scaling Phases
+
+Before picking tactics, pick the **shape** of the community and match your effort to its stage. See **`references/community-models.md`** for:
+
+- **The 4 community models** (plus the common blend) — Support-Driven (GreenPal), Product-Development (Ydata), Education/Enablement (LiveAgent), Founder-Led (Bento, Postaga) — each with a "best when…" fit test tied to a primary goal.
+- **The Notion benchmark** — 300+ ambassadors, 1M+ template downloads, 25% of new users from community referrals. The north star for community-led growth at scale.
+- **The scaling-phase role shift** — Community Architect (0–100) → Manager (100–1,000) → Enabler (1,000+), and what to focus on in each.
+
+Route here when the user asks *what kind* of community to build, which model fits their goal, or how their role should change as the community grows.
 
 ---
 
