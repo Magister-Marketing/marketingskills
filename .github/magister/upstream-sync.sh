@@ -184,7 +184,8 @@ DRAFT=""
 [ "$rc" = 0 ] || DRAFT=1
 # Upstream workflow changes are how upstream code could reach the token once
 # they are on main: a person reads each one before the PR leaves draft.
-WORKFLOWS="$(git diff --name-only "$BASE" HEAD -- .github | grep -v '^\.github/magister/' || true)"
+# This includes .github/magister: the token scripts themselves.
+WORKFLOWS="$(git diff --name-only "$BASE" HEAD -- .github)"
 [ -z "$WORKFLOWS" ] || DRAFT=1
 
 TITLE="Weekly upstream sync: marketingskills $UP_VERSION"
