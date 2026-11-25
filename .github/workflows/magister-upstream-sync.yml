@@ -1,0 +1,55 @@
+name: Magister upstream sync
+
+# Weekly: merge coreyhaines31/marketingskills main into a branch of this fork
+# and open one PR (a draft listing the files on conflicts). Runs no upstream
+# code; the fork's checks run as that PR's workflows. See .github/magister/README.md.
+
+on:
+  schedule:
+    - cron: "0 16 * * 1" # Mondays 16:00 UTC (08:00 or 09:00 Pacific)
+  workflow_dispatch:
+
+concurrency:
+  group: magister-upstream-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    if: github.repository == 'Magister-Marketing/marketingskills-magister' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    # The token is an environment secret that only main can use, so workflows
+    # on PR branches (including ones a sync brings in) cannot read it.
+    environment: magister-sync
+    permissions:
+      contents: read
+    steps:
+      # Two sibling checkouts: nothing a merge writes into the fork can land in
+      # the monorepo checkout whose scanner runs next to the token.
+      - uses: actions/checkout@v4
+        with:
+          path: fork
+          fetch-depth: 0
+          token: ${{ secrets.MAGISTER_SYNC_TOKEN }}
+
+      - name: Check out magister-marketing for the network scan
+        uses: actions/checkout@v4
+        with:
+          repository: Magister-Marketing/magister-marketing
+          token: ${{ secrets.MAGISTER_SYNC_TOKEN }}
+          persist-credentials: false
+          path: mm
+          sparse-checkout: |
+            scripts
+            gateway/app
+          submodules: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Merge upstream and open the sync PR
+        env:
+          GH_TOKEN: ${{ secrets.MAGISTER_SYNC_TOKEN }}
+          MM_DIR: ${{ github.workspace }}/mm
+        working-directory: fork
+        run: bash .github/magister/upstream-sync.sh
