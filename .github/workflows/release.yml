@@ -17,6 +17,8 @@ permissions:
 
 jobs:
   release:
+    # Magister fork: tag, release and auto-commit only upstream.
+    if: github.repository == 'coreyhaines31/marketingskills'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

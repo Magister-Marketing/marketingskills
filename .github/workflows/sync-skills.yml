@@ -9,6 +9,8 @@ on:
 
 jobs:
   sync:
+    # Magister fork: tag, release and auto-commit only upstream.
+    if: github.repository == 'coreyhaines31/marketingskills'
     runs-on: ubuntu-slim
     permissions:
       contents: write
