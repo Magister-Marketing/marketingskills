@@ -59,6 +59,6 @@ Every push to `main` opens or refreshes the draft PR `bump/marketingskills-magis
    - Check that no organization secret is shared with this repo.
 
    The fork's workflows run upstream's scripts (validators, tests) on the sync PR with this repo's `GITHUB_TOKEN`, so keep that token read-only.
-4. Settings → Rules: protect `main` (pull request required). Add a ruleset that restricts updates and deletions on all branches and tags, and exclude `main` and `magister/upstream-sync` from its targets. Rulesets bypass by actor, not by branch. The environment rule is only as strong as who can push `main`.
+4. Settings → Rules: protect `main` with a branch ruleset (require a pull request with 0 approvals, block force pushes, restrict deletions). The environment rule is only as strong as who can push `main`. No ruleset on other branches is needed, because upstream's workflows never run on the fork.
 5. Merge the first catch-up sync, which adds the guard on `release.yml` and `sync-skills.yml` (rule 5), and this automation.
 6. Actions → enable workflows for this fork.
