@@ -15,8 +15,9 @@ concurrency:
 
 jobs:
   bump:
-    if: github.repository == 'Magister-Marketing/marketingskills-magister'
+    if: github.repository == 'Magister-Marketing/marketingskills-magister' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    environment: magister-sync
     permissions:
       contents: read
     steps:

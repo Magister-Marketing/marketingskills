@@ -1,7 +1,8 @@
 name: Magister upstream sync
 
 # Weekly: merge coreyhaines31/marketingskills main into a branch of this fork
-# and open one PR (or, on conflicts, one issue). See .github/magister/README.md.
+# and open one PR (a draft listing the files on conflicts). Runs no upstream
+# code; the fork's checks run as that PR's workflows. See .github/magister/README.md.
 
 on:
   schedule:
@@ -14,8 +15,11 @@ concurrency:
 
 jobs:
   sync:
-    if: github.repository == 'Magister-Marketing/marketingskills-magister'
+    if: github.repository == 'Magister-Marketing/marketingskills-magister' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    # The token is an environment secret that only main can use, so workflows
+    # on PR branches (including ones a sync brings in) cannot read it.
+    environment: magister-sync
     permissions:
       contents: read
     steps:
@@ -29,6 +33,7 @@ jobs:
         with:
           repository: Magister-Marketing/magister-marketing
           token: ${{ secrets.MAGISTER_SYNC_TOKEN }}
+          persist-credentials: false
           path: .magister-marketing
           sparse-checkout: |
             scripts
@@ -38,10 +43,6 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-      - run: pip install --quiet pytest pyyaml
 
       - name: Merge upstream and open the sync PR
         env:

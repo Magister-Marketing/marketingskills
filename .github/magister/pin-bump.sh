@@ -27,6 +27,7 @@ OLD_MAIN="$(git ls-tree HEAD "$SUB" | awk '{print $3}')"
 if [ "$OLD_MAIN" = "$NEW" ]; then echo "$MM_REPO main already pins ${NEW:0:7}."; exit 0; fi
 
 PR_NUM="$(gh pr list -R "$MM_REPO" --head "$BRANCH" --state open --json number --jq '.[0].number // empty')"
+REMOTE="$(git ls-remote origin "refs/heads/$BRANCH" | cut -f1)"
 if [ -n "$PR_NUM" ]; then
   # Keep anything a person added to the open bump PR (lane notes, fixes).
   git fetch -q --depth 1 origin "$BRANCH"
@@ -83,14 +84,15 @@ Not run by the workflow. Run \`make skills-check\`, \`make agent-network-invento
 ## To fully deploy
 
 1. Merge with the merge train.
-2. \`make skills-publish\` from the updated \`main\`. No image rebuild is needed (#706).
+2. \`make skills-publish\` from the updated \`main\`. No image rebuild is needed (https://github.com/$MM_REPO/issues/706).
 3. Verify with \`make skills-status\`.
 
 Deploy: pending.
 EOF
 )"
 
-run git push -q origin "HEAD:refs/heads/$BRANCH" $( [ -z "$PR_NUM" ] && echo --force )
+if [ -n "$PR_NUM" ]; then run git push -q origin "HEAD:refs/heads/$BRANCH"   # fast-forward only
+else run git push -q "--force-with-lease=refs/heads/$BRANCH:$REMOTE" origin "HEAD:refs/heads/$BRANCH"; fi
 if [ -n "$PR_NUM" ]; then run gh pr edit "$PR_NUM" -R "$MM_REPO" --title "$TITLE" --body "$BODY"
 else run gh pr create -R "$MM_REPO" --draft --base main --head "$BRANCH" --title "$TITLE" --body "$BODY"; fi
 [ "$DRY" = 1 ] && printf '%s\n' "$BODY"
