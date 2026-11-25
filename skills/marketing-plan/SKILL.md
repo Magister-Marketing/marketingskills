@@ -36,7 +36,7 @@ Examples:
 - `/marketing-plan acme-saas`
 - `/marketing-plan` (will prompt for client name)
 
-On invocation, the skill reads `~/marketing-plans/{client-slug}/progress.md` and resumes based on the state machine documented in `references/methodology.md` Step 1.1.2 (fresh → INIT → REVIEW → FINALIZE → finalized). Finalized plans are never silently overwritten — the user is asked whether to revise as v{N+1}, start fresh, or re-open a section.
+On invocation, the skill reads `<selected plan root>/{client-slug}/progress.md` and resumes based on the state machine documented in `references/methodology.md` Step 1.1.2 (fresh → INIT → REVIEW → FINALIZE → finalized). Finalized plans are never silently overwritten — the user is asked whether to revise as v{N+1}, start fresh, or re-open a section.
 
 **Path safety.** Build `{client-slug}` only by slugifying the client name to lowercase `[a-z0-9-]` (strip everything else); reject `..`, `/`, and absolute paths, and never read or write outside the selected plan root (`resources/marketing-plans/` in a Magister hosted workspace, otherwise `~/marketing-plans/` or the user's explicit destination). On a shared machine this keeps one client's plan — and their data — from leaking into another client's context.
 
