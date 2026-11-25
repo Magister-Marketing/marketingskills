@@ -249,7 +249,7 @@ $( [ -n "$SCAN" ] && printf '\n## Magisterify before merging\n\nPublishing would
 
 ## Merging
 
-$( if [ -z "$DRAFT" ] && [ "$HUMAN" = 0 ]; then echo "This PR merges itself (merge commit) once the checks that run on it pass."; else echo "Merge with a merge commit once the items above are done."; fi )
+$( if [ -z "$DRAFT" ] && [ "$HUMAN" = 0 ] && [ "$PUSH" = 1 ]; then echo "This PR merges itself (merge commit) once the checks that run on it pass."; elif [ -z "$DRAFT" ] && [ "$HUMAN" = 0 ]; then echo "This PR merges itself after the next upstream change, or merge it by hand with a merge commit."; else echo "Merge with a merge commit once the items above are done."; fi )
 Merging opens the magister-marketing pin-bump PR, which is where the Magister layer is checked on a lane; nothing ships until that PR runs \`make skills-publish\`."
 
 # Put an open PR back in draft before its branch changes, if it must be one.
@@ -259,7 +259,7 @@ if [ -n "$DRAFT" ] && [ -n "$PR_NUM" ]; then
   [ "$IS_DRAFT" = false ] && run gh pr ready "$PR_NUM" -R "$REPO" --undo
 fi
 # Ready it before pushing, so checks that skip drafts run on the new head.
-if [ -z "$DRAFT" ] && [ "$IS_DRAFT" = true ]; then
+if [ -z "$DRAFT" ] && [ "$IS_DRAFT" = true ] && [ "$PUSH" = 1 ]; then
   run gh pr ready "$PR_NUM" -R "$REPO"
 fi
 if [ "$PUSH" = 0 ]; then
@@ -298,6 +298,19 @@ elif [ -z "$DRAFT" ] && [ "$HUMAN" = 0 ]; then
     HEAD_SHA="$(git rev-parse HEAD)"
     # Fails on a real API error (no "|| true"): an error must never skip the wait.
     NCHECKS="$(gh pr view "$PR_NUM" -R "$REPO" --json statusCheckRollup --jq '.statusCheckRollup | length')"
+    # A SKILL.md change must be validated: wait up to 5 more minutes for its
+    # check to register, and never merge without it.
+    if [ "$NCHECKS" = 0 ] && [ -n "$(git diff --name-only "$BASE" HEAD -- '*SKILL.md')" ]; then
+      for _ in 1 2 3 4 5; do
+        sleep 60
+        NCHECKS="$(gh pr view "$PR_NUM" -R "$REPO" --json statusCheckRollup --jq '.statusCheckRollup | length')"
+        [ "$NCHECKS" = 0 ] || break
+      done
+      if [ "$NCHECKS" = 0 ]; then
+        echo "::warning::No check registered on PR #$PR_NUM although SKILL.md files changed; not merging. Merge it by hand once validate-skill passes." >&2
+        exit 1
+      fi
+    fi
     if [ "$NCHECKS" != 0 ] && ! gh pr checks "$PR_NUM" -R "$REPO" --watch --fail-fast --interval 30 >/dev/null; then
       gh pr ready "$PR_NUM" -R "$REPO" --undo
       FMARK="<!-- magister-upstream-sync check-failed head=$HEAD_SHA -->"
