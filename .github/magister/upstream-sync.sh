@@ -332,7 +332,13 @@ A check failed, so this sync was not merged. Fix it on this branch (README, rule
       done
       if [ "$V" != ok ]; then
         echo "::warning::Validate Agent Skill did not pass on PR #$PR_NUM ($V); not merging." >&2
-        [ "$V" = failed ] && gh pr ready "$PR_NUM" -R "$REPO" --undo
+        if [ "$V" = failed ]; then
+          gh pr ready "$PR_NUM" -R "$REPO" --undo
+          FMARK="<!-- magister-upstream-sync check-failed head=$HEAD_SHA -->"
+          BODIES="$(gh pr view "$PR_NUM" -R "$REPO" --json comments --jq '.comments[].body')"
+          grep -qF "$FMARK" <<<"$BODIES" || gh pr comment "$PR_NUM" -R "$REPO" --body "$FMARK
+Validate Agent Skill did not pass on this head, so this sync was not merged. A deleted or renamed upstream skill is the usual cause. Fix it on this branch (README, rule 7), mark it ready and merge it with a merge commit."
+        fi
         exit 1
       fi
     fi
