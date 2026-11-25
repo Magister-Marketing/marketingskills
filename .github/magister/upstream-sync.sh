@@ -4,9 +4,9 @@
 #
 # Clean merge -> the branch holds the merge, with the fork's own workflows
 #                (upstream's are held back). The PR body has magister-marketing's
-#                network-surface scan; it opens as a draft unless the scan passed
-#                and nothing under .github changed; otherwise it merges itself
-#                once the checks that run on it pass.
+#                network-surface scan. If the scan passed and nothing under
+#                .github changed, it merges itself once its checks pass;
+#                otherwise it is a draft for a person.
 # Conflicts   -> a draft PR whose head is upstream's tip (with the fork's
 #                workflows), listing the files and
 #                the commands to resolve. When a sync PR with someone's work on
@@ -102,7 +102,18 @@ else
 fi
 if [ "$merge_ok" = 1 ] && ! git merge-base --is-ancestor "$UP" HEAD; then
   STAGE=upstream
-  bot merge --no-ff --no-edit -m "Merge upstream $UPSTREAM main ($UP_VERSION) into the Magister fork" "$UP" >>"$LOG" 2>&1 || merge_ok=0
+  MSG="Merge upstream $UPSTREAM main ($UP_VERSION) into the Magister fork"
+  if ! bot merge --no-ff --no-edit -m "$MSG" "$UP" >>"$LOG" 2>&1; then
+    # Held-back workflows conflict every time upstream edits them again. When
+    # only .github/workflows conflicts, keep the fork's and finish the merge.
+    U="$(git diff --name-only --diff-filter=U)"
+    if [ -n "$U" ] && ! grep -qv '^\.github/workflows/' <<<"$U"; then
+      hold_back_workflows HEAD
+      bot commit -q --no-edit -m "$MSG"
+    else
+      merge_ok=0
+    fi
+  fi
   if [ "$merge_ok" = 1 ] && ! git diff --quiet HEAD^1 HEAD -- .github/workflows; then
     hold_back_workflows HEAD^1
     bot commit -q --amend --no-edit
@@ -232,7 +243,7 @@ Upstream changes: $COMPARE
 
 - magister-marketing network-surface scan (the \`make skills-publish\` gate): $SCAN_ROW
 - The fork's validators and tests run as this PR's checks once it is out of draft (some skip drafts).
-$( [ -n "$WORKFLOWS" ] && printf '\n## Changed under .github (read each before merging)\n\nThese were pushed to this branch, not brought from upstream. Keep this PR a draft until each file is checked: a workflow that runs on the fork must not use `environment:`, `secrets.` or write `permissions:` (README rule 5).\n\n```\n%s\n```\n' "$WORKFLOWS" || true)
+$( [ -n "$WORKFLOWS" ] && printf '\n## Changed under .github (read each before merging)\n\nThe .github scripts and templates from upstream arrive here, as does anything pushed to this branch (workflows are held back). Keep this PR a draft until each file is checked: a workflow that runs on the fork must not use `environment:`, `secrets.` or write `permissions:` (README rule 5).\n\n```\n%s\n```\n' "$WORKFLOWS" || true)
 $( [ -n "$HELD" ] && printf '\n## Upstream workflow changes held back\n\nThe fork keeps its own `.github/workflows`; these upstream changes were not brought over:\n\n```\n%s\n```\n' "$HELD" || true)
 $( [ -n "$SCAN" ] && printf '\n## Magisterify before merging\n\nPublishing would refuse these surfaces. Rewrite each one for the hosted runtime (a typed `magister-*` tool, or `execution_unavailable`), push to this branch, and re-run `.github/magister/network-scan.sh`:\n\n```\n%s\n```\n' "$SCAN" || true)
 
@@ -247,6 +258,10 @@ IS_DRAFT=""
 if [ -n "$DRAFT" ] && [ -n "$PR_NUM" ]; then
   [ "$IS_DRAFT" = false ] && run gh pr ready "$PR_NUM" -R "$REPO" --undo
 fi
+# Ready it before pushing, so checks that skip drafts run on the new head.
+if [ -z "$DRAFT" ] && [ "$IS_DRAFT" = true ]; then
+  run gh pr ready "$PR_NUM" -R "$REPO"
+fi
 if [ "$PUSH" = 0 ]; then
   :
 elif [ "$ON_PR" = 1 ]; then
@@ -256,9 +271,6 @@ else
 fi
 if [ -n "$PR_NUM" ]; then
   run gh pr edit "$PR_NUM" -R "$REPO" --title "$TITLE" --body "$BODY"
-  if [ -z "$DRAFT" ] && [ "$IS_DRAFT" = true ]; then
-    run gh pr ready "$PR_NUM" -R "$REPO"
-  fi
 else
   run gh pr create -R "$REPO" --base main --head "$BRANCH" --title "$TITLE" --body "$BODY" ${DRAFT:+--draft}
   PR_NUM="$(gh pr list -R "$REPO" --head "$BRANCH" --state open --json number,isCrossRepository \
@@ -271,13 +283,19 @@ if [ -z "$DRAFT" ] && [ "$HUMAN" = 0 ]; then
     echo "DRY_RUN: wait for the checks on #${PR_NUM:-<new PR>}, then gh pr merge --merge"
   else
     sleep 60   # let the PR's workflows register
-    NCHECKS="$(gh pr checks "$PR_NUM" -R "$REPO" --json name --jq length 2>/dev/null || true)"
-    if [ "${NCHECKS:-0}" != 0 ] && ! gh pr checks "$PR_NUM" -R "$REPO" --watch --fail-fast --interval 30 >/dev/null; then
+    HEAD_SHA="$(git rev-parse HEAD)"
+    # Fails on a real API error (no "|| true"): an error must never skip the wait.
+    NCHECKS="$(gh pr view "$PR_NUM" -R "$REPO" --json statusCheckRollup --jq '.statusCheckRollup | length')"
+    if [ "$NCHECKS" != 0 ] && ! gh pr checks "$PR_NUM" -R "$REPO" --watch --fail-fast --interval 30 >/dev/null; then
       gh pr ready "$PR_NUM" -R "$REPO" --undo
-      gh pr comment "$PR_NUM" -R "$REPO" --body "A check failed, so this sync was not merged. Fix it on this branch (README, rule 7), mark it ready and merge it with a merge commit."
+      FMARK="<!-- magister-upstream-sync check-failed head=$HEAD_SHA -->"
+      BODIES="$(gh pr view "$PR_NUM" -R "$REPO" --json comments --jq '.comments[].body')"
+      grep -qF "$FMARK" <<<"$BODIES" || gh pr comment "$PR_NUM" -R "$REPO" --body "$FMARK
+A check failed, so this sync was not merged. Fix it on this branch (README, rule 7), mark it ready and merge it with a merge commit."
       exit 1
     fi
-    gh pr merge "$PR_NUM" -R "$REPO" --merge
+    # Merge only the commit that was checked: a push in the meantime stops it.
+    gh pr merge "$PR_NUM" -R "$REPO" --merge --match-head-commit "$HEAD_SHA"
   fi
 fi
 [ "$DRY" = 1 ] && printf '%s\n' "$BODY"
