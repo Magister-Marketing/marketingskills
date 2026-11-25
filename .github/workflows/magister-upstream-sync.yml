@@ -23,8 +23,11 @@ jobs:
     permissions:
       contents: read
     steps:
+      # Two sibling checkouts: nothing a merge writes into the fork can land in
+      # the monorepo checkout whose scanner runs next to the token.
       - uses: actions/checkout@v4
         with:
+          path: fork
           fetch-depth: 0
           token: ${{ secrets.MAGISTER_SYNC_TOKEN }}
 
@@ -34,7 +37,7 @@ jobs:
           repository: Magister-Marketing/magister-marketing
           token: ${{ secrets.MAGISTER_SYNC_TOKEN }}
           persist-credentials: false
-          path: .magister-marketing
+          path: mm
           sparse-checkout: |
             scripts
             gateway/app
@@ -47,5 +50,6 @@ jobs:
       - name: Merge upstream and open the sync PR
         env:
           GH_TOKEN: ${{ secrets.MAGISTER_SYNC_TOKEN }}
-          MM_DIR: ${{ github.workspace }}/.magister-marketing
+          MM_DIR: ${{ github.workspace }}/mm
+        working-directory: fork
         run: bash .github/magister/upstream-sync.sh

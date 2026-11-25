@@ -35,7 +35,7 @@ Take upstream's content and keep the Magister layer.
 2. Where upstream adds `.agents/brand.md`, keep the fork's `BRAND.md` block.
 3. Where upstream adds `curl`, `npx`, `fetch(`, `git clone` or a loopback call, keep or write the hosted form: a typed `magister-*` tool, or `execution_unavailable` with a user-side step.
 4. Where the fork's text is just an older upstream copy (check with `git log`), take upstream's.
-5. Upstream workflows that write to `main` or publish (`release.yml`, `sync-skills.yml`) keep the fork's `if: github.repository == 'coreyhaines31/marketingskills'` guard, so they run only upstream.
+5. Upstream workflows that write to `main`, publish, or ask for write `permissions:` (today `release.yml` and `sync-skills.yml`) get or keep the fork's `if: github.repository == 'coreyhaines31/marketingskills'` guard, so they run only upstream. Check every new upstream workflow for this.
 6. Check that every network surface is resolved. The script only reads the monorepo checkout:
    ```bash
    bash .github/magister/network-scan.sh <path to a magister-marketing checkout>
@@ -49,9 +49,14 @@ Every push to `main` opens or refreshes the draft PR `bump/marketingskills-magis
 
 ## One-time setup, in this order
 
-1. Merge the first catch-up sync, which adds the guard on `release.yml` and `sync-skills.yml` (rule 5), and this automation.
-2. Create a fine-grained token owned by Magister-Marketing for the repos `marketingskills-magister` and `magister-marketing`, with **Contents**, **Pull requests** and **Workflows** set to read and write. Workflows is needed because a sync pushes upstream's workflow changes.
-3. Settings → Environments → New environment `magister-sync`. Under deployment branches, allow only `main`. Add the token as the environment secret `MAGISTER_SYNC_TOKEN`. Don't add it as a repository secret: a workflow on a PR branch, including one a sync brings in, could read it.
-4. Settings → Actions → General: set Workflow permissions to **Read repository contents**. Check that no organization secret is shared with this repo: upstream's workflows run on the sync PR and would receive it.
-5. Protect `main` (pull request required). The environment rule is only as strong as who can push `main`.
+1. Create a fine-grained token owned by Magister-Marketing for the repos `marketingskills-magister` and `magister-marketing`, with **Contents**, **Pull requests** and **Workflows** set to read and write. Workflows is needed because a sync pushes upstream's workflow changes.
+2. Settings → Environments: create (or open, if it already exists) `magister-sync`. Under deployment branches allow only `main`, and confirm nothing else is allowed. Add the token as the environment secret `MAGISTER_SYNC_TOKEN`. Don't add it as a repository secret: a workflow on a PR branch, including one a sync brings in, could read it.
+3. Settings → Actions → General:
+   - Set Workflow permissions to **Read repository contents**.
+   - Turn off "Allow GitHub Actions to create and approve pull requests".
+   - Check that no organization secret is shared with this repo.
+
+   Upstream's workflows run on the sync PR with this repo's `GITHUB_TOKEN`, and a workflow can raise its own permissions with a `permissions:` key, so rule 5 also applies to any new upstream workflow that asks for write access.
+4. Settings → Rules: protect `main` (pull request required), and add a ruleset that restricts pushes and deletions on every other branch and on tags, with a bypass for `magister/upstream-sync` and for the token's owner. The environment rule is only as strong as who can push `main`.
+5. Merge the first catch-up sync, which adds the guard on `release.yml` and `sync-skills.yml` (rule 5), and this automation.
 6. Actions → enable workflows for this fork.

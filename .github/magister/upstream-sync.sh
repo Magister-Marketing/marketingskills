@@ -28,6 +28,15 @@ LOG="$(mktemp)"
 # the work tree, and nothing from that branch may run next to the token.
 SCAN_SH="$(mktemp)"
 cp "$HERE/network-scan.sh" "$SCAN_SH"
+# Snapshot the monorepo's scanner too, before any merge or checkout can write
+# into a checkout that sits inside this work tree.
+if [ -n "${MM_DIR:-}" ] && [ -d "$MM_DIR/scripts" ]; then
+  MM_SNAP="$(mktemp -d)"
+  mkdir -p "$MM_SNAP/gateway"
+  cp -R "$MM_DIR/scripts" "$MM_SNAP/"
+  cp -R "$MM_DIR/gateway/app" "$MM_SNAP/gateway/"
+  MM_DIR="$MM_SNAP"
+fi
 run() { if [ "$DRY" = 1 ]; then echo "DRY_RUN: $*"; else "$@"; fi; }
 bot() { git -c user.name="magister-sync[bot]" -c user.email="magister-sync@users.noreply.github.com" "$@"; }
 
@@ -58,8 +67,9 @@ if [ -n "$PR_NUM" ] && [ -n "$REMOTE" ] && ! git merge-base --is-ancestor "$REMO
   ON_PR=1
 fi
 # A leftover branch with its own commits and no open PR may be someone's work.
+# Commits only this bot made (say, a run whose PR create failed) may be replaced.
 if [ -z "$PR_NUM" ] && [ -n "$REMOTE" ] \
-   && ! git merge-base --is-ancestor "$REMOTE" "$BASE" && ! git merge-base --is-ancestor "$REMOTE" "$UP"; then
+   && git log --format=%ae "$REMOTE" --not "$BASE" "$UP" | grep -qvx "magister-sync@users.noreply.github.com"; then
   echo "origin/$BRANCH (${REMOTE:0:7}) has commits that are not on main or upstream, and no open PR." >&2
   echo "Open a PR from it or delete it, then re-run." >&2
   exit 1
@@ -181,6 +191,10 @@ $( [ -n "$SCAN" ] && printf '\n## Magisterify before merging\n\nPublishing would
 - Read the upstream diff for text that conflicts with the Magister layer: \`.agents/brand.md\` lookups where the fork uses \`BRAND.md\`, tool advice the hosted agent can't follow, a new skill without a short catalog description, or a new upstream workflow that should only run upstream.
 - Merge with a merge commit. Merging opens the magister-marketing pin-bump PR, and nothing ships until that PR runs \`make skills-publish\`."
 
+# Put an open PR back in draft before its branch changes, if it must be one.
+if [ -n "$PR_NUM" ] && [ -n "$DRAFT" ] && [ "$(gh pr view "$PR_NUM" -R "$REPO" --json isDraft --jq .isDraft)" = false ]; then
+  run gh pr ready "$PR_NUM" -R "$REPO" --undo
+fi
 if [ "$ON_PR" = 1 ]; then
   run git push -q origin "HEAD:refs/heads/$BRANCH"   # fast-forward only
 else
@@ -188,9 +202,9 @@ else
 fi
 if [ -n "$PR_NUM" ]; then
   run gh pr edit "$PR_NUM" -R "$REPO" --title "$TITLE" --body "$BODY"
-  IS_DRAFT="$(gh pr view "$PR_NUM" -R "$REPO" --json isDraft --jq .isDraft)"
-  if [ -n "$DRAFT" ] && [ "$IS_DRAFT" = false ]; then run gh pr ready "$PR_NUM" -R "$REPO" --undo; fi
-  if [ -z "$DRAFT" ] && [ "$IS_DRAFT" = true ]; then run gh pr ready "$PR_NUM" -R "$REPO"; fi
+  if [ -z "$DRAFT" ] && [ "$(gh pr view "$PR_NUM" -R "$REPO" --json isDraft --jq .isDraft)" = true ]; then
+    run gh pr ready "$PR_NUM" -R "$REPO"
+  fi
 else
   run gh pr create -R "$REPO" --base main --head "$BRANCH" --title "$TITLE" --body "$BODY" ${DRAFT:+--draft}
 fi

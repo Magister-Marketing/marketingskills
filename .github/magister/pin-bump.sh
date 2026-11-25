@@ -37,8 +37,10 @@ if [ -n "$PR_NUM" ]; then
 else
   if [ -n "$REMOTE" ]; then
     git fetch -q origin "$BRANCH"
-    # Only a branch whose tip is this bot's own bump commit may be replaced.
-    if [ "$(git log -1 --format=%ae FETCH_HEAD)" != "magister-sync@users.noreply.github.com" ]; then
+    # Only a branch whose every commit off main is this bot's may be replaced
+    # (the clone is shallow, so ask GitHub for the list).
+    if gh api "repos/$MM_REPO/compare/main...$BRANCH" --jq '.commits[].commit.author.email' \
+         | grep -qvx "magister-sync@users.noreply.github.com"; then
       echo "$MM_REPO has a $BRANCH branch someone else committed to, and no open PR; open a PR from it or delete it." >&2
       exit 1
     fi
