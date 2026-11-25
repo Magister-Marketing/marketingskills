@@ -265,9 +265,15 @@ fi
 if [ "$PUSH" = 0 ]; then
   :
 elif [ "$ON_PR" = 1 ]; then
-  run git push -q origin "HEAD:refs/heads/$BRANCH"   # fast-forward only
+  run git push -q origin "HEAD:refs/heads/$BRANCH" || PUSH=failed   # fast-forward only
 else
-  run git push -q "$LEASE" origin "HEAD:refs/heads/$BRANCH"
+  run git push -q "$LEASE" origin "HEAD:refs/heads/$BRANCH" || PUSH=failed
+fi
+if [ "$PUSH" = failed ]; then
+  # Someone pushed in between: leave their head as a draft and stop.
+  [ -n "$PR_NUM" ] && [ "$IS_DRAFT" = true ] && [ -z "$DRAFT" ] && run gh pr ready "$PR_NUM" -R "$REPO" --undo
+  echo "The push to $BRANCH was rejected; it changed during the run. Re-run the workflow." >&2
+  exit 1
 fi
 if [ -n "$PR_NUM" ]; then
   run gh pr edit "$PR_NUM" -R "$REPO" --title "$TITLE" --body "$BODY"
@@ -278,7 +284,11 @@ else
 fi
 # A clean, scanned, bot-only sync merges itself once the checks that ran on it
 # pass. Fork main is not production: the pin-bump PR and `make skills-publish` are.
-if [ -z "$DRAFT" ] && [ "$HUMAN" = 0 ]; then
+# A head that was a draft and got no new push has only skipped checks (some
+# skip drafts and are not re-run on ready): leave it for the next push.
+if [ "$PUSH" = 0 ] && [ "$IS_DRAFT" = true ]; then
+  echo "PR #$PR_NUM is ready but its head was checked as a draft; it merges after the next upstream change (or merge it by hand)."
+elif [ -z "$DRAFT" ] && [ "$HUMAN" = 0 ]; then
   if [ "$DRY" = 1 ]; then
     echo "DRY_RUN: wait for the checks on #${PR_NUM:-<new PR>}, then gh pr merge --merge"
   else
