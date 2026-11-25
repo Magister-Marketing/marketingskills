@@ -300,7 +300,8 @@ elif [ -z "$DRAFT" ] && [ "$HUMAN" = 0 ]; then
     NCHECKS="$(gh pr view "$PR_NUM" -R "$REPO" --json statusCheckRollup --jq '.statusCheckRollup | length')"
     # A SKILL.md change must be validated: wait up to 5 more minutes for its
     # check to register, and never merge without it.
-    if [ "$NCHECKS" = 0 ] && [ -n "$(git diff --name-only "$BASE" HEAD -- '*SKILL.md')" ]; then
+    SKILLS_CHANGED="$(git diff --name-only "$BASE" HEAD -- '*SKILL.md')"
+    if [ "$NCHECKS" = 0 ] && [ -n "$SKILLS_CHANGED" ]; then
       for _ in 1 2 3 4 5; do
         sleep 60
         NCHECKS="$(gh pr view "$PR_NUM" -R "$REPO" --json statusCheckRollup --jq '.statusCheckRollup | length')"
@@ -318,6 +319,22 @@ elif [ -z "$DRAFT" ] && [ "$HUMAN" = 0 ]; then
       grep -qF "$FMARK" <<<"$BODIES" || gh pr comment "$PR_NUM" -R "$REPO" --body "$FMARK
 A check failed, so this sync was not merged. Fix it on this branch (README, rule 7), mark it ready and merge it with a merge commit."
       exit 1
+    fi
+    # A SKILL.md change merges only once "Validate Agent Skill"'s validate jobs
+    # (a matrix that appears after detect-changes) all succeeded on this head.
+    if [ -n "$SKILLS_CHANGED" ]; then
+      V=""
+      for _ in 1 2 3 4 5 6 7 8 9 10; do
+        gh pr checks "$PR_NUM" -R "$REPO" --watch --interval 30 >/dev/null || true
+        V="$(gh pr view "$PR_NUM" -R "$REPO" --json statusCheckRollup --jq '[.statusCheckRollup[] | select(.workflowName == "Validate Agent Skill" and ((.name // "") | startswith("validate")))] | if length == 0 then "none" elif all(.conclusion == "SUCCESS") then "ok" elif any(.status != "COMPLETED") then "pending" else "failed" end')"
+        [ "$V" = none ] || [ "$V" = pending ] || break
+        sleep 30
+      done
+      if [ "$V" != ok ]; then
+        echo "::warning::Validate Agent Skill did not pass on PR #$PR_NUM ($V); not merging." >&2
+        [ "$V" = failed ] && gh pr ready "$PR_NUM" -R "$REPO" --undo
+        exit 1
+      fi
     fi
     # Merge only the commit that was checked: a push in the meantime stops it.
     gh pr merge "$PR_NUM" -R "$REPO" --merge --match-head-commit "$HEAD_SHA"
