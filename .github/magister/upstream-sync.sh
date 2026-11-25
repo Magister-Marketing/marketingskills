@@ -284,10 +284,12 @@ else
 fi
 # A clean, scanned, bot-only sync merges itself once the checks that ran on it
 # pass. Fork main is not production: the pin-bump PR and `make skills-publish` are.
-# A head that was a draft and got no new push has only skipped checks (some
-# skip drafts and are not re-run on ready): leave it for the next push.
-if [ "$PUSH" = 0 ] && [ "$IS_DRAFT" = true ]; then
-  echo "PR #$PR_NUM is ready but its head was checked as a draft; it merges after the next upstream change (or merge it by hand)."
+# Self-merge only a head this run pushed: an existing head's checks may have
+# run while it was a draft (skipped, and not re-run on ready).
+if [ "$PUSH" = 0 ] && [ -z "$DRAFT" ] && [ "$HUMAN" = 0 ]; then
+  echo "PR #$PR_NUM's head was not pushed by this run; it merges itself after the next upstream change (or merge it by hand)."
+elif [ "$PUSH" = 0 ]; then
+  :
 elif [ -z "$DRAFT" ] && [ "$HUMAN" = 0 ]; then
   if [ "$DRY" = 1 ]; then
     echo "DRY_RUN: wait for the checks on #${PR_NUM:-<new PR>}, then gh pr merge --merge"
