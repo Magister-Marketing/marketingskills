@@ -26,7 +26,8 @@ OLD_MAIN="$(git ls-tree HEAD "$SUB" | awk '{print $3}')"
 [ -n "$OLD_MAIN" ] || { echo "no $SUB gitlink in $MM_REPO" >&2; exit 2; }
 if [ "$OLD_MAIN" = "$NEW" ]; then echo "$MM_REPO main already pins ${NEW:0:7}."; exit 0; fi
 
-PR_NUM="$(gh pr list -R "$MM_REPO" --head "$BRANCH" --state open --json number --jq '.[0].number // empty')"
+PR_NUM="$(gh pr list -R "$MM_REPO" --head "$BRANCH" --state open --json number,isCrossRepository \
+  --jq '[.[] | select(.isCrossRepository | not)][0].number // empty')"
 REMOTE="$(git ls-remote origin "refs/heads/$BRANCH" | cut -f1)"
 if [ -n "$PR_NUM" ]; then
   # Keep anything a person added to the open bump PR (lane notes, fixes).
@@ -34,6 +35,14 @@ if [ -n "$PR_NUM" ]; then
   git checkout -q -B "$BRANCH" FETCH_HEAD
   if [ "$(git ls-tree HEAD "$SUB" | awk '{print $3}')" = "$NEW" ]; then echo "PR #$PR_NUM already pins ${NEW:0:7}."; exit 0; fi
 else
+  if [ -n "$REMOTE" ]; then
+    git fetch -q origin "$BRANCH"
+    # Only a branch whose tip is this bot's own bump commit may be replaced.
+    if [ "$(git log -1 --format=%ae FETCH_HEAD)" != "magister-sync@users.noreply.github.com" ]; then
+      echo "$MM_REPO has a $BRANCH branch someone else committed to, and no open PR; open a PR from it or delete it." >&2
+      exit 1
+    fi
+  fi
   git checkout -q -B "$BRANCH"
 fi
 
@@ -63,7 +72,7 @@ Points the \`$SUB\` submodule at [\`${NEW:0:7}\`](https://github.com/$FORK_REPO/
 
 - Skills changed: ${SKILLS_CHANGED:-none}
 - Skills added: ${ADDED:-none}
-- Skills removed or renamed: ${REMOVED:-none}$( [ -n "$REMOVED" ] && printf '\n  **A removed or renamed skill needs gateway slug aliases and a \`focus_skills\` data migration first (\`skills/CLAUDE.md\`).**')
+- Skills removed or renamed: ${REMOVED:-none}$( [ -n "$REMOVED" ] && printf '\n  **A removed or renamed skill needs gateway slug aliases and a `focus_skills` data migration first (`skills/CLAUDE.md`).**')
 
 <details><summary>Commits touching skills/ or tools/</summary>
 

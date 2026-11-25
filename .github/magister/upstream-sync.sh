@@ -24,6 +24,10 @@ BRANCH="magister/upstream-sync"
 HERE="$(cd "$(dirname "$0")" && pwd)"
 DRY="${DRY_RUN:-0}"
 LOG="$(mktemp)"
+# Run the scan from main's copy: a checkout of the PR branch below replaces
+# the work tree, and nothing from that branch may run next to the token.
+SCAN_SH="$(mktemp)"
+cp "$HERE/network-scan.sh" "$SCAN_SH"
 run() { if [ "$DRY" = 1 ]; then echo "DRY_RUN: $*"; else "$@"; fi; }
 bot() { git -c user.name="magister-sync[bot]" -c user.email="magister-sync@users.noreply.github.com" "$@"; }
 
@@ -38,10 +42,12 @@ if git merge-base --is-ancestor "$UP" "$BASE"; then
 fi
 
 BEHIND="$(git rev-list --count "$BASE..$UP")"
-UP_VERSION="$(git show "$UP:.claude-plugin/plugin.json" | python3 -c 'import json,sys;print(json.load(sys.stdin)["version"])')"
+UP_VERSION="$(git show "$UP:.claude-plugin/plugin.json" | python3 -I -c 'import json,sys;print(json.load(sys.stdin)["version"])')"
 COMPARE="https://github.com/$UPSTREAM/compare/$(git merge-base "$BASE" "$UP")...$UP"
 
-PR_NUM="$(gh pr list -R "$REPO" --head "$BRANCH" --state open --json number --jq '.[0].number // empty')"
+# --head matches any fork's branch of that name; only this repo's branch counts.
+PR_NUM="$(gh pr list -R "$REPO" --head "$BRANCH" --state open --json number,isCrossRepository \
+  --jq '[.[] | select(.isCrossRepository | not)][0].number // empty')"
 REMOTE="$(git ls-remote origin "refs/heads/$BRANCH" | cut -f1)"
 [ -n "$REMOTE" ] && git fetch -q origin "$BRANCH"
 
@@ -122,7 +128,8 @@ $(printf '%s\n' "$CONFLICTS" | sed 's/^/- `/; s/$/`/')
 </details>"
   if [ "$ON_PR" = 1 ]; then
     # Leave the branch alone and say so once per upstream/main pair.
-    if gh pr view "$PR_NUM" -R "$REPO" --json comments --jq '.comments[].body' | grep -qF "$MARKER"; then
+    BODIES="$(gh pr view "$PR_NUM" -R "$REPO" --json comments --jq '.comments[].body')"
+    if grep -qF "$MARKER" <<<"$BODIES"; then
       echo "PR #$PR_NUM already has this conflict report."
     else
       run gh pr comment "$PR_NUM" -R "$REPO" --body "$CONFLICT_MD"
@@ -146,10 +153,10 @@ fi
 # Clean merge: the network scan decides whether the PR may leave draft.
 SCAN="" ; SCAN_ROW=""
 if [ -n "${MM_DIR:-}" ] && [ -d "$MM_DIR/scripts" ]; then
-  rc=0; SCAN="$(bash "$HERE/network-scan.sh" "$MM_DIR")" || rc=$?
+  rc=0; SCAN="$(bash "$SCAN_SH" "$MM_DIR")" || rc=$?
   case $rc in
     0) SCAN_ROW="passed" ;;
-    1) SCAN_ROW="**$(printf '%s\n' "$SCAN" | grep -c .) surfaces to Magisterify** (below)" ;;
+    1) SCAN_ROW="**$(printf '%s\n' "$SCAN" | grep -c . || true) surfaces to Magisterify** (below)" ;;
     *) SCAN_ROW="**not run** (the scan failed; see the workflow log)"; SCAN="" ;;
   esac
 else
@@ -166,7 +173,7 @@ Upstream changes: $COMPARE
 ## Checks
 
 - magister-marketing network-surface scan (the \`make skills-publish\` gate): $SCAN_ROW
-- The fork's validators and tests run as this PR's checks.
+- The fork's validators and tests run as this PR's checks once it is out of draft (some skip drafts).
 $( [ -n "$SCAN" ] && printf '\n## Magisterify before merging\n\nPublishing would refuse these surfaces. Rewrite each one for the hosted runtime (a typed `magister-*` tool, or `execution_unavailable`), push to this branch, and re-run `.github/magister/network-scan.sh`:\n\n```\n%s\n```\n' "$SCAN" || true)
 
 ## Before merging

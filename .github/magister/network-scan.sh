@@ -10,6 +10,7 @@
 # applies), and prints one line per surface that publishing would refuse.
 # Exit 0: clean. Exit 1: violations. Exit 2: the scan could not run.
 set -euo pipefail
+trap 'exit 2' ERR   # any failure before the verdict is "could not run"
 
 MM="${1:?usage: network-scan.sh <magister-marketing checkout>}"
 FORK="$(pwd)"
@@ -24,7 +25,7 @@ cp -R "$FORK/skills" "$FORK/tools" "$T/magister-marketingskills/"
 
 (cd "$T" && python3 scripts/inventory-agent-network-surfaces.py --fail-on none --output "$T/out.json" >/dev/null) || exit 2
 
-OUT="$(python3 - "$T/out.json" <<'EOF'
+OUT="$(python3 -I - "$T/out.json" <<'EOF'
 import json, sys
 data = json.load(open(sys.argv[1]))
 for row in data["surfaces"]:

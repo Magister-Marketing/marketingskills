@@ -20,7 +20,7 @@ coreyhaines31/marketingskills ──weekly sync PR──▶ marketingskills-magi
 
 ## Weekly sync (Mondays 16:00 UTC, or Actions → "Magister upstream sync" → Run workflow)
 
-`upstream-sync.sh` merges upstream `main` into the branch `magister/upstream-sync` and opens one PR. It never pushes to `main`, and it runs no code from upstream: the fork's validators and tests (upstream's own workflows, which come with the merge) run as the PR's checks.
+`upstream-sync.sh` merges upstream `main` into the branch `magister/upstream-sync` and opens one PR. It never pushes to `main`, and it runs no code from upstream or from the sync branch: the fork's validators and tests (upstream's own workflows, which come with the merge) run as the PR's checks. Some of them skip draft PRs, and a conflict PR has no merge to check, so run them locally (rule 7) before merging those.
 
 - **Clean merge:** the PR body has the result of magister-marketing's network-surface scan, the same gate `make skills-publish` applies. The PR is a draft unless the scan passed.
 - **Conflicts:** a draft PR whose head is upstream's tip, listing the conflicting files and the commands to resolve them.
@@ -52,4 +52,6 @@ Every push to `main` opens or refreshes the draft PR `bump/marketingskills-magis
 1. Merge the first catch-up sync, which adds the guard on `release.yml` and `sync-skills.yml` (rule 5), and this automation.
 2. Create a fine-grained token owned by Magister-Marketing for the repos `marketingskills-magister` and `magister-marketing`, with **Contents**, **Pull requests** and **Workflows** set to read and write. Workflows is needed because a sync pushes upstream's workflow changes.
 3. Settings → Environments → New environment `magister-sync`. Under deployment branches, allow only `main`. Add the token as the environment secret `MAGISTER_SYNC_TOKEN`. Don't add it as a repository secret: a workflow on a PR branch, including one a sync brings in, could read it.
-4. Actions → enable workflows for this fork.
+4. Settings → Actions → General: set Workflow permissions to **Read repository contents**. Check that no organization secret is shared with this repo: upstream's workflows run on the sync PR and would receive it.
+5. Protect `main` (pull request required). The environment rule is only as strong as who can push `main`.
+6. Actions → enable workflows for this fork.
