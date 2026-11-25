@@ -1,6 +1,6 @@
 ---
 name: schema
-description: "Add or fix schema.org structured data — JSON-LD for Article, Product, FAQ, HowTo, breadcrumbs; validate for Google rich results."
+description: "Add or fix schema.org structured data — JSON-LD for Article, Product, FAQ, breadcrumbs; FAQ and HowTo no longer earn Google rich results."
 metadata:
   version: 2.0.5
 ---

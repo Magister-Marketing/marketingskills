@@ -2,7 +2,7 @@
 name: analytics
 description: "Set up or audit tracking — GA4, GTM, Mixpanel, Segment; tracking plans, event naming, UTM conventions, conversion and attribution debugging. Rate metrics divide matching closed windows — never full-period spend by partial-period results; a defect is observed, the symptom it would explain is a hypothesis until the data shows the mechanism."
 metadata:
-  version: 2.2.7
+  version: 2.3.3
 ---
 
 # Analytics Tracking

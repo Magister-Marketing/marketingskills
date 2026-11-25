@@ -141,9 +141,8 @@ Per submission:
 4. Submit.
 5. Log: date, URL, status, moderator notes.
 6. Once live, use `magister-firecrawl` through its typed Hosted Agent read
-   action to fetch rendered HTML. Find the exact backlink anchor: a missing
-   `nofollow`, `ugc`, or `sponsored` token in its `rel` attribute means the link
-   is dofollow. If the typed fetch is unavailable, ask the user to verify it in
+   action to fetch rendered HTML, and inspect the actual link to your product
+   using the procedure below. If the typed fetch is unavailable, ask the user to verify it in
    their browser instead of attempting shell networking.
 
 ### When an Agent Does the Submitting

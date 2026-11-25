@@ -54,7 +54,7 @@ Before drafting, decide which of three situations you're in. Most bad AI copy co
 | **B. Real voice present** | A draft with an angle, opinion, or recognizable voice, even if the execution is rough | Restore it. Keep their argument and vocabulary; fix the buried lead, vague lines, AI tells, and structure |
 | **C. Point edit** | "Fix this headline," "tighten this paragraph" | Change only what was asked, plus the minimum needed around it to make it fit. Return the rest untouched |
 
-State the diagnosis in one line with the evidence ("B: the draft argues against agencies in the founder's voice, uses 'ship' and 'stuff'") before writing.
+State the diagnosis in one line with the evidence ("B: the draft argues against agencies in the founder's voice, uses 'ship' and 'stuff'") before writing, unless the request fixes the output form (see The Deliverable Takes the Form Requested).
 
 **Read taste out of the input (B and C).** What they gave you is evidence of their judgment:
 - **Vocabulary is a voice choice.** If they write "stuff" and "ship," don't upgrade to "solutions" and "deploy."

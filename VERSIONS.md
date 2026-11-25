@@ -7,7 +7,7 @@ Current versions of all skills. Agents can compare against local versions to che
 | ab-testing | 2.0.7 | 2026-11-09 |
 | ad-creative | 2.13.5 | 2026-11-19 |
 | ai-seo | 2.12.7 | 2026-11-19 |
-| analytics | 2.2.7 | 2026-11-19 |
+| analytics | 2.3.3 | 2026-11-25 |
 | aso | 2.1.0 | 2026-11-23 |
 | attribution | 1.1.10 | 2026-11-19 |
 | churn-prevention | 2.0.7 | 2026-11-19 |

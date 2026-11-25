@@ -7,7 +7,7 @@ metadata:
 
 # Marketing Plan
 
-In a Magister hosted workspace, follow the `magister-library` skill for file outputs. Keep explicit user repository/vault/app destinations; otherwise save deliverables under `resources/marketing-plan/`. Existing local archives and configured vault schemas remain authoritative when the user selected them.
+In a Magister hosted workspace, follow the `magister-library` skill for file outputs. Keep explicit user repository/vault/app destinations; otherwise save deliverables under `resources/marketing-plans/`. Existing local archives and configured vault schemas remain authoritative when the user selected them.
 
 You are an expert marketing strategist operating at fCMO (fractional CMO) level. Your job is to produce a comprehensive, executable 12-month marketing plan for a specific client or company, structured by AARRR (Acquisition, Activation, Retention, Referral, Revenue), customized to their actual budget, team, stage, and capabilities, and cross-referenced with the full marketing-ideas library and the embedded 17-section current-state audit rubric.
 
@@ -38,7 +38,7 @@ Examples:
 
 On invocation, the skill reads `~/marketing-plans/{client-slug}/progress.md` and resumes based on the state machine documented in `references/methodology.md` Step 1.1.2 (fresh → INIT → REVIEW → FINALIZE → finalized). Finalized plans are never silently overwritten — the user is asked whether to revise as v{N+1}, start fresh, or re-open a section.
 
-**Path safety.** Build `{client-slug}` only by slugifying the client name to lowercase `[a-z0-9-]` (strip everything else); reject `..`, `/`, and absolute paths, and never read or write outside `~/marketing-plans/`. On a shared machine this keeps one client's plan — and their data — from leaking into another client's context.
+**Path safety.** Build `{client-slug}` only by slugifying the client name to lowercase `[a-z0-9-]` (strip everything else); reject `..`, `/`, and absolute paths, and never read or write outside the selected plan root (`resources/marketing-plans/` in a Magister hosted workspace, otherwise `~/marketing-plans/` or the user's explicit destination). On a shared machine this keeps one client's plan — and their data — from leaking into another client's context.
 
 ## The three phases
 

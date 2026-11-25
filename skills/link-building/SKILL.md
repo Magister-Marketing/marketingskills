@@ -1,6 +1,6 @@
 ---
 name: link-building
-description: "Earn backlinks and mentions that lift rankings and AI citations — link gaps, unlinked mentions, broken links, guest posts, best-of outreach. Never buy links that pass ranking credit: paid or exchanged placements get rel=sponsored or nofollow. For press, see public-relations; for directories, directory-submissions."
+description: "Earn backlinks and mentions that lift rankings and AI citations — link gaps, unlinked mentions, broken links, guest posts, best-of outreach. On paid links, state Google's rule (rel=sponsored or nofollow) and the risk once; the user decides. For press, see public-relations; for directories, directory-submissions."
 metadata:
   version: 1.1.0
 ---
