@@ -68,8 +68,13 @@ if [ -n "$PR_NUM" ] && [ -n "$REMOTE" ] && ! git merge-base --is-ancestor "$REMO
 fi
 # A leftover branch with its own commits and no open PR may be someone's work.
 # Commits only this bot made (say, a run whose PR create failed) may be replaced.
-if [ -z "$PR_NUM" ] && [ -n "$REMOTE" ] \
-   && git log --format=%ae "$REMOTE" --not "$BASE" "$UP" | grep -qvx "magister-sync@users.noreply.github.com"; then
+# (Read the authors first: a failed git log must stop the run, not count as "bot only".)
+if [ -z "$PR_NUM" ] && [ -n "$REMOTE" ]; then
+  AUTHORS="$(git log --format=%ae "$REMOTE" --not "$BASE" "$UP")"
+else
+  AUTHORS=""
+fi
+if [ -n "$AUTHORS" ] && grep -qvx "magister-sync@users.noreply.github.com" <<<"$AUTHORS"; then
   echo "origin/$BRANCH (${REMOTE:0:7}) has commits that are not on main or upstream, and no open PR." >&2
   echo "Open a PR from it or delete it, then re-run." >&2
   exit 1
@@ -90,9 +95,12 @@ if [ "$merge_ok" = 1 ] && ! git merge-base --is-ancestor "$UP" HEAD; then
   STAGE=upstream
   bot merge --no-ff --no-edit -m "Merge upstream $UPSTREAM main ($UP_VERSION) into the Magister fork" "$UP" >>"$LOG" 2>&1 || merge_ok=0
 fi
+# The open PR already holds this merge (say, a person pushed the resolution):
+# scan it and refresh the PR, but push nothing.
+PUSH=1
 if [ "$merge_ok" = 1 ] && [ "$(git rev-parse HEAD)" = "$REMOTE" ]; then
-  echo "The open sync PR already contains upstream ${UP:0:7} and main ${BASE:0:7}."
-  exit 0
+  echo "The open sync PR already contains upstream ${UP:0:7} and main ${BASE:0:7}; rescanning it."
+  PUSH=0
 fi
 
 if [ "$merge_ok" = 0 ]; then
@@ -174,6 +182,10 @@ else
 fi
 DRAFT=""
 [ "$rc" = 0 ] || DRAFT=1
+# Upstream workflow changes are how upstream code could reach the token once
+# they are on main: a person reads each one before the PR leaves draft.
+WORKFLOWS="$(git diff --name-only "$BASE" HEAD -- .github | grep -v '^\.github/magister/' || true)"
+[ -z "$WORKFLOWS" ] || DRAFT=1
 
 TITLE="Weekly upstream sync: marketingskills $UP_VERSION"
 BODY="Merges upstream \`$UPSTREAM\` main (\`${UP:0:7}\`, $UP_VERSION) into the fork: $BEHIND new upstream commits, merged without conflicts. Opened by the weekly \`magister-upstream-sync\` workflow.
@@ -184,6 +196,7 @@ Upstream changes: $COMPARE
 
 - magister-marketing network-surface scan (the \`make skills-publish\` gate): $SCAN_ROW
 - The fork's validators and tests run as this PR's checks once it is out of draft (some skip drafts).
+$( [ -n "$WORKFLOWS" ] && printf '\n## Changed under .github (read each before merging)\n\nKeep this PR a draft until each file is checked: a workflow that runs on the fork must not use `environment:`, `secrets.` or write `permissions:`, and anything that publishes or writes `main` gets the upstream-only guard (README rule 5).\n\n```\n%s\n```\n' "$WORKFLOWS" || true)
 $( [ -n "$SCAN" ] && printf '\n## Magisterify before merging\n\nPublishing would refuse these surfaces. Rewrite each one for the hosted runtime (a typed `magister-*` tool, or `execution_unavailable`), push to this branch, and re-run `.github/magister/network-scan.sh`:\n\n```\n%s\n```\n' "$SCAN" || true)
 
 ## Before merging
@@ -192,17 +205,21 @@ $( [ -n "$SCAN" ] && printf '\n## Magisterify before merging\n\nPublishing would
 - Merge with a merge commit. Merging opens the magister-marketing pin-bump PR, and nothing ships until that PR runs \`make skills-publish\`."
 
 # Put an open PR back in draft before its branch changes, if it must be one.
-if [ -n "$PR_NUM" ] && [ -n "$DRAFT" ] && [ "$(gh pr view "$PR_NUM" -R "$REPO" --json isDraft --jq .isDraft)" = false ]; then
+IS_DRAFT=""
+[ -n "$PR_NUM" ] && IS_DRAFT="$(gh pr view "$PR_NUM" -R "$REPO" --json isDraft --jq .isDraft)"
+if [ -n "$DRAFT" ] && [ "$IS_DRAFT" = false ]; then
   run gh pr ready "$PR_NUM" -R "$REPO" --undo
 fi
-if [ "$ON_PR" = 1 ]; then
+if [ "$PUSH" = 0 ]; then
+  :
+elif [ "$ON_PR" = 1 ]; then
   run git push -q origin "HEAD:refs/heads/$BRANCH"   # fast-forward only
 else
   run git push -q "$LEASE" origin "HEAD:refs/heads/$BRANCH"
 fi
 if [ -n "$PR_NUM" ]; then
   run gh pr edit "$PR_NUM" -R "$REPO" --title "$TITLE" --body "$BODY"
-  if [ -z "$DRAFT" ] && [ "$(gh pr view "$PR_NUM" -R "$REPO" --json isDraft --jq .isDraft)" = true ]; then
+  if [ -z "$DRAFT" ] && [ "$IS_DRAFT" = true ]; then
     run gh pr ready "$PR_NUM" -R "$REPO"
   fi
 else
